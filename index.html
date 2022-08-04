@@ -15,249 +15,247 @@
     <meta itemprop="url" content="urlHere">
 
     <!-- favicon -->
-    <link rel="shortcut icon" href="logo-16x16.png" type="image/x-icon">
-    <link rel="apple-touch-icon" href="logo-16x16.png">
+    <link rel="shortcut icon" href="logo.webp" type="image/x-icon">
+    <link rel="apple-touch-icon" href="logo.webp">
 
     <!-- style -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="default.css">
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Harmattan:wght@400;700&family=Inter:wght@200;400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/0cdbb62622.js" crossorigin="anonymous"></script>
 
 
 </head>
 <body onload="loadScreen">
     <div id="loading">
-        <lottie-player class="loading" src="https://assets7.lottiefiles.com/packages/lf20_xecggiji.json" background="transparent" speed="0.8" loop autoplay></lottie-player>
+        <lottie-player class="loading" src="https://assets9.lottiefiles.com/private_files/lf30_rnpgzd17.json" background="transparent" speed="1" loop autoplay></lottie-player>
     </div>
 
     <header>
         <div class="brand">
-            <a href=""><img src="ico-128x128.png" alt="GetProjects" srcset="ico-128x128.png"></a>
+            <a href=""><img src="logo.webp" alt="GetProjects" srcset="logo.webp"></a>
             <a href=""><h1>GetProjects</h1></a>
         </div>
 
-        <span class="menu" >
-            <button onclick="toggle_menu()"><i class="fa-solid fa-bars-staggered"></i></button>
-        </span>
-        <div class="link">
-            <div class="dropdown">
-                <h2 class="dropbtn">Discover<i class="fa-solid fa-angle-down"></i></h2>
-                <div class="dropdown-content">
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-solid fa-shapes"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Beginner</h3>
-                                <p>Start with easy projects in less then 30 mins</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-solid fa-chart-simple"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Intermediate</h3>
-                                <p>Create projects with normal difficulty and great learning</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-solid fa-atom"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Pro</h3>
-                                <p>Make awesome Projects with higher difficulty</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-
-
-            <div class="dropdown">
-                <h2 class="dropbtn">Code &lt;/&gt;<i class="fa-solid fa-angle-down"></i></h2>
-                <div class="dropdown-content">
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-brands fa-html5"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Web3</h3>
-                                <p>Create WebApps, Portfolios and E-commerce platform</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-solid fa-c"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>C / C++</h3>
-                                <p>Create projects with C / C++ programming language</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-brands fa-python"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Python</h3>
-                                <p>Create projects with Python programming language</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-
-
-            <div class="dropdown">
-                <h2 class="dropbtn">Learn<i class="fa-solid fa-angle-down"></i></h2>
-                <div class="dropdown-content">
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-brands fa-html5"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>HTML CSS</h3>
-                                <p>Learn building website using HTML5 & CSS3</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-solid fa-c"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>C / C++</h3>
-                                <p>Learn C / C++ programming language and make small apps</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-brands fa-python"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Python</h3>
-                                <p>Learn Python and explore lots of opportunities</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-brands fa-java"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>Java</h3>
-                                <p>Learn Java and get into android devlopment</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-brands fa-square-js"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>JavaScript</h3>
-                                <p>Learn JavaScript and develop dynamic websites</p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="item">
-                            <div class="ico">
-                                <i class="fa-solid fa-server"></i>
-                            </div>
-                            <div class="topic">
-                                <h3>DBMS - SQL</h3>
-                                <p>Learn SQL for Database Management</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-        </div>
+        <a onclick="copyUrl()" id="share" class="button">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a>
     </header>
+
+    <div class="menu">
+        <div class="option">
+            <a class="opt" href="">Discover</a>
+            <div class="opt-overlay">
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div><div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="option">
+            <a class="opt" href="">Code &lt;/&gt;</a>
+            <div class="opt-overlay">
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div><div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="option">
+            <a class="opt" href="">Learn</a>
+            <div class="opt-overlay">
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div><div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="option">
+            <a class="opt" href="">About</a>
+            <div class="opt-overlay">
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+                <div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div><div class="opt-card">
+                    <h3>Projects</h3>
+                    <hr>
+                    <a href="">Latest Projects</a>
+                    <a href="">Top Projects</a>
+                    <a href="">Frontend-Based Projects</a>
+                    <a href="">Programming-Based Projects</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
 
     <footer id="menu">
-        <div class="sitemap">
-            <div class="col">
-                <h4>Discover</h4>
-                <a href="">Beginner</a>
-                <a href="">Intermediate</a>
-                <a href="">Pro</a>
+        <div class="cta">
+            <div class="cta-text"><h2>Get connected with us on social networks!</h2></div>
+            <div class="social">
+                <a href="https://github.com/TMtechnomania" target="_blank"><i class="fa-brands fa-github"></i></a>
+                <a href="https://twitter.com/TMtechnomania" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://www.facebook.com/youtube.com.TMtechnomania" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://chrome.google.com/webstore/detail/tm-launcher/ppgcdhfpgpiecpjaobadcaigbhmkpgob" target="_blank"><i class="fa-brands fa-chrome"></i></a>
+                <a href="https://instagram.com/kartikeytiwari" target="_blank"><i class="fa-brands fa-instagram"></i></a>
             </div>
-
-            <div class="col">
-                <h4>Code</h4>
-                <a href="">Web3</a>
-                <a href="">C / C++</a>
-                <a href="">Python</a>
+        </div>
+        <div class="container">
+            <div class="info">
+                <div class="brand">
+                    <a href=""><img src="logo.webp" alt="GetProjects" srcset="logo.webp"></a>
+                    <a href=""><h1>GetProjects</h1></a>
+                </div>
+                <div class="description">GetProjects is a content platforms for engineering students, those are either persueing their college or diploma and are searching for projects that can be used in final year.</div>
+                <a class="mail" href="mailto:tmtechnomaniayt@gmail.com"><i class="fa-regular fa-envelope"></i>tmtechnomaniayt@gmail.com</a>
             </div>
-
-            <div class="col col-join">
-                <h4>Learn</h4>
-                <a href="">HTML CSS</a>
-                <a href="">C / C++</a>
-                <a href="">Python</a>
+            <div class="sitemap">
+                <div id="s1" class="col">
+                    <h2>Discover</h2>
+                    <a href="">Beginner</a>
+                    <a href="">Intermediate</a>
+                    <a href="">Pro</a>
+                </div>
+    
+                <div id="s2" class="col">
+                    <h2>Code</h2>
+                    <a href="">Web3</a>
+                    <a href="">C / C++</a>
+                    <a href="">Python</a>
+                </div>
+    
+                <div id="s3" class="col">
+                    <h2>Learn</h2>
+                    <a href="">HTML5</a>
+                    <a href="">CSS3</a>
+                    <a href="">C / C++</a>
+                    <a href="">Python</a>
+                    <a href="">Java</a>
+                    <a href="">JavaScript</a>
+                    <a href="">DBMS - SQL</a>
+                    <a href="">Tips & Tricks</a>
+                </div>
+    
+                <div id="s4" class="col">
+                    <h2>About</h2>
+                    <a href="">Author</a>
+                    <a href="">FAQ</a>
+                    <a href="">Privacy Policy</a>
+                </div>
+    
             </div>
-
-            <div class="col col-rep">
-                <h4>&nbsp;</h4>
-                <a href="">Java</a>
-                <a href="">JavaScript</a>
-                <a href="">DBMS - SQL</a>
-            </div>
-
-            <div class="col">
-                <h4>About</h4>
-                <a href="">Author</a>
-                <a href="">FAQ</a>
-                <a href="">Privacy Policy</a>
-            </div>
-
         </div>
 
-            <div class="row">
-                <a href="https://www.youtube.com/channel/UCoJV3qDGpYINYc7-XVAAa_Q" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://github.com/TMtechnomania" target="_blank"><i class="fa-brands fa-github"></i></a>
-                <a href="https://www.instagram.com/kartikeytiwari/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.facebook.com/youtube.com.TMtechnomania" target="_blank"><i class="fa-brands fa-chrome"></i></a>
-            </div>
+        <div class="row">
+            <h2><i class="fa-regular fa-copyright"></i> 2022 Copyright: GetProjects.tech</h2>
+        </div>
         
     </footer>
 
@@ -266,20 +264,6 @@
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
     <!-- scripts -->
-    <script>
-        function loadScreen() {
-    setTimeout(function() {
-    document.getElementById("loading").style.display = "none";
-    }, 5000);
-    }
-    loadScreen();
-
-
-    function toggle_menu() {
-        var element = document.getElementById("menu");
-        element.classList.toggle("menutoggle");
-    }
-    </script>
-    <script src="script.js"></script>
+    <script src="default.js"></script>
 </body>
 </html>
