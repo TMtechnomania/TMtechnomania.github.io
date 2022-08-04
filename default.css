@@ -68,6 +68,42 @@ a.button:hover .fa-solid{
     margin: auto;
 }
 
+header a{
+    color: var(--gray);
+    cursor: pointer;
+}
+
+.brand{
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: space-evenly;
+    cursor: pointer;
+}
+
+.menu .opt-card a:hover{
+    color: var(--color-primary);
+}
+
+.menu .opt-card:hover{
+    box-shadow: 0px 0px 8px -4px rgb(0, 114, 255);
+}
+
+footer a{
+    color: var(--off-white);
+}
+
+.social .fa-brands , .fa-solid{
+    color: var(--off-white);
+}
+
+.social .fa-brands:hover , .fa-solid:hover{
+    color: var(--white);
+}
+
+.info .mail:hover{
+    color: var(--color-primary);
+}
 
 /* Mobile View */
 @media only screen and (max-width: 320px) {}
@@ -103,19 +139,6 @@ a.button:hover .fa-solid{
         background-color: var(--off-white);
         color: var(--gray);
         font-size: 14px;
-    }
-
-    header a{
-        color: var(--gray);
-        cursor: pointer;
-    }
-
-    .brand{
-        display: flex;
-        width: fit-content;
-        align-items: center;
-        justify-content: space-evenly;
-        cursor: pointer;
     }
 
     .brand img{
@@ -187,7 +210,7 @@ a.button:hover .fa-solid{
         display: flex;
     }
 
-    .menu .opt:hover{
+    .menu .option:hover .opt{
         border-bottom: 3px solid var(--color-primary);
         color: var(--color-primary);
     }
@@ -213,7 +236,7 @@ a.button:hover .fa-solid{
     .menu .opt-card hr{
         width: 80px;
         margin: 0 0 30px 30px;
-        height: 3px;
+        padding: 1px 0;
         background-color: var(--color-primary);
     }
 
@@ -224,22 +247,11 @@ a.button:hover .fa-solid{
         justify-content: flex-start;
     }
 
-    .menu .opt-card a:hover{
-        color: var(--color-primary);
-    }
-
-    .menu .opt-card:hover{
-        box-shadow: 0px 0px 4px 0px rgb(0, 114, 255);
-    }
 
     footer{
         margin: 80px 0 0 0;
         font-size: 16px;
         font-family: var(--font-content);
-    }
-
-    footer a{
-        color: var(--off-white);
     }
 
     footer .cta{
@@ -272,14 +284,6 @@ a.button:hover .fa-solid{
         align-items: center;
     }
 
-    .social .fa-brands , .fa-solid{
-        color: var(--off-white);
-    }
-
-    .social .fa-brands:hover , .fa-solid:hover{
-        color: var(--white);
-    }
-
     footer .container{
         display: flex;
         padding: 30px calc((100vw - 1600px)/ 2);
@@ -310,10 +314,6 @@ a.button:hover .fa-solid{
 
     .info .fa-regular{
         padding: 0 5px 0 0;
-    }
-
-    .info .mail:hover{
-        color: var(--green);
     }
     
     .sitemap{
