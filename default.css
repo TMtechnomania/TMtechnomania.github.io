@@ -13,19 +13,19 @@
     --font-content: 'Comfortaa', cursive;
 }
 
-::-webkit-scrollbar {
+body::-webkit-scrollbar {
     width: 8px;
 }
 
-::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track {
     background: var(--white);
 }
 
-::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
     background: var(--gray);
 }
 
-::-webkit-scrollbar-thumb:hover {
+body::-webkit-scrollbar-thumb:hover {
     background: var(--color-primary);
 }
 
