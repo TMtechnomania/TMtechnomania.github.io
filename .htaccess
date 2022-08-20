@@ -1,3 +1,0 @@
-ErrorDocument 404 http://getprojects.tech/404.html
-ErrorDocument 401 http://getprojects.tech/401.html
-ErrorDocument 500 http://getprojects.tech/500.html
