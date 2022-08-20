@@ -18,3 +18,25 @@ function copyUrl() {
         document.getElementById("share").innerHTML = x;
     }, delayInMilliseconds);
 };
+
+function hamberger() {
+    var x = document.getElementById("hambergerMenu");
+    if (x.style.display === "flex") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "flex";
+    }
+
+    var a = document.getElementById("hambergerico").classList.value;
+    if (a === "fa-solid fa-bars") {
+        var element = document.getElementById("hambergerico");
+        element.classList.toggle("fa-bars");
+        element.classList.toggle("fa-xmark");
+    } else {
+        var element = document.getElementById("hambergerico");
+        element.classList.toggle("fa-xmark");
+        element.classList.toggle("fa-bars");
+    }
+  
+
+  }
