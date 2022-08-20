@@ -14,19 +14,19 @@
 }
 
 ::-webkit-scrollbar {
-width: 2px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-background: var(--white);
+    background: var(--white);
 }
 
 ::-webkit-scrollbar-thumb {
-background: var(--gray);
+    background: var(--gray);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-background: var(--color-primary);
+    background: var(--color-primary);
 }
 
 body{
