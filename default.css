@@ -14,19 +14,19 @@
 }
 
 ::-webkit-scrollbar {
-width: 1vw;
+width: 2px;
 }
 
 ::-webkit-scrollbar-track {
-background: #f1f1f1;
+background: var(--white);
 }
 
 ::-webkit-scrollbar-thumb {
-background: #888;
+background: var(--gray);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-background: #555;
+background: var(--color-primary);
 }
 
 body{
