@@ -148,7 +148,7 @@ footer a{
         height: calc(100vw / 6);
         align-items: center;
         justify-content: center;
-        position: absolute;
+        position: fixed;
         top: 0;
         right: 0;
         z-index: 25;
@@ -160,7 +160,7 @@ footer a{
         display: none;
         align-items: center;
         justify-content: flex-start;
-        position: absolute;
+        position: fixed;
         top: calc(100vw / 6);
         z-index: 25;
         width: 100vw;
