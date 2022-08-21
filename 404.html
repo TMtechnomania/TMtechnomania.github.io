@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5; https://getprojects.tech">
+    <!-- <meta http-equiv="refresh" content="7"> -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>GetProjects</title>
     <meta name="description" content="GetProjects is a content platforms for enginnering students, those are either persueing their college or diploma and are searching for projects that can be used in final year." />
     <meta name="google" content="nopagereadaloud" />
     <meta property="og:title" content="GetProjects">
@@ -16,12 +16,12 @@
     <meta itemprop="url" content="urlHere">
 
     <!-- favicon -->
-    <link rel="shortcut icon" href="https://getprojects.tech/logo.webp" type="image/x-icon">
-    <link rel="apple-touch-icon" href="https://getprojects.tech/logo.webp">
+    <link rel="shortcut icon" href="./images/logo.webp" type="image/x-icon">
+    <link rel="apple-touch-icon" href="./images/logo.webp">
 
     <!-- style -->
-    <link rel="preload" href="https://getprojects.tech/default.css" as="style">
-    <link async rel="stylesheet" href="https://getprojects.tech/default.css">
+    <link rel="preload" href="./css/default.css" as="style">
+    <link rel="stylesheet" href="./css/default.css">
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,11 +46,14 @@
 
 </head>
 <body oncontextmenu="return false" onload="loadScreen">
+    <div id="loading">
+        <lottie-player class="loading" src="https://assets9.lottiefiles.com/private_files/lf30_rnpgzd17.json" background="transparent" speed="1" loop autoplay></lottie-player>
+    </div>
 
     <header>
         <div class="brand">
-            <a href=""><img src="https://getprojects.tech/logo.webp" alt="GetProjects" srcset="https://getprojects.tech/logo.webp"></a>
-            <a href=""><h1>GetProjects</h1></a>
+            <a href="https://getprojects.tech/"><img src="./images/logo.webp" alt="GetProjects" srcset="./images/logo.webp"></a>
+            <a href="https://getprojects.tech/" target="_self"><h1>GetProjects</h1></a>
         </div>
 
         <a onclick="copyUrl()" id="share" class="button">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a>
@@ -59,169 +62,151 @@
 
     <div id="hambergerMenu" class="mobmenu">
         <ul>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-house"></i></div>Home</a></li>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a></li>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a></li>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a></li>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Benefits</a></li>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a></li>
-            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a></li>
+            <li><a href="https://getprojects.tech/"><div id="mobMenuIco"><i class="fa-solid fa-house"></i></div>Home</a></li>
+            <li><a href="./pages/discover.html"><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a></li>
+            <li><a href="./pages/code.html"><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a></li>
+            <li><a href="./pages/learn.html"><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a></li>
+            <li><a href="./pages/free.html"><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Benefits</a></li>
+            <li><a href="./pages/help.html"><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a></li>
+            <li><a href="./pages/about.html"><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a></li>
             <li id="shareMob"><a onclick="copyUrl()" id="share shareMob" class="button">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a></li>
         </ul>
     </div>
     </header>
 
-    
-
     <div class="menu">
         <div class="option">
-            <a class="opt" href="">Discover</a>
+            <a class="opt" href="./pages/discover.html">Discover</a>
             <div class="opt-overlay">
                 <div class="opt-card">
                     <h3>Projects</h3>
                     <hr>
-                    <a href="">Top Projects</a>
-                    <a href="">Latest Projects</a>
-                    <a href="">Frontend-Based Projects</a>
-                    <a href="">Programming-Based Projects</a>
+                    <a href="./pages/projects/top-projects.html">Top Projects</a>
+                    <a href="./pages/projects/latest-projects.html">Latest Projects</a>
+                    <a href="./pages/discover/websites.html">Frontend-Based Projects</a>
+                    <a href="./pages/discover/programs.html">Programming-Based Projects</a>
                 </div>
                 <div class="opt-card">
                     <h3>Websites</h3>
                     <hr>
-                    <a href="">Blog Website</a>
-                    <a href="">Portfolio Website</a>
-                    <a href="">Mini-Games (HTML5)</a>
-                    <a href="">Website Componenets</a>
+                    <a href="./pages/websites/blog-websites.html">Blog Website</a>
+                    <a href="./pages/websites/portfolio-websites.html">Portfolio Website</a>
+                    <a href="./pages/projects/mini-games.html">Mini-Games (HTML5)</a>
+                    <a href="./pages/projects/ui-elements.html">Website Componenets</a>
                 </div>
                 <div class="opt-card">
                     <h3>Programs</h3>
                     <hr>
-                    <a href="">Top Programs</a>
-                    <a href="">Latest Programs</a>
-                    <a href="">Basic OOPS Programs</a>
-                    <a href="">Complex OOPS Programs</a>
+                    <a href="./pages/programs/top-programs.html">Top Programs</a>
+                    <a href="./pages/programs/latest-programs.html">Latest Programs</a>
+                    <a href="./pages/programs/basic-oops-programs.html">Basic OOPS Programs</a>
+                    <a href="./pages/programs/complex-oops-programs.html">Complex OOPS Programs</a>
                 </div>
                 <div id="exclusive" class="opt-card">
                     <h3>Exclusive</h3>
                     <hr>
-                    <a href="">Free Games</a>
-                    <a href="">Free E-Books</a>
-                    <a href="">Best Free Tools</a>
-                    <a href="">Must Have Goodies!!</a>
+                    <a href="./pages/free.html">Free Games</a>
+                    <a href="./pages/free.html">Free E-Books</a>
+                    <a href="./pages/free.html">Best Free Tools</a>
+                    <a href="./pages/free.html">Must Have Goodies!!</a>
                 </div>
             </div>
         </div>
 
         <div class="option">
-            <a class="opt" href="">Code &lt;/&gt;</a>
+            <a class="opt" href="./pages/code.html">Code &lt;/&gt;</a>
             <div class="opt-overlay">
                 <div class="opt-card">
                     <h3>Web3</h3>
                     <hr>
-                    <a href="">Bingo</a>
-                    <a href="">Photo Editor</a>
-                    <a href="">Tic Tack Toe</a>
-                    <a href="">WhatsApp Clone</a>
+                    <a href="./pages/projects/minor-projects/bingo/">Bingo</a>
+                    <a href="./pages/projects/minor-projects/photo-editor/">Photo Editor</a>
+                    <a href="./pages/projects/mini-games/tic-tac-toe/">Tic Tack Toe</a>
+                    <a href="./pages/projects/minor-projects/whatsapp-clone/">WhatsApp Clone</a>
                 </div>
                 <div class="opt-card">
                     <h3>Python</h3>
                     <hr>
-                    <a href="">Stopwatch</a>
-                    <a href="">Calculator</a>
-                    <a href="">Voice Assistant</a>
-                    <a href="">Password Generator</a>
+                    <a href="./pages/programs/python-programs/stopwatch.html">Stopwatch</a>
+                    <a href="./pages/programs/python-programs/calculator.html">Calculator</a>
+                    <a href="./pages/programs/python-programs/voice-assistant">Voice Assistant</a>
+                    <a href="./pages/programs/python-programs/password-generator">Password Generator</a>
                 </div>
                 <div class="opt-card">
                     <h3>C / C++</h3>
                     <hr>
-                    <a href="">Bank Management</a>
-                    <a href="">Hotel Management</a>
-                    <a href="">Contact Management</a>
-                    <a href="">Student Report Management</a>
+                    <a href="./pages/programs/c-programs/bank-management.html">Bank Management</a>
+                    <a href="./pages/programs/c-programs/hotel-management.html">Hotel Management</a>
+                    <a href="./pages/programs/c-programs/contact-management.html">Contact Management</a>
+                    <a href="./pages/programs/c-programs/Student-report-management.html">Student Report Management</a>
                 </div>
                 <div id="exclusive" class="opt-card">
                     <h3>Exclusive</h3>
                     <hr>
-                    <a href="">Free Games</a>
-                    <a href="">Free E-Books</a>
-                    <a href="">Best Free Tools</a>
-                    <a href="">Must Have Goodies!!</a>
+                    <a href="./pages/free.html">Free Games</a>
+                    <a href="./pages/free.html">Free E-Books</a>
+                    <a href="./pages/free.html">Best Free Tools</a>
+                    <a href="./pages/free.html">Must Have Goodies!!</a>
                 </div>
             </div>
         </div>
 
         <div class="option">
-            <a class="opt" href="">Learn</a>
+            <a class="opt" href="./pages/learn.html">Learn</a>
             <div class="opt-overlay">
                 <div class="opt-card">
                     <h3>Web-Dev</h3>
                     <hr>
-                    <a href="">HTML 5</a>
-                    <a href="">CSS 3</a>
-                    <a href="">JavaScript</a>
-                    <a href="">Hosting</a>
+                    <a href="./pages/learn/learn-web-dev/html5.html">HTML 5</a>
+                    <a href="./pages/learn/learn-web-dev/css3.html">CSS 3</a>
+                    <a href="./pages/learn/learn-web-dev/javascript.html">JavaScript</a>
+                    <a href="./pages/learn/learn-web-dev/hosting.html">Hosting</a>
                 </div>
                 <div class="opt-card">
                     <h3>Python</h3>
                     <hr>
-                    <a href="">Basics</a>
-                    <a href="">Libraries</a>
-                    <a href="">Small Programs</a>
-                    <a href="">Submit Your Here!</a>
+                    <a href="./pages/learn/learn-python/">Basics</a>
+                    <a href="./pages/learn/learn-python/">Libraries</a>
+                    <a href="./pages/learn/learn-python/">Small Programs</a>
+                    <a href="./pages/learn/learn-python/">Submit Your Here!</a>
                 </div>
                 <div class="opt-card">
                     <h3>C / C++</h3>
                     <hr>
-                    <a href="">Basics</a>
-                    <a href="">Algorithms</a>
-                    <a href="">Data Structures</a>
-                    <a href="">Submit Your Here!</a>
+                    <a href="./pages/learn/learn-c-c++/">Basics</a>
+                    <a href="./pages/learn/learn-c-c++/">Algorithms</a>
+                    <a href="./pages/learn/learn-c-c++/">Data Structures</a>
+                    <a href="./pages/learn/learn-c-c++/">Submit Your Here!</a>
                 </div>
                 <div id="exclusive" class="opt-card">
                     <h3>Exclusive</h3>
                     <hr>
-                    <a href="">Free Games</a>
-                    <a href="">Free E-Books</a>
-                    <a href="">Best Free Tools</a>
-                    <a href="">Must Have Goodies!!</a>
+                    <a href="./pages/free.html">Free Games</a>
+                    <a href="./pages/free.html">Free E-Books</a>
+                    <a href="./pages/free.html">Best Free Tools</a>
+                    <a href="./pages/free.html">Must Have Goodies!!</a>
                 </div>
             </div>
         </div>
 
         <div class="option">
-            <a class="opt" href="">About</a>
+            <a class="opt" href="./pages/about.html">About</a>
             <div class="opt-overlay">
                 <div class="opt-card">
                     <h3>FAQ & Support</h3>
                     <hr>
-                    <a href="">Projects</a>
-                    <a href="">Programs</a>
-                    <a href="">Suggest Us!</a>
-                    <a href="">Suggested IDEs</a>
-                </div>
-                <div class="opt-card">
-                    <h3>GetProjects</h3>
-                    <hr>
-                    <a href="">Tools</a>
-                    <a href="">Purpose</a>
-                    <a href="">Supporters</a>
-                    <a href="">Course of Development</a>
-                </div>
-                <div class="opt-card">
-                    <h3>Developers</h3>
-                    <hr>
-                    <a href="">Meet the Team</a>
-                    <a href="">Trusted Partners</a>
-                    <a href="">Developers Suggests</a>
-                    <a href="">Join Community!!</a>
+                    <a href="./pages/about/faq.html">FAQ</a>
+                    <a href="./pages/about/developers.html">Contact</a>
+                    <a href="./pages/about/terms.html">Terms & Conditions</a>
+                    <a href="./pages/about/privacy-policy.html">Privacy policy</a>
                 </div>
                 <div id="exclusive" class="opt-card">
                     <h3>Exclusive</h3>
                     <hr>
-                    <a href="">Free Games</a>
-                    <a href="">Free E-Books</a>
-                    <a href="">Best Free Tools</a>
-                    <a href="">Must Have Goodies!!</a>
+                    <a href="./pages/free.html">Free Games</a>
+                    <a href="./pages/free.html">Free E-Books</a>
+                    <a href="./pages/free.html">Best Free Tools</a>
+                    <a href="./pages/free.html">Must Have Goodies!!</a>
                 </div>
             </div>
         </div>
@@ -251,7 +236,7 @@
         <div class="container">
             <div class="info">
                 <div class="brand">
-                    <a href=""><img src="https://getprojects.tech/logo.webp" alt="GetProjects" srcset="https://getprojects.tech/logo.webp"></a>
+                    <a href=""><img src="./images/logo.webp" alt="GetProjects" srcset="./images/logo.webp"></a>
                     <a href=""><h1>GetProjects</h1></a>
                 </div>
                 <div class="description">GetProjects is a content platforms for engineering students, those are either persueing their college or diploma and are searching for projects that can be used in final year.</div>
@@ -260,30 +245,30 @@
             <div class="sitemap">
                 <div id="s1" class="col">
                     <h2>Discover</h2>
-                    <a href="">Projects</a>
-                    <a href="">Websites</a>
-                    <a href="">Programs</a>
+                    <a href="./pages/projects/latest-projects.html">Projects</a>
+                    <a href="./pages/websites/websites.html">Websites</a>
+                    <a href="./pages/programs/latest-programs.html">Programs</a>
                 </div>
     
                 <div id="s2" class="col">
                     <h2>Code</h2>
-                    <a href="">Web3</a>
-                    <a href="">Python</a>
-                    <a href="">C / C++</a>
+                    <a href="./pages/code/web3.html">Web3</a>
+                    <a href="./pages/code/python.html">Python</a>
+                    <a href="./pages/code/c++.html">C / C++</a>
                 </div>
     
                 <div id="s3" class="col">
                     <h2>Learn</h2>
-                    <a href="">Web-Dev</a>
-                    <a href="">Python</a>
-                    <a href="">C / C++</a>
+                    <a href="./pages/learn/learn-web-dev/">Web-Dev</a>
+                    <a href="./pages/learn/learn-python/">Python</a>
+                    <a href="./pages/learn/learn-c-c++/">C / C++</a>
                 </div>
     
                 <div id="s4" class="col">
                     <h2>About</h2>
-                    <a href="">FAQ & Support</a>
-                    <a href="">Developers</a>
-                    <a href="">Privacy Policy</a>
+                    <a href="./pages/about/faq.html">FAQ & Support</a>
+                    <a href="./pages/about/developers.html">Developers</a>
+                    <a href="./pages/about/privacy-policy.html">Privacy Policy</a>
                 </div>
     
             </div>
@@ -300,6 +285,6 @@
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
     <!-- scripts -->
-    <script src="https://getprojects.tech/default.js"></script>
+    <script src="./js/default.js"></script>
 </body>
 </html>

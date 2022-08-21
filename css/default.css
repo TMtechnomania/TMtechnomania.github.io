@@ -790,7 +790,8 @@ footer a{
         padding: 1vw;
         top: 4vw;
         left: 0px;
-        background-color: var(--white);
+        background-color: rgb(255, 255, 255, 0.8);
+        backdrop-filter: blur(4vw);
     }
 
     .menu .option:hover .opt-overlay{
