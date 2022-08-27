@@ -1,6 +1,6 @@
 # Tipue search settings
 tipue_search:
-  include:
+  include: true
     pages: true
-  exclude:
+  exclude: true
     files: [search.html]
