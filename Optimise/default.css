@@ -46,7 +46,7 @@ body{
     }
 
     .btn-primary:hover{
-        background-color: var(--off-bright);
+        background-color: transparent;
         color: var(--font--color-secondary);
         border: 2px solid var(--color-primary);
     }
@@ -65,7 +65,7 @@ body{
     }
 
     .btn-primary:hover{
-        background-color: var(--off-bright);
+        background-color: transparent;
         color: var(--font-btn-hover);
         border: 2px solid var(--color-primary);
     }
@@ -78,6 +78,10 @@ body{
     width: fit-content;
     height: fit-content;
     font-weight: 500;
+}
+
+.btn-primary .fa-solid{
+    padding: 0.2vw;
 }
 
 a, a:link, a:visited {
@@ -306,34 +310,6 @@ footer a{
         justify-content: space-between;
     }
     
-    .sitemap{
-        justify-content: space-evenly;
-        width: 100vw;
-        padding: 0 5vw;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        overflow: hidden;
-    }
-    
-    .sitemap .col{
-        width: 45vw;
-        padding: 4vw 0;
-        line-height: 6.5vw;
-    }
-
-    .sitemap h2{
-        line-height: 8vw;
-        font-size: 4.5vw;
-    }
-    
-    .sitemap .col a{
-        display: block;
-        width: fit-content;
-        font-size: 4vw;
-        line-height: 6.5vw;
-    }
-    
     .row{
         display: flex;
         align-items: center;
@@ -506,33 +482,6 @@ footer a{
         background-color: var(--color-secondary);
         color: var(--off-bright);
     }
-    
-    .sitemap{
-        justify-content: space-evenly;
-        width: 48vw;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        overflow: hidden;
-    }
-
-    .sitemap .col{
-        width: 22vw;
-        line-height: 2.8vw;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .sitemap h2{
-        line-height: 2.8vw;
-        font-size: 2vw;
-    }
-    
-    .sitemap .col a{
-        display: block;
-        font-size: 1.6vw;
-    }
 
     .row{
         display: flex;
@@ -579,7 +528,7 @@ footer a{
     }
 
     .btn-primary{
-        padding: 0.6vw 1.2vw;
+        padding: 0.4vw 1vw;
         border-radius: 2vw;
         -webkit-border-radius: 2vw;
         -moz-border-radius: 2vw;
@@ -663,33 +612,6 @@ footer a{
         font-size: 0.8vw;
         justify-content: space-between;
         background-color: var(--color-secondary);
-        color: var(--font--color-secondary);
-    }
-    
-    .sitemap{
-        justify-content: space-evenly;
-        width: 52vw;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        overflow: hidden;
-    }
-    
-    .sitemap .col{
-        width: 12vw;
-        line-height: 1.5vw;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .sitemap h2{
-        line-height: 2vw;
-        font-size: 1vw;
-    }
-    
-    .sitemap .col a{
-        display: block;
         color: var(--font--color-secondary);
     }
     
