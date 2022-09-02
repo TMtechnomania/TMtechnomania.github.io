@@ -26,7 +26,7 @@
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/0cdbb62622.js" crossorigin="anonymous"></script>
 
     <!-- Google Ads -->
@@ -45,10 +45,7 @@
 
 
 </head>
-<body oncontextmenu="return false" onload="loadScreen()">
-    <div id="loading">
-        <lottie-player class="loading" src="https://assets9.lottiefiles.com/private_files/lf30_rnpgzd17.json" background="transparent" speed="1" loop autoplay></lottie-player>
-    </div>
+<body oncontextmenu="return false">
 
     <header>
         <div class="brand">
@@ -56,214 +53,42 @@
             <a href="https://getprojects.tech/" target="_self"><h1>GetProjects</h1></a>
         </div>
 
-        <a onclick="copyUrl()" id="share" class="button">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a>
+        <a onclick="copyUrl()" id="share" class="btn-primary">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a>
 
         <a id="hamberger" onclick="hamberger()"><i id="hambergerico" class="fa-solid fa-bars"></i></a>
 
     <div id="hambergerMenu" class="mobmenu">
         <ul>
             <li><a href="https://getprojects.tech/"><div id="mobMenuIco"><i class="fa-solid fa-house"></i></div>Home</a></li>
-            <li><a href="./pages/discover.html"><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a></li>
-            <li><a href="./pages/code.html"><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a></li>
-            <li><a href="./pages/learn.html"><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a></li>
-            <li><a href="./pages/free.html"><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Benefits</a></li>
-            <li><a href="./pages/help.html"><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a></li>
-            <li><a href="./pages/about.html"><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a></li>
-            <li id="shareMob"><a onclick="copyUrl()" id="share shareMob" class="button">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a></li>
+            <li><a href="https://getprojects.tech/discover"><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a></li>
+            <li><a href="https://getprojects.tech/code"><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a></li>
+            <li><a href="https://getprojects.tech/learn"><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a></li>
+            <li><a href="https://getprojects.tech/perks"><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Perks</a></li>
+            <li><a href="https://getprojects.tech/help"><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a></li>
+            <li><a href="https://getprojects.tech/about"><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a></li>
         </ul>
     </div>
     </header>
 
     <div class="menu">
-        <div class="option">
-            <a class="opt" href="./pages/discover.html">Discover</a>
-            <div class="opt-overlay">
-                <div class="opt-card">
-                    <h3>Projects</h3>
-                    <hr>
-                    <a href="./pages/projects/top-projects.html">Top Projects</a>
-                    <a href="./pages/projects/latest-projects.html">Latest Projects</a>
-                    <a href="./pages/discover/websites.html">Frontend-Based Projects</a>
-                    <a href="./pages/discover/programs.html">Programming-Based Projects</a>
-                </div>
-                <div class="opt-card">
-                    <h3>Websites</h3>
-                    <hr>
-                    <a href="./pages/websites/blog-websites.html">Blog Website</a>
-                    <a href="./pages/websites/portfolio-websites.html">Portfolio Website</a>
-                    <a href="./pages/projects/mini-games.html">Mini-Games (HTML5)</a>
-                    <a href="./pages/projects/ui-elements.html">Website Componenets</a>
-                </div>
-                <div class="opt-card">
-                    <h3>Programs</h3>
-                    <hr>
-                    <a href="./pages/programs/top-programs.html">Top Programs</a>
-                    <a href="./pages/programs/latest-programs.html">Latest Programs</a>
-                    <a href="./pages/programs/basic-oops-programs.html">Basic OOPS Programs</a>
-                    <a href="./pages/programs/complex-oops-programs.html">Complex OOPS Programs</a>
-                </div>
-                <div id="exclusive" class="opt-card">
-                    <h3>Exclusive</h3>
-                    <hr>
-                    <a href="./pages/free.html">Free Games</a>
-                    <a href="./pages/free.html">Free E-Books</a>
-                    <a href="./pages/free.html">Best Free Tools</a>
-                    <a href="./pages/free.html">Must Have Goodies!!</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="option">
-            <a class="opt" href="./pages/code.html">Code &lt;/&gt;</a>
-            <div class="opt-overlay">
-                <div class="opt-card">
-                    <h3>Web3</h3>
-                    <hr>
-                    <a href="./pages/projects/minor-projects/bingo/">Bingo</a>
-                    <a href="./pages/projects/minor-projects/photo-editor/">Photo Editor</a>
-                    <a href="./pages/projects/mini-games/tic-tac-toe/">Tic Tack Toe</a>
-                    <a href="./pages/projects/minor-projects/whatsapp-clone/">WhatsApp Clone</a>
-                </div>
-                <div class="opt-card">
-                    <h3>Python</h3>
-                    <hr>
-                    <a href="./pages/programs/python-programs/stopwatch.html">Stopwatch</a>
-                    <a href="./pages/programs/python-programs/calculator.html">Calculator</a>
-                    <a href="./pages/programs/python-programs/voice-assistant">Voice Assistant</a>
-                    <a href="./pages/programs/python-programs/password-generator">Password Generator</a>
-                </div>
-                <div class="opt-card">
-                    <h3>C / C++</h3>
-                    <hr>
-                    <a href="./pages/programs/c-programs/bank-management.html">Bank Management</a>
-                    <a href="./pages/programs/c-programs/hotel-management.html">Hotel Management</a>
-                    <a href="./pages/programs/c-programs/contact-management.html">Contact Management</a>
-                    <a href="./pages/programs/c-programs/Student-report-management.html">Student Report Management</a>
-                </div>
-                <div id="exclusive" class="opt-card">
-                    <h3>Exclusive</h3>
-                    <hr>
-                    <a href="./pages/free.html">Free Games</a>
-                    <a href="./pages/free.html">Free E-Books</a>
-                    <a href="./pages/free.html">Best Free Tools</a>
-                    <a href="./pages/free.html">Must Have Goodies!!</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="option">
-            <a class="opt" href="./pages/learn.html">Learn</a>
-            <div class="opt-overlay">
-                <div class="opt-card">
-                    <h3>Web-Dev</h3>
-                    <hr>
-                    <a href="./pages/learn/learn-web-dev/html5.html">HTML 5</a>
-                    <a href="./pages/learn/learn-web-dev/css3.html">CSS 3</a>
-                    <a href="./pages/learn/learn-web-dev/javascript.html">JavaScript</a>
-                    <a href="./pages/learn/learn-web-dev/hosting.html">Hosting</a>
-                </div>
-                <div class="opt-card">
-                    <h3>Python</h3>
-                    <hr>
-                    <a href="./pages/learn/learn-python/">Basics</a>
-                    <a href="./pages/learn/learn-python/">Libraries</a>
-                    <a href="./pages/learn/learn-python/">Small Programs</a>
-                    <a href="./pages/learn/learn-python/">Submit Your Here!</a>
-                </div>
-                <div class="opt-card">
-                    <h3>C / C++</h3>
-                    <hr>
-                    <a href="./pages/learn/learn-c-c++/">Basics</a>
-                    <a href="./pages/learn/learn-c-c++/">Algorithms</a>
-                    <a href="./pages/learn/learn-c-c++/">Data Structures</a>
-                    <a href="./pages/learn/learn-c-c++/">Submit Your Here!</a>
-                </div>
-                <div id="exclusive" class="opt-card">
-                    <h3>Exclusive</h3>
-                    <hr>
-                    <a href="./pages/free.html">Free Games</a>
-                    <a href="./pages/free.html">Free E-Books</a>
-                    <a href="./pages/free.html">Best Free Tools</a>
-                    <a href="./pages/free.html">Must Have Goodies!!</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="option">
-            <a class="opt" href="./pages/about.html">About</a>
-            <div class="opt-overlay">
-                <div class="opt-card">
-                    <h3>FAQ & Support</h3>
-                    <hr>
-                    <a href="./pages/about/faq.html">FAQ</a>
-                    <a href="./pages/about/developers.html">Contact</a>
-                    <a href="./pages/about/terms.html">Terms & Conditions</a>
-                    <a href="./pages/about/privacy-policy.html">Privacy policy</a>
-                </div>
-                <div id="exclusive" class="opt-card">
-                    <h3>Exclusive</h3>
-                    <hr>
-                    <a href="./pages/free.html">Free Games</a>
-                    <a href="./pages/free.html">Free E-Books</a>
-                    <a href="./pages/free.html">Best Free Tools</a>
-                    <a href="./pages/free.html">Must Have Goodies!!</a>
-                </div>
-            </div>
-        </div>
+        <a href="https://getprojects.tech/discover"><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a>
+        <a href="https://getprojects.tech/code"><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a>
+        <a href="https://getprojects.tech/learn"><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a>
+        <a href="https://getprojects.tech/perks"><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Perks</a>
+        <a href="https://getprojects.tech/help"><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a>
+        <a href="https://getprojects.tech/about"><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a>
     </div>
-
-
 
 
     <footer id="menu">
         <div class="cta">
             <div class="cta-text"><h2>Get connected with us on social networks!</h2></div>
             <div class="social">
-                <a href="https://github.com/TMtechnomania" target="_blank"><i class="fa-brands fa-github"></i></a>
-                <a href="https://twitter.com/TMtechnomania" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                <a href="https://www.facebook.com/youtube.com.TMtechnomania" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://chrome.google.com/webstore/detail/tm-launcher/ppgcdhfpgpiecpjaobadcaigbhmkpgob" target="_blank"><i class="fa-brands fa-chrome"></i></a>
-                <a href="https://instagram.com/kartikeytiwari" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="container">
-            <div class="info">
-                <div class="brand">
-                    <a href=""><img src="./images/logo.webp" alt="GetProjects" srcset="./images/logo.webp"></a>
-                    <a href=""><h1>GetProjects</h1></a>
-                </div>
-                <div class="description">GetProjects is a content platforms for engineering students, those are either persueing their college or diploma and are searching for projects that can be used in final year.</div>
-                <a class="mail" href="mailto:tmtechnomaniayt@gmail.com"><i class="fa-regular fa-envelope"></i>tmtechnomaniayt@gmail.com</a>
-            </div>
-            <div class="sitemap">
-                <div id="s1" class="col">
-                    <h2>Discover</h2>
-                    <a href="./pages/projects/latest-projects.html">Projects</a>
-                    <a href="./pages/websites/websites.html">Websites</a>
-                    <a href="./pages/programs/latest-programs.html">Programs</a>
-                </div>
-    
-                <div id="s2" class="col">
-                    <h2>Code</h2>
-                    <a href="./pages/code/web3.html">Web3</a>
-                    <a href="./pages/code/python.html">Python</a>
-                    <a href="./pages/code/c++.html">C / C++</a>
-                </div>
-    
-                <div id="s3" class="col">
-                    <h2>Learn</h2>
-                    <a href="./pages/learn/learn-web-dev/">Web-Dev</a>
-                    <a href="./pages/learn/learn-python/">Python</a>
-                    <a href="./pages/learn/learn-c-c++/">C / C++</a>
-                </div>
-    
-                <div id="s4" class="col">
-                    <h2>About</h2>
-                    <a href="./pages/about/faq.html">FAQ & Support</a>
-                    <a href="./pages/about/developers.html">Developers</a>
-                    <a href="./pages/about/privacy-policy.html">Privacy Policy</a>
-                </div>
-    
+                <a alt="GitHub" href="https://github.com/TMtechnomania" target="_blank"><i class="fa-brands fa-github"></i></a>
+                <a alt="Facebook" href="https://www.facebook.com/youtube.com.TMtechnomania" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                <a alt="Chrome Extension" href="https://chrome.google.com/webstore/detail/tm-launcher/ppgcdhfpgpiecpjaobadcaigbhmkpgob" target="_blank"><i class="fa-brands fa-chrome"></i></a>
+                <a alt="Instagram" href="https://instagram.com/kartikeytiwari" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a alt="Developer Portfolio" href="getprojects.tech/portfolio" target="_blank"><i class="fa-solid fa-user"></i></a>
             </div>
         </div>
 
