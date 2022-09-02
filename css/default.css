@@ -539,7 +539,7 @@ footer a{
     }
 
     .menu a .fa-solid{
-        padding: 0.3vw;
+        padding: 0.3vw 0.3vw 0.3vw 0;
     }
 
     .menu a:hover{
