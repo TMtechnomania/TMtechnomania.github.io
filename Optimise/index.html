@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta http-equiv="refresh" content="7"> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetProjects</title>
+    <meta name="description" content="GetProjects is a content platforms for enginnering students, those are either persueing their college or diploma and are searching for projects that can be used in final year." />
+    <meta name="google" content="nopagereadaloud" />
+    <meta property="og:title" content="GetProjects">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="urlHere">
+    <meta itemprop="name" content="GetProjects">
+    <meta itemprop="description" content="GetProjects is a content platforms for enginnering students, those are either persueing their college or diploma and are searching for projects that can be used in final year.">
+    <meta itemprop="url" content="urlHere">
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="../images/logo.webp" type="image/x-icon">
+    <link rel="apple-touch-icon" href="../images/logo.webp">
+
+    <!-- style -->
+    <link rel="preload" href="default.css" as="style">
+    <link rel="stylesheet" href="default.css">
+
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/0cdbb62622.js" crossorigin="anonymous"></script>
+
+    <!-- Google Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+     crossorigin="anonymous"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RSHPVBNXNX"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-RSHPVBNXNX');
+    </script>
+
+
+</head>
+<body oncontextmenu="return false" onload="loadScreen()">
+    <div id="loading">
+        <lottie-player class="loading" src="https://assets9.lottiefiles.com/private_files/lf30_rnpgzd17.json" background="transparent" speed="1" loop autoplay></lottie-player>
+    </div>
+
+    <header>
+        <div class="brand">
+            <a href="https://getprojects.tech/"><img src="../images/logo.webp" alt="GetProjects" srcset="../images/logo.webp"></a>
+            <a href="https://getprojects.tech/" target="_self"><h1>GetProjects</h1></a>
+        </div>
+
+        <a onclick="copyUrl()" id="share" class="btn-primary">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a>
+
+        <a id="hamberger" onclick="hamberger()"><i id="hambergerico" class="fa-solid fa-bars"></i></a>
+
+    <div id="hambergerMenu" class="mobmenu">
+        <ul>
+            <li><a href="https://getprojects.tech/"><div id="mobMenuIco"><i class="fa-solid fa-house"></i></div>Home</a></li>
+            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a></li>
+            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a></li>
+            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a></li>
+            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Benefits</a></li>
+            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a></li>
+            <li><a href=""><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a></li>
+        </ul>
+    </div>
+    </header>
+
+    <div class="menu">
+        <a href=""><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a>
+        <a href=""><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a>
+        <a href=""><div id="mobMenuIco"><i class="fa-solid fa-graduation-cap"></i></div>Learn</a>
+        <a href=""><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Benefits</a>
+        <a href=""><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a>
+        <a href=""><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a>
+    </div>
+
+
+    <footer id="menu">
+        <div class="cta">
+            <div class="cta-text"><h2>Get connected with us on social networks!</h2></div>
+            <div class="social">
+                <a alt="GitHub" href="https://github.com/TMtechnomania" target="_blank"><i class="fa-brands fa-github"></i></a>
+                <a alt="Facebook" href="https://www.facebook.com/youtube.com.TMtechnomania" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                <a alt="Chrome Extension" href="https://chrome.google.com/webstore/detail/tm-launcher/ppgcdhfpgpiecpjaobadcaigbhmkpgob" target="_blank"><i class="fa-brands fa-chrome"></i></a>
+                <a alt="Instagram" href="https://instagram.com/kartikeytiwari" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a alt="Developer Portfolio" href="getprojects.tech/portfolio" target="_blank"><i class="fa-solid fa-user"></i></a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="sitemap">
+                <div id="s1" class="col">
+                    <h2>Discover</h2>
+                    <a href="">Projects</a>
+                    <a href="">Websites</a>
+                    <a href="">Programs</a>
+                </div>
+    
+                <div id="s2" class="col">
+                    <h2>Code</h2>
+                    <a href="">Web3</a>
+                    <a href="">Python</a>
+                    <a href="">C / C++</a>
+                </div>
+    
+                <div id="s3" class="col">
+                    <h2>Learn</h2>
+                    <a href="">Web-Dev</a>
+                    <a href="">Python</a>
+                    <a href="">C / C++</a>
+                </div>
+    
+                <div id="s4" class="col">
+                    <h2>About</h2>
+                    <a href="">FAQ & Support</a>
+                    <a href="">Developers</a>
+                    <a href="">Privacy Policy</a>
+                </div>
+    
+            </div>
+        </div>
+
+        <div class="row">
+            <h2><i class="fa-regular fa-copyright"></i> 2022 Copyright: GetProjects.tech</h2>
+        </div>
+        
+    </footer>
+
+
+    <!-- loading animation script -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <!-- scripts -->
+    <script src="default.js"></script>
+</body>
+</html>
