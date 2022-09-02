@@ -584,6 +584,11 @@ footer a{
         align-items: center;
     }
 
+    footer .container{
+        color: var(--font--color-secondary);
+        padding: 0 8vw;
+    }
+
     .quick-links{
         display: flex;
         justify-content: space-around;
@@ -601,11 +606,15 @@ footer a{
         border: 2px solid transparent;
         justify-content: center;
         font-size: 0.85vw;
-        color: var(--font--color-primary);
+        color: var(--font--color-secondary);
     }
 
     .quick-links a .fa-solid{
         padding: 0.3vw 0.3vw 0.3vw 0;
+    }
+
+    .quick-links a:hover{
+        color: var(--font-btn-hover);
     }
     
     .row{

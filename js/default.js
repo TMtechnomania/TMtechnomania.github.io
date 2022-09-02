@@ -1,19 +1,24 @@
-// function loadScreen() {
-//     setTimeout(function() {
-//     document.getElementById("loading").style.display = "none";
-//     }, 4000);
-//     let url = window.location.href;
-//     if (navigator.share) {
-//         navigator.share({
-//           title: 'getprojects.tech',
-//           text: 'Hey! check out GetProjects, it will help you in your projects. Also share it with your friends..',
-//           url: url,
-//         })
-//           .then(() => console.log('Successful share'))
-//           .catch((error) => console.log('Error sharing', error));
-//       }
-// }
-// loadScreen();
+const blocks = gsap.utils.toArray(".animate");
+blocks.forEach(animate => {
+  const anim = gsap.fromTo(animate,
+    {
+      autoAlpha: 0,
+      y: -100,
+      x: 100,
+      rotate: 0
+    },
+    {
+      duration: 0.6,
+      autoAlpha: 1,
+      y: 0,
+      x: 0,
+      rotate: 0
+    });
+    ScrollTrigger.create({
+      trigger: animate,
+      animation: anim,
+    });
+});
 
 function copyUrl() {
     let x = document.getElementById("share").innerHTML;
