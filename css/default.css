@@ -126,6 +126,10 @@ footer a{
     color: var(--font--color-primary);
 }
 
+.quick-links a:hover{
+    color: var(--font-btn-hover);
+}
+
 .error404{
     display: flex;
     align-items: center;
@@ -282,10 +286,7 @@ footer a{
     }
 
     footer .container{
-        display: flex;
-        padding: 4vw 0;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        display: none;
     }
     
     .row{
@@ -454,11 +455,34 @@ footer a{
     }
 
     footer .container{
+        color: var(--font--color-secondary);
+        padding: 0 7vw;
         display: flex;
-        padding: 2vw 8vw;
-        justify-content: space-between;
-        background-color: var(--color-secondary);
-        color: var(--off-bright);
+        justify-content: center;
+    }
+
+    .quick-links{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 86vw;
+        height: 8vw;
+    }
+
+    .quick-links a{
+        display: flex;
+        width: fit-content;
+        align-items: center;
+        height: 100%;
+        width: 6vw;
+        border: 2px solid transparent;
+        justify-content: center;
+        font-size: 1.6vw;
+        color: var(--font--color-secondary);
+    }
+
+    .quick-links a .fa-solid{
+        padding: 0.8vw 0.8vw 0.8vw 0;
     }
 
     .row{
@@ -587,14 +611,16 @@ footer a{
     footer .container{
         color: var(--font--color-secondary);
         padding: 0 8vw;
+        display: flex;
+        justify-content: center;
     }
 
     .quick-links{
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width: 40vw;
-        height: 3.5vw;
+        width: 50vw;
+        height: 4vw;
     }
 
     .quick-links a{
@@ -611,10 +637,6 @@ footer a{
 
     .quick-links a .fa-solid{
         padding: 0.3vw 0.3vw 0.3vw 0;
-    }
-
-    .quick-links a:hover{
-        color: var(--font-btn-hover);
     }
     
     .row{
