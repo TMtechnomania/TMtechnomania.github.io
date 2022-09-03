@@ -5,26 +5,6 @@
     border: none;
 }
 
-::-webkit-scrollbar {
-    width: 1vw;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bright);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--color-secondary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary);
-}
-
-body{
-    background-color: var(--bright);
-}
-
 :root {
     --font-primary: 'Inter', sans-serif;
     --font-content: 'Comfortaa', cursive;
@@ -82,8 +62,6 @@ body{
 
 a, a:link, a:visited {
     text-decoration: none;
-    color: var(--font--color-primary);
-    font-family: var(--font-primary);
 }
 
 /* Mobile View */
