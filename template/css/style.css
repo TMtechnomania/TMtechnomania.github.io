@@ -88,15 +88,24 @@ a, a:link, a:visited {
 
 /* Mobile View */
 @media only screen and (max-width: 479px){
-
+    .wrapper > div{
+        padding-top: calc(100vw / 6);
+        scroll-snap-align: start;
+    }
 }
 
 /* Tablet View */
 @media only screen and (min-width: 480px) and (max-width: 1023px){
-
+    .wrapper > div{
+        padding-top: 8vw;
+        scroll-snap-align: start;
+    }
 }
 
 /* Laptop View */
 @media only screen and (min-width: 1024px){
-    
+    .wrapper > div{
+        padding-top: 3.5vw;
+        scroll-snap-align: start;
+    }
 }
