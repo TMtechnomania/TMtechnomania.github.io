@@ -85,3 +85,18 @@ a, a:link, a:visited {
     color: var(--font--color-primary);
     font-family: var(--font-primary);
 }
+
+/* Mobile View */
+@media only screen and (max-width: 479px){
+
+}
+
+/* Tablet View */
+@media only screen and (min-width: 480px) and (max-width: 1023px){
+
+}
+
+/* Laptop View */
+@media only screen and (min-width: 1024px){
+    
+}
