@@ -3,7 +3,6 @@
     padding: 0;
     box-sizing: border-box;
     border: none;
-    scroll-behavior: smooth;
 }
 
 ::-webkit-scrollbar {
@@ -24,6 +23,7 @@
 
 body{
     background-color: var(--bright);
+    overflow-x: hidden;
 }
 
 :root {
