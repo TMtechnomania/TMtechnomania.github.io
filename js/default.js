@@ -1,5 +1,3 @@
-AOS.init();
-
 function copyUrl() {
     let x = document.getElementById("share").innerHTML;
     let a = window.location.href;
