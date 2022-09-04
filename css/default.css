@@ -257,7 +257,6 @@ footer a{
     }
 
     footer{
-        margin: calc(100vw / 6) 0 0 0;
         font-size: 4vw;
         font-family: var(--font-content);
     }
@@ -417,7 +416,6 @@ footer a{
     }
 
     footer{
-        margin: 8vw 0 0 0;
         font-size: 1.5vw;
         font-family: var(--font-content);
     }
@@ -573,7 +571,6 @@ footer a{
     }
 
     footer{
-        margin: 3.5vw 0 0 0;
         font-size: 0.9vw;
         font-family: var(--font-content);
     }
