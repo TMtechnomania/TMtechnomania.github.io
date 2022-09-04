@@ -4,7 +4,7 @@
     box-sizing: border-box;
     border: none;
     scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
     overflow-y: scroll;
 }
 
@@ -26,7 +26,7 @@
 
 body{
     background-color: var(--bright);
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 :root {
