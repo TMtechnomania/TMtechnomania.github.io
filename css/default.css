@@ -4,8 +4,6 @@
     box-sizing: border-box;
     border: none;
     scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
-    overflow-y: scroll;
 }
 
 ::-webkit-scrollbar {
