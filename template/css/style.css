@@ -11,7 +11,7 @@
     --font-secondary: 'Outfit', sans-serif;
 }
 
-@media (prefers-color-scheme: dark){
+/* @media (prefers-color-scheme: dark){
     :root {
         --color-primary: #24272C;
         --bright: #131920;
@@ -30,7 +30,7 @@
         color: var(--font--color-secondary);
         border: 2px solid var(--color-primary);
     }
-}
+} */
 
 @media (prefers-color-scheme: light){
     :root {
