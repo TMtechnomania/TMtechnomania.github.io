@@ -32,18 +32,22 @@ body{
     --font-secondary: 'Outfit', sans-serif;
 }
 
-/* @media (prefers-color-scheme: dark){
+@media (prefers-color-scheme: dark){
     :root {
         --color-primary: #24272C;
         --bright: #131920;
-        --off-bright: #131920;
-        --color-secondary: #131920;
-        --font--color-secondary: #d7dce2;
-        --font--color-primary: #d7dce2;
+        --off-bright: #1E232A;
+        --color-secondary: #1E232A;
+        --font--color-secondary: #5D8393;
+        --font--color-primary: #ffffff;
         --font-btn-primary: #eff6ff;
         --font-btn-hover: #0072ff;
         filter: grayscale(0.2);
         -webkit-filter: grayscale(0.2);
+    }
+
+    body{
+        background-color: #121212;
     }
 
     .btn-primary:hover{
@@ -51,7 +55,7 @@ body{
         color: var(--font--color-secondary);
         border: 2px solid var(--color-primary);
     }
-} */
+}
 
     :root {
         --color-primary: #0072ff;
@@ -62,6 +66,10 @@ body{
         --font--color-secondary: #ffffff;
         --font-btn-primary: #eff6ff;
         --font-btn-hover: #0072ff;
+    }
+
+    body{
+        background-color: #ffffff;
     }
 
     .btn-primary:hover{
