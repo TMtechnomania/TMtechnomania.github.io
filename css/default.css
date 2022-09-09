@@ -23,7 +23,7 @@
 
 body{
     background-color: var(--bright);
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 :root {
@@ -68,10 +68,6 @@ body{
         --font-btn-hover: #0072ff;
     }
 
-    body{
-        background-color: #ffffff;
-    }
-
     .btn-primary:hover{
         background-color: transparent;
         color: var(--font-btn-hover);
@@ -113,6 +109,17 @@ header a{
     justify-content: space-evenly;
     cursor: pointer;
     color: var(--font--color-primary);
+}
+
+.wrapper{
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    width: 100%;
+    height: 100%
+}
+
+.section{
+    scroll-snap-align:start;
 }
 
 footer, footer .col a{
