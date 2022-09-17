@@ -59,7 +59,7 @@ a,a:visited,a:hover{
 .btn-primary:hover{
     background-color: transparent;
     border: 2px solid var(--blue-blue);
-    box-shadow: 0 4px 16px -6px var(--blue-blue);
+    box-shadow: 0 2px 16px -6px var(--blue-blue);
     color: var(--blue-blue);
 }
 
@@ -87,7 +87,7 @@ a,a:visited,a:hover{
 .btn:hover{
     background-color: transparent;
     border: 2px solid var(--black-white);
-    box-shadow: 0 4px 16px -6px var(--off-black-black);
+    box-shadow: 0 2px 16px -6px var(--off-black-black);
     color: var(--black-white);
 }
 
