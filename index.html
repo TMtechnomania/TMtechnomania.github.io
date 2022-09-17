@@ -6,119 +6,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GetProjects</title>
-    <meta name="description" content="GetProjects is a content platforms for enginnering students, those are either persueing their college or diploma and are searching for projects that can be used in final year." />
+    <meta name="description" content="GetProjects is a content platforms for engineering students, those are either persuing their college or diploma and are searching for projects that can be used in final year." />
     <meta name="google" content="nopagereadaloud" />
     <meta property="og:title" content="GetProjects">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="urlHere">
+    <meta property="og:url" content="https://getprojects.tech">
     <meta itemprop="name" content="GetProjects">
-    <meta itemprop="description" content="GetProjects is a content platforms for enginnering students, those are either persueing their college or diploma and are searching for projects that can be used in final year.">
-    <meta itemprop="url" content="urlHere">
+    <meta itemprop="description" content="GetProjects is a content platforms for engineering students, those are either persuing their college or diploma and are searching for projects that can be used in final year.">
+    <meta itemprop="url" content="https://getprojects.tech">
 
     <!-- favicon -->
-    <link rel="shortcut icon" href="./images/logo.webp" type="image/x-icon">
-    <link rel="apple-touch-icon" href="./images/logo.webp">
+    <link rel="shortcut icon" href="./images/ico.svg" type="image/x-icon">
+    <link rel="apple-touch-icon" href="./images/ico.svg">
 
     <!-- style -->
-    <link rel="preload" href="./css/default.css" as="style">
-    <link rel="stylesheet" href="./css/default.css">
+    <link rel="stylesheet" href="./css/style.css" as="style">
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/0cdbb62622.js" crossorigin="anonymous"></script>
-
-    <!-- Google Ads -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
-     crossorigin="anonymous"></script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RSHPVBNXNX"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-RSHPVBNXNX');
-    </script>
-
-
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Source+Code+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="./assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="./assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="./assets/fontawesome/css/solid.css" rel="stylesheet">
+    <link href="./assets/fontawesome/css/regular.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="./js/jquery-3.6.1.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <title>GetProjects</title>
+    <script src="./js/content.js"></script>
 </head>
-<body oncontextmenu="return false" onload="window.open('https://chrome.google.com/webstore/detail/tm-launcher/ppgcdhfpgpiecpjaobadcaigbhmkpgob', '_blank');">
-
-    <header>
-        <div class="brand">
-            <a href="https://getprojects.tech/"><img src="./images/logo.webp" alt="GetProjects" srcset="./images/logo.webp"></a>
-            <a href="https://getprojects.tech/" target="_self"><h1>GetProjects</h1></a>
-        </div>
-
-        <a onclick="copyUrl()" id="share" class="btn-primary">Share&nbsp;<i class="fa-solid fa-bullhorn"></i></a>
-
-        <a id="hamberger" onclick="hamberger()"><i id="hambergerico" class="fa-solid fa-bars"></i></a>
-
-        <div id="hambergerMenu" class="mobmenu">
-            <ul>
-                <li><a href="https://getprojects.tech/"><div id="mobMenuIco"><i class="fa-solid fa-house"></i></div>Home</a></li>
-                <li><a href="https://getprojects.tech/discover"><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a></li>
-                <li><a href="https://getprojects.tech/code"><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a></li>
-                <li><a href="https://getprojects.tech/games"><div id="mobMenuIco"><i class="fa-solid fa-gamepad"></i></div>Games</a></li>
-                <li><a href="https://getprojects.tech/blog"><div id="mobMenuIco"><i class="fa-solid fa-pen-nib"></i></div>Blog</a></li>
-                <li><a href="https://getprojects.tech/perks"><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Perks</a></li>
-                <li><a href="https://getprojects.tech/help"><div id="mobMenuIco"><i class="fa-solid fa-circle-question"></i></div>Help</a></li>
-                <li><a href="https://getprojects.tech/about"><div id="mobMenuIco"><i class="fa-solid fa-circle-info"></i></div>About</a></li>
-            </ul>
-        </div>
+<body>
     
+    <div id="wrapper">
 
-        <div class="menu">
-            <a href="https://getprojects.tech/discover"><div id="mobMenuIco"><i class="fa-solid fa-earth-americas"></i></div>Discover</a>
-            <a href="https://getprojects.tech/code"><div id="mobMenuIco"><i class="fa-solid fa-code"></i></div>Code</a>
-            <a href="https://getprojects.tech/games"><div id="mobMenuIco"><i class="fa-solid fa-gamepad"></i></div>Games</a>
-            <a href="https://getprojects.tech/blog"><div id="mobMenuIco"><i class="fa-solid fa-pen-nib"></i></div>Blog</a>
-            <a href="https://getprojects.tech/perks"><div id="mobMenuIco"><i class="fa-solid fa-wand-magic-sparkles"></i></div>Perks</a>
-        </div>
-
-    </header>
+        <!-- Navbar -->
+        <header id="navbar"></header>
 
 
-    <footer id="menu">
-        <div class="cta">
-            <div class="cta-text"><h2>Get connected with us on social networks!</h2></div>
-            <div class="social">
-                <a alt="GitHub" href="https://github.com/TMtechnomania" target="_blank"><i class="fa-brands fa-github"></i></a>
-                <a alt="Facebook" href="https://www.facebook.com/youtube.com.TMtechnomania" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-                <a alt="Chrome Extension" href="https://chrome.google.com/webstore/detail/tm-launcher/ppgcdhfpgpiecpjaobadcaigbhmkpgob" target="_blank"><i class="fa-brands fa-chrome"></i></a>
-                <a alt="Instagram" href="https://instagram.com/kartikeytiwari" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a alt="Developer Portfolio" href="https://getprojects.tech/portfolio" target="_blank"><i class="fa-solid fa-user"></i></a>
-            </div>
-        </div>
+        <div class="section"></div>
 
-        <div class="container">
-            <div class="quick-links">
-                <a href="https://getprojects.tech/discover"><div><i class="fa-solid fa-earth-americas"></i></div>Discover</a>
-                <a href="https://getprojects.tech/code"><div><i class="fa-solid fa-code"></i></div>Code</a>
-                <a href="https://getprojects.tech/games"><div><i class="fa-solid fa-gamepad"></i></div>Games</a>
-                <a href="https://getprojects.tech/blog"><div><i class="fa-solid fa-pen-nib"></i></div>Blog</a>
-                <a href="https://getprojects.tech/perks"><div><i class="fa-solid fa-wand-magic-sparkles"></i></div>Perks</a>
-                <a href="https://getprojects.tech/help"><div><i class="fa-solid fa-circle-question"></i></div>Help</a>
-                <a href="https://getprojects.tech/about"><div><i class="fa-solid fa-circle-info"></i></div>About</a>
-            </div>
-        </div>
 
-        <div class="row">
-            <h2><i class="fa-regular fa-copyright"></i> 2022 Copyright: GetProjects.tech</h2>
-        </div>
-        
-    </footer>
+        <!-- Footer -->
+        <div id="footer"></div>
+    </div>
 
+    
+    <script src="./js/index.js"></script>
 
     <!-- loading animation script -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- <script src="./js/lottie-player.js"></script> -->
 
     <!-- scripts -->
-    <script src="./js/default.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/ScrollTrigger.min.js"></script>
+    <script src="./js/ScrollTrigger.min.js"></script>
+    <script>
+        AOS.init();
+    </script>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="tmtechnomania" data-description="Support me on Buy me a coffee!" data-message="Thanks for visiting us.. You can buy a coffee for the sleepy programmers behind the content!!" data-color="#0072ff" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 </body>
 </html>
