@@ -68,14 +68,95 @@
 
 #hero{
     width: 100vw;
-    padding: 10vw;
-    font-size: 20px;
+    padding: 54px 10vw;
+    justify-content: center;
+}
+
+#hero .heading{
+    font-size: 5vw;
     letter-spacing: 0.5px;
-    line-height: 44px;
+    line-height: 10vw;
+}
+
+#hero .heading h1{
+    padding-bottom: 27px;
+}
+
+#hero .btn-primary{
+    color: var(--font--white-white);
+}
+
+#hero .btn-primary:hover{
+    background-color: transparent;
+    border: 2px solid var(--blue-blue);
+    color: var(--blue-blue);
+}
+
+#hero .lottie{
+    display: none;
+}
+
+#hero .heading h3{
+    padding-bottom: 27px;
+    font-size: 2.2vh;
+    letter-spacing: 0;
+    line-height: normal;
+    font-family: var(--font-primary);
+    font-weight: 300;
 }
 
 @media only screen and (min-width: 480px) and (max-width: 768px){
+    #hero .heading{
+        padding-bottom: 54px;
+        font-size: 4vw;
+        letter-spacing: 0.5px;
+        line-height: 8vw;
+    }
+
+    #hero .heading h3{
+        padding-bottom: 27px;
+        font-size: 2.5vh;
+        letter-spacing: 0;
+        line-height: normal;
+        font-family: var(--font-primary);
+        font-weight: 300;
+    }
 }
 
 @media only screen and (min-width: 769px){
+    #hero{
+        width: 100vw;
+        padding: 54px 10vw;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
+    #hero .heading h1{
+        padding-bottom: 5vh;
+        font-size: 7.2vh;
+        line-height: 7vh;
+    }
+    
+    #hero .heading{
+        width: 40vw;
+        font-size: 3vh;
+        letter-spacing: 0.5px;
+        line-height: 6vh;
+    }
+
+    #hero .heading h3{
+        padding-bottom: 5vh;
+        font-size: 2.5vh;
+        letter-spacing: 0;
+        line-height: normal;
+        font-family: var(--font-primary);
+        font-weight: 400;
+    }
+
+    #hero .lottie{
+        display: block;
+        width: 40vw;
+        max-width: 70vh;
+        padding: 0;
+    }
 }

@@ -26,7 +26,7 @@ input{
 
 a,a:visited,a:hover{
     text-decoration: none;
-    color: unset;
+    color: inherit;
 }
 
 h1 ,h2, h3, h4, h5, h6{
@@ -38,7 +38,9 @@ h1 ,h2, h3, h4, h5, h6{
     color: var(--font--white-white);
     font-family: var(--font-primary);
     height: 45px;
-    width: 110px;
+    min-width: 110px;
+    max-width: fit-content;
+    padding: 10px;
     font-size: 15px;
     font-weight: bold;
     border: 2px solid transparent;
@@ -101,27 +103,27 @@ h1 ,h2, h3, h4, h5, h6{
 
 @media (prefers-color-scheme: dark){
     :root{
-        --blue-blue: rgb(0, 114, 255, 0.8);
+        --blue-blue: #0072ff;
         --white-black: #121212;
-        --black-white: #dddddd;
+        --black-white: #f0f0f0;
         --off-white-black: #1E232A;
         --off-black-black: #131920;
         --off-black-white: #eff6ff;
-        --font-black-white: #dddddd;
-        --font--white-white: #dddddd;
+        --font-black-white: #f0f0f0;
+        --font--white-white: #f0f0f0;
         --font--white-black: #000000;
         --bd-white: rgb(255, 255, 255, 0.2);
         --bd-off-white: rgb(239, 246, 255, 0.2);
         --bd-off-black: rgb(19, 25, 32, 0.2);
         --bd-black: rgb(18, 18, 18, 0.2);
         --gray: #F8F8F8;
-        --red: #FD5056;
-        --cyan: #42DAF5;
-        --sea-green: #25D2D5;
-        --yellow: #FCC101;
+        --red: rgb(253, 80, 86, 0.6);
+        --cyan: rgb(66, 218, 245, 0.6);
+        --sea-green: rgb(37, 210, 213, 0.6);
+        --yellow: rgb(252, 193, 1, 0.6);
     }
 
-    img{
+    img, lottie-player{
         filter: brightness(0.9) saturate(1.1);
         -webkit-filter: brightness(0.9) saturate(1.1);
     }
@@ -158,6 +160,7 @@ h1 ,h2, h3, h4, h5, h6{
     top: 0;
     left: 0;
     overflow: hidden;
+    background-color: var(--off-white-black);
 }
 
 .circleS1{
@@ -264,10 +267,6 @@ h1 ,h2, h3, h4, h5, h6{
     width: 100vw;
     height: 100vh;
     background-color: var(--white-black);
-}
-
-#searchMob #searchbar{
-    display: flex;
 }
 
 .section.bd{
@@ -413,7 +412,8 @@ h1 ,h2, h3, h4, h5, h6{
     box-shadow: 0 0 7px -4px var(--off-black-white);
     display: flex;
     opacity: 1;
-    background-color: var(--off-white-black);
+    background-color: var(--bd-off-white);
+    backdrop-filter: blur(10vw);
     color: var(--font-black-white);
     font-family: var(--font-custom);
     font-weight: bold;
@@ -650,11 +650,6 @@ span.blue{
         -moz-border-radius: 40vh;
         -ms-border-radius: 40vh;
         -o-border-radius: 40vh;
-    }
-
-    .section{
-        display: flex;
-        flex-direction: row;
     }
 
     .section.bd{

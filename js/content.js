@@ -1,7 +1,6 @@
 $(document).ready(function(){
     $(function(){
         $("#bgcolor").load("https://getprojects.tech/components/bgcolor/index.html");
-        $("#searchMob").load("https://getprojects.tech/components/searchbar/index.html");
         $("#navbar").load("https://getprojects.tech/components/navbar/index.html");
         $("#footer").load("https://getprojects.tech/components/footer/index.html");
     });
