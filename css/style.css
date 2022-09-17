@@ -47,7 +47,6 @@ a,a:visited,a:hover{
     -ms-border-radius: 7px;
     -o-border-radius: 7px;
     cursor: pointer;
-    box-shadow: 0 4px 16px -6px var(--gray);
 }
 
 .btn-primary i{
@@ -59,7 +58,6 @@ a,a:visited,a:hover{
 .btn-primary:hover{
     background-color: transparent;
     border: 2px solid var(--blue-blue);
-    box-shadow: 0 2px 16px -6px var(--blue-blue);
     color: var(--blue-blue);
 }
 
@@ -80,14 +78,12 @@ a,a:visited,a:hover{
     -moz-border-radius: 7px;
     -ms-border-radius: 7px;
     -o-border-radius: 7px;
-    box-shadow: 0 4px 16px -6px var(--gray);
     cursor: pointer;
 }
 
 .btn:hover{
     background-color: transparent;
     border: 2px solid var(--black-white);
-    box-shadow: 0 2px 16px -6px var(--off-black-black);
     color: var(--black-white);
 }
 

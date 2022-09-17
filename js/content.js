@@ -1,8 +1,8 @@
 $(document).ready(function(){
     $(function(){
-        $("#bgcolor").load("./components/bgcolor/index.html");
-        $("#navbar").load("./components/navbar/index.html");
-        $("#footer").load("./components/footer/index.html");
+        $("#bgcolor").load("https://getprojects.tech/components/bgcolor/index.html");
+        $("#navbar").load("https://getprojects.tech/components/navbar/index.html");
+        $("#footer").load("https://getprojects.tech/components/footer/index.html");
     });
 });
 
