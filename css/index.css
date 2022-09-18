@@ -132,9 +132,9 @@
     }
 
     #hero .heading h1{
-        padding-bottom: 5vh;
-        font-size: 7.2vh;
-        line-height: 7vh;
+        padding-bottom: 1vw;
+        font-size: 3.5vw;
+        line-height: 3.2vw;
     }
     
     #hero .heading{
@@ -146,7 +146,7 @@
 
     #hero .heading h3{
         padding-bottom: 5vh;
-        font-size: 2.5vh;
+        font-size: 1.2vw;
         letter-spacing: 0;
         line-height: normal;
         font-family: var(--font-primary);

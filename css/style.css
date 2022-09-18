@@ -660,6 +660,11 @@ span.blue{
         -o-border-radius: 40vh;
     }
 
+    .section{
+        aspect-ratio: 2.0;
+        max-height: 50vw;
+    }
+
     .section.bd{
         backdrop-filter: blur(10vh);
     }
