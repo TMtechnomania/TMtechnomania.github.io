@@ -116,6 +116,10 @@ h1 ,h2, h3, h4, h5, h6{
         --bd-off-white: rgb(239, 246, 255, 0.2);
         --bd-off-black: rgb(19, 25, 32, 0.2);
         --bd-black: rgb(18, 18, 18, 0.2);
+        --bd-black-white: rgb(255, 255, 255, 0.2);
+        --bd-off-black-white: rgb(239, 246, 255, 0.2);
+        --bd-off-white-black: rgb(19, 25, 32, 0.2);
+        --bd-white-black: rgb(18, 18, 18, 0.2);
         --gray: #F8F8F8;
         --red: rgb(253, 80, 86, 0.6);
         --cyan: rgb(66, 218, 245, 0.6);
@@ -144,6 +148,10 @@ h1 ,h2, h3, h4, h5, h6{
         --bd-off-white: rgb(239, 246, 255, 0.2);
         --bd-off-black: rgb(19, 25, 32, 0.2);
         --bd-black: rgb(18, 18, 18, 0.2);
+        --bd-white-black: rgb(255, 255, 255, 0.2);
+        --bd-off-white-black: rgb(239, 246, 255, 0.2);
+        --bd-off-black-white: rgb(19, 25, 32, 0.2);
+        --bd-black-white: rgb(18, 18, 18, 0.2);
         --gray: #F8F8F8;
         --red: #FD5056;
         --cyan: #42DAF5;
@@ -237,13 +245,13 @@ h1 ,h2, h3, h4, h5, h6{
 @keyframes round{
     0%{
       transform:rotate(0deg)
-                translate(15%)
+                translate(25%)
                 rotate(0deg);
     
     }
     100%{
       transform:rotate(360deg)
-                translate(15%)
+                translate(25%)
                 rotate(-360deg);
     }
   }
@@ -361,7 +369,7 @@ h1 ,h2, h3, h4, h5, h6{
 
 #searchbar ul{
     box-shadow: 0 0 7px -4px var(--off-black-white);
-    background-color: var(--white-black);
+    background-color: var(--bd-white-black);
     width: 260px;
     max-height: calc(6 * 54px);
     border-radius: 7px;
@@ -400,7 +408,7 @@ h1 ,h2, h3, h4, h5, h6{
 }
 
 .href a:hover{
-    background-color: var(--off-white-black);
+    background-color: var(--white-black);
 }
 
 #navmenu{
@@ -412,7 +420,7 @@ h1 ,h2, h3, h4, h5, h6{
     box-shadow: 0 0 7px -4px var(--off-black-white);
     display: flex;
     opacity: 1;
-    background-color: var(--bd-off-white);
+    background-color: var(--bd-off-white-black);
     backdrop-filter: blur(10vw);
     color: var(--font-black-white);
     font-family: var(--font-custom);

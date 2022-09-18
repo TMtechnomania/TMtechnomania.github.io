@@ -50,7 +50,7 @@ function search_pages(){
         }
         else{
             x[i].style.display="flex";
-            $('ul').find('li:visible:first').css('background','var(--off-white-black)');
+            $('#searchbar ul').find('li:visible:first').css('background-color','var(--white-black)');
         }
     }
     
@@ -58,15 +58,15 @@ function search_pages(){
     searchaction.addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
-            $('ul').find('li a:visible:first').attr('id', 'clickit');
+            $('#searchbar').find('li a:visible:first').attr('id', 'clickit');
             document.getElementById("clickit").click();
         };
     });
     if (input === '') {
-    $('ul').find('li:visible').css('background','var(--white-black)');
-    $('ul').find('li a:visible').removeAttr('id');
+    $('#searchbar').find('li:visible').css('background-color','var(--bd-white-black)');
+    $('#searchbar').find('li a:visible').removeAttr('id');
     }
     else{
-        $('ul').find('li:visible:first').css('background','var(--off-white-black)');
+        $('#searchbar').find('li:visible:first').css('background-color','var(--white-black)');
     }
 }
