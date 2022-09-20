@@ -90,7 +90,8 @@
 .about h3{
     color: var(--font--white-black);
     padding: 5vw 0;
-    font-size: 6vw;
+    font-weight: normal;
+    font-size: 5vw;
 }
 
 #user-hero.section{
@@ -157,10 +158,95 @@
     color: var(--font--white-black) !important;
 }
 
+.btn:hover{
+    margin: 5vw;
+    color: var(--font-black-white) !important;
+}
+
 .btn.yellow-light-grey{
     color: var(--font-black-white) !important;
 }
 
 .btn.yellow-light-grey:hover{
     color: var(--font-black-white) !important;
+}
+
+
+
+/* Tablet View */
+@media only screen and (min-width: 480px) and (max-width: 768px){}
+
+
+
+/* Laptop View */
+@media only screen and (min-width: 769px){
+    .section{
+        aspect-ratio: 16 / 9;
+    }
+
+    .section.bd{
+        backdrop-filter: blur(10vh);
+    }
+
+    #user-hero .btn{
+        margin: 4vh;
+    }
+
+    .user-name{
+        font-size: 4vh;
+        padding: 0;
+    }
+
+    .user-social ul{
+        display: flex;
+        justify-content: space-around;
+        font-size: 4vh;
+        align-items: center;
+        width: 16vw;
+        padding: 0;
+    }
+    
+    .user-social ul li{
+        width: fit-content;
+        height: fit-content;
+    }
+    
+    .user-social ul li a{
+        width: fit-content;
+        padding: 5vh;
+    }
+    
+    .lang-tags h3{
+        font-family: var(--font-code-2) !important;
+        font-size: 4vh;
+        padding-bottom: 5vh;
+    }
+
+    a.btn.yellow-light-grey{
+        margin: 0 !important;
+    }
+
+    a.btn.yellow-light-grey:hover{
+        margin: 0;
+    }
+
+    .about{
+        background-color: var(--off-black-black);
+        color: var(--yellow-light);
+        justify-content: start;
+        padding: 54px 10vw;
+    }
+    
+    .about h1{
+        padding: 2vw 0 0;
+        font-size: 4vw;
+    }
+    
+    .about h3{
+        color: var(--font--white-black);
+        font-family: var(--font-primary);
+        font-weight: 400;
+        padding: 1vw 0;
+        font-size: 2.2vw;
+    }
 }
