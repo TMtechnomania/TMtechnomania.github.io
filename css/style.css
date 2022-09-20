@@ -68,8 +68,8 @@ h1 ,h2, h3, h4, h5, h6{
 }
 
 .btn{
-    background-color: var(--off-black-black);
-    color: var(--font--white-white);
+    background-color: var(--off-black-white);
+    color: var(--font--white-black);
     font-family: var(--font-primary);
     height: 45px;
     width: 110px;
@@ -125,6 +125,7 @@ h1 ,h2, h3, h4, h5, h6{
         --cyan: rgb(66, 218, 245, 0.6);
         --sea-green: rgb(37, 210, 213, 0.6);
         --yellow: rgb(252, 193, 1, 0.6);
+        --yellow-light: rgb(254, 230, 94, 0.8);
     }
 
     img, lottie-player{
@@ -157,6 +158,7 @@ h1 ,h2, h3, h4, h5, h6{
         --cyan: #42DAF5;
         --sea-green: #25D2D5;
         --yellow: #FCC101;
+        --yellow-light: #FEE65E;
     }
 }
 
@@ -266,6 +268,7 @@ h1 ,h2, h3, h4, h5, h6{
 
 .section{
     display: flex;
+    aspect-ratio: 9 / 16;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
@@ -273,13 +276,43 @@ h1 ,h2, h3, h4, h5, h6{
     height: fit-content;
     padding-top: 54px;
     width: 100vw;
-    height: 100vh;
+    height: auto;
     background-color: var(--white-black);
 }
 
 .section.bd{
     background-color: var(--bd-off-white);
     backdrop-filter: blur(10vw);
+}
+
+.red-grey{
+    background-color: var(--red) !important;
+    color: var(--font-black-white);
+}
+
+.cyan-grey{
+    background-color: var(--cyan) !important;
+    color: var(--font-black-white);
+}
+
+.sea-green-grey{
+    background-color: var(--sea-green) !important;
+    color: var(--font-black-white);
+}
+
+.yellow-grey{
+    background-color: var(--yellow) !important;
+    color: var(--font-black-white);
+}
+
+.yellow-light-grey{
+    background-color: var(--yellow-light) !important;
+    color: var(--font-black-white);
+}
+
+.blue-grey{
+    background-color: var(--blue-blue) !important;
+    color: var(--font-black-white);
 }
 
 #header{
@@ -563,6 +596,22 @@ span.blue{
     color: var(--blue-blue);
 }
 
+span.red{
+    color: var(--red);
+}
+
+span.cyan{
+    color: var(--cyan);
+}
+
+span.sea-green{
+    color: var(--sea-green);
+}
+
+span.yellow{
+    color: var(--yellow);
+}
+
 /* Tablet View */
 @media only screen and (min-width: 480px) and (max-width: 768px){
     #searchbar{
@@ -661,7 +710,7 @@ span.blue{
     }
 
     .section{
-        aspect-ratio: 2.0;
+        aspect-ratio: 2 / 1;
         max-height: 50vw;
     }
 
