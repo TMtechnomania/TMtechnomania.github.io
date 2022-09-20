@@ -1,0 +1,252 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+    scroll-behavior: smooth;
+    user-select: none;
+}
+
+:root{
+    --font-primary: 'Inter', sans-serif;
+    --font-code: 'Fira Code', monospace;--font-code-2: 'Source Code Pro', monospace;
+    --font-custom: 'Comfortaa', cursive;
+    --font-heading: 'Outfit', sans-serif;
+    color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark){
+    :root{
+        --blue-blue: #0072ff;
+        --white-black: #121212;
+        --black-white: #f0f0f0;
+        --off-white-black: #1E232A;
+        --off-black-black: #131920;
+        --off-black-white: #eff6ff;
+        --font-black-white: #f0f0f0;
+        --font--white-white: #f0f0f0;
+        --font--white-black: #000000;
+        --bd-white: rgb(255, 255, 255, 0.2);
+        --bd-off-white: rgb(239, 246, 255, 0.2);
+        --bd-off-black: rgb(19, 25, 32, 0.2);
+        --bd-black: rgb(18, 18, 18, 0.2);
+        --bd-black-white: rgb(255, 255, 255, 0.2);
+        --bd-off-black-white: rgb(239, 246, 255, 0.2);
+        --bd-off-white-black: rgb(19, 25, 32, 0.2);
+        --bd-white-black: rgb(18, 18, 18, 0.2);
+        --gray: #F8F8F8;
+        --red: rgb(253, 80, 86, 0.6);
+        --cyan: rgb(66, 218, 245, 0.6);
+        --sea-green: rgb(37, 210, 213, 0.6);
+        --yellow: rgb(252, 193, 1, 0.6);
+        --yellow-light: rgb(254, 230, 94, 0.8);
+    }
+
+    img, lottie-player{
+        filter: brightness(0.9) saturate(1.1);
+        -webkit-filter: brightness(0.9) saturate(1.1);
+    }
+}
+
+@media (prefers-color-scheme: light){
+    :root {
+        --blue-blue: #0072ff;
+        --white-black: #ffffff;
+        --black-white: #121212;
+        --off-white-black: #eff6ff;
+        --off-black-black: #131920;
+        --off-black-white: #131920;
+        --font-black-white: #131920;
+        --font--white-white: #ffffff;
+        --font--white-black: #ffffff;
+        --bd-white: rgb(255, 255, 255, 0.2);
+        --bd-off-white: rgb(239, 246, 255, 0.2);
+        --bd-off-black: rgb(19, 25, 32, 0.2);
+        --bd-black: rgb(18, 18, 18, 0.2);
+        --bd-white-black: rgb(255, 255, 255, 0.2);
+        --bd-off-white-black: rgb(239, 246, 255, 0.2);
+        --bd-off-black-white: rgb(19, 25, 32, 0.2);
+        --bd-black-white: rgb(18, 18, 18, 0.2);
+        --gray: #F8F8F8;
+        --red: #FD5056;
+        --cyan: #42DAF5;
+        --sea-green: #25D2D5;
+        --yellow: #FCC101;
+        --yellow-light: #FEE65E;
+    }
+}
+
+.about{
+    background-color: var(--off-black-black);
+    color: var(--yellow-light);
+    justify-content: start;
+    padding: 54px;
+}
+
+.about h1{
+    padding: 8vw 0 0;
+}
+
+.about h3{
+    color: var(--font--white-black);
+    padding: 5vw 0;
+    font-weight: normal;
+    font-size: 5vw;
+}
+
+#user-hero.section{
+    justify-content: flex-start;
+}
+
+.bg-poligon{
+    clip-path: polygon(0 30%, 100% 0%, 100% 70%, 0% 100%);
+    /* position: absolute;
+    top: 10vh; */
+    height: 50vh;
+    width: 100vw;
+    background-color: var(--yellow);
+}
+
+.user-image{
+    clip-path: polygon(0 0, 100% 0%, 100% 70%, 0% 100%);
+    background: url(/sargun-singh-sethi/images/sargun.png) no-repeat center;
+    position: absolute;
+    top: 54px;
+    background-size: contain;
+    z-index: 5;
+    width: 100vw;
+    height: 50vh;
+}
+
+.user-name{
+    font-size: 4.5vw;
+    padding: 5vw 0 0;
+}
+
+/* .user-social{
+    top: 70vh;
+    position: absolute;
+} */
+
+.user-social ul{
+    display: flex;
+    justify-content: space-around;
+    font-size: 5vw;
+    align-items: center;
+    width: 80vw;
+    padding: 2vw;
+}
+
+.user-social ul li{
+    width: fit-content;
+    height: fit-content;
+}
+
+.user-social ul li a{
+    width: fit-content;
+    padding: 5vw;
+}
+
+.lang-tags h3{
+    font-family: var(--font-code-2) !important;
+    font-size: 5vw;
+    padding-bottom: 5vw;
+}
+
+.btn{
+    margin: 5vw;
+    color: var(--font--white-black) !important;
+}
+
+.btn:hover{
+    margin: 5vw;
+    color: var(--font-black-white) !important;
+}
+
+.btn.yellow-light-grey{
+    color: var(--font-black-white) !important;
+}
+
+.btn.yellow-light-grey:hover{
+    color: var(--font-black-white) !important;
+}
+
+
+
+/* Tablet View */
+@media only screen and (min-width: 480px) and (max-width: 768px){}
+
+
+
+/* Laptop View */
+@media only screen and (min-width: 769px){
+    .section{
+        aspect-ratio: 16 / 9;
+    }
+
+    .section.bd{
+        backdrop-filter: blur(10vh);
+    }
+
+    #user-hero .btn{
+        margin: 4vh;
+    }
+
+    .user-name{
+        font-size: 4vh;
+        padding: 0;
+    }
+
+    .user-social ul{
+        display: flex;
+        justify-content: space-around;
+        font-size: 4vh;
+        align-items: center;
+        width: 16vw;
+        padding: 0;
+    }
+    
+    .user-social ul li{
+        width: fit-content;
+        height: fit-content;
+    }
+    
+    .user-social ul li a{
+        width: fit-content;
+        padding: 5vh;
+    }
+    
+    .lang-tags h3{
+        font-family: var(--font-code-2) !important;
+        font-size: 4vh;
+        padding-bottom: 5vh;
+    }
+
+    a.btn.yellow-light-grey{
+        margin: 0 !important;
+    }
+
+    a.btn.yellow-light-grey:hover{
+        margin: 0;
+    }
+
+    .about{
+        background-color: var(--off-black-black);
+        color: var(--yellow-light);
+        justify-content: start;
+        padding: 54px 10vw;
+    }
+    
+    .about h1{
+        padding: 2vw 0 0;
+        font-size: 4vw;
+    }
+    
+    .about h3{
+        color: var(--font--white-black);
+        font-family: var(--font-primary);
+        font-weight: 400;
+        padding: 1vw 0;
+        font-size: 2.2vw;
+    }
+}
