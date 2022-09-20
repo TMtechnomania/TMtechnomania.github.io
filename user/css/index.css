@@ -76,24 +76,6 @@
     }
 }
 
-.about{
-    background-color: var(--off-black-black);
-    color: var(--yellow-light);
-    justify-content: start;
-    padding: 54px;
-}
-
-.about h1{
-    padding: 8vw 0 0;
-}
-
-.about h3{
-    color: var(--font--white-black);
-    padding: 5vw 0;
-    font-weight: normal;
-    font-size: 5vw;
-}
-
 #user-hero.section{
     justify-content: flex-start;
 }
@@ -123,11 +105,6 @@
     padding: 5vw 0 0;
 }
 
-/* .user-social{
-    top: 70vh;
-    position: absolute;
-} */
-
 .user-social ul{
     display: flex;
     justify-content: space-around;
@@ -153,22 +130,36 @@
     padding-bottom: 5vw;
 }
 
-.btn{
+#user-hero .btn-primary,.about .btn-primary{
     margin: 5vw;
-    color: var(--font--white-black) !important;
+    background-color: var(--blue-blue);
+    color: var(--font--white-white);
+    font-family: var(--font-primary);
 }
 
-.btn:hover{
+#user-hero .btn-primary:hover,.about .btn-primary:hover{
     margin: 5vw;
-    color: var(--font-black-white) !important;
+    background-color: transparent;
+    border: 2px solid var(--blue-blue);
+    color: var(--blue-blue) !important;
 }
 
-.btn.yellow-light-grey{
-    color: var(--font-black-white) !important;
+.about{
+    background-color: var(--off-black-black);
+    color: var(--blue-blue);
+    justify-content: start;
+    padding: 54px;
 }
 
-.btn.yellow-light-grey:hover{
-    color: var(--font-black-white) !important;
+.about h1{
+    padding: 8vw 0 0;
+}
+
+.about h3{
+    color: var(--font--white-white);
+    padding: 5vw 0;
+    font-weight: normal;
+    font-size: 5vw;
 }
 
 
@@ -188,7 +179,11 @@
         backdrop-filter: blur(10vh);
     }
 
-    #user-hero .btn{
+    #user-hero .btn-primary{
+        margin: 4vh;
+    }
+
+    #user-hero .btn-primary:hover{
         margin: 4vh;
     }
 
@@ -222,17 +217,17 @@
         padding-bottom: 5vh;
     }
 
-    a.btn.yellow-light-grey{
+    .about .btn-primary{
         margin: 0 !important;
     }
 
-    a.btn.yellow-light-grey:hover{
+    .about .btn-primary:hover{
         margin: 0;
     }
 
     .about{
         background-color: var(--off-black-black);
-        color: var(--yellow-light);
+        color: var(--blue-blue);
         justify-content: start;
         padding: 54px 10vw;
     }
@@ -247,6 +242,11 @@
         font-family: var(--font-primary);
         font-weight: 400;
         padding: 1vw 0;
-        font-size: 2.2vw;
+        font-size: 2vw;
+    }
+    
+    .user-social ul li a{
+        width: fit-content;
+        padding: 2vw;
     }
 }
