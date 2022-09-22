@@ -123,7 +123,7 @@ h1 ,h2, h3, h4, h5, h6{
         --gray: #F8F8F8;
         --red: rgb(253, 80, 86, 0.6);
         --cyan: rgb(66, 218, 245, 0.6);
-        --sea-green: rgb(37, 210, 213, 0.6);
+        --sea-green: rgb(64, 181, 138, 0.6);
         --yellow: rgb(252, 193, 1, 0.6);
         --yellow-light: rgb(254, 230, 94, 0.8);
     }
@@ -156,7 +156,7 @@ h1 ,h2, h3, h4, h5, h6{
         --gray: #F8F8F8;
         --red: #FD5056;
         --cyan: #42DAF5;
-        --sea-green: #25D2D5;
+        --sea-green: #40B58A;
         --yellow: #FCC101;
         --yellow-light: #FEE65E;
     }

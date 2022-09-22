@@ -172,11 +172,20 @@
 /* Laptop View */
 @media only screen and (min-width: 769px){
     .section{
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 16 / 8;
     }
 
     .section.bd{
         backdrop-filter: blur(10vh);
+    }
+
+    .flex-card{
+        width: 50vw;
+        height: inherit;
+    }
+
+    #user-hero{
+        flex-wrap: wrap-reverse;
     }
 
     #user-hero .btn-primary{
@@ -195,7 +204,7 @@
     .user-social ul{
         display: flex;
         justify-content: space-around;
-        font-size: 4vh;
+        font-size: 3.5vh;
         align-items: center;
         width: 16vw;
         padding: 0;
@@ -208,7 +217,7 @@
     
     .user-social ul li a{
         width: fit-content;
-        padding: 5vh;
+        padding: 2vh;
     }
     
     .lang-tags h3{
@@ -231,6 +240,10 @@
         justify-content: start;
         padding: 54px 10vw;
     }
+
+    .about a.btn-primary{
+        margin: 5vw;
+    }
     
     .about h1{
         padding: 2vw 0 0;
@@ -241,8 +254,8 @@
         color: var(--font--white-black);
         font-family: var(--font-primary);
         font-weight: 400;
-        padding: 1vw 0;
-        font-size: 2vw;
+        padding: 4vw 0;
+        font-size: 1.8vw;
     }
     
     .user-social ul li a{
