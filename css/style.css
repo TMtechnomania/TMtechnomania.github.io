@@ -5,97 +5,15 @@
     border: none;
     scroll-behavior: smooth;
     user-select: none;
-}
-
-body{
     font-family: var(--font-primary);
-}
-
-body i{
-    color: inherit;
-}
-
-input{
-    border: 0;
-    outline: none;
-}
-
-::-webkit-scrollbar {
+}::-webkit-scrollbar {
     width: 0vw;
-}
-
-a,a:visited,a:hover{
-    text-decoration: none;
-    color: inherit;
-}
-
-h1 ,h2, h3, h4, h5, h6{
-    font-family: var(--font-heading);
-}
-
-.btn-primary{
-    background-color: var(--blue-blue);
-    color: var(--font--white-white);
-    font-family: var(--font-primary);
-    height: 45px;
-    min-width: 110px;
-    max-width: fit-content;
-    padding: 10px;
-    font-size: 15px;
-    font-weight: bold;
-    border: 2px solid transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 7px;
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
-    -ms-border-radius: 7px;
-    -o-border-radius: 7px;
-    cursor: pointer;
-}
-
-.btn-primary i{
-    width: fit-content;
-    height: fit-content;
-    padding: 12px 3px;
-}
-
-.btn-primary:hover{
-    background-color: transparent;
-    border: 2px solid var(--blue-blue);
-    color: var(--blue-blue);
-}
-
-.btn{
-    background-color: var(--off-black-white);
-    color: var(--font--white-black);
-    font-family: var(--font-primary);
-    height: 45px;
-    width: 110px;
-    font-size: 15px;
-    font-weight: bold;
-    border: 2px solid transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 7px;
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
-    -ms-border-radius: 7px;
-    -o-border-radius: 7px;
-    cursor: pointer;
-}
-
-.btn:hover{
-    background-color: transparent;
-    border: 2px solid var(--black-white);
-    color: var(--black-white);
 }
 
 :root{
     --font-primary: 'Inter', sans-serif;
-    --font-code: 'Fira Code', monospace;--font-code-2: 'Source Code Pro', monospace;
+    --font-code: 'Fira Code', monospace;
+    --font-code-2: 'Source Code Pro', monospace;
     --font-custom: 'Comfortaa', cursive;
     --font-heading: 'Outfit', sans-serif;
     color-scheme: light dark;
@@ -120,11 +38,11 @@ h1 ,h2, h3, h4, h5, h6{
         --bd-off-black-white: rgb(239, 246, 255, 0.2);
         --bd-off-white-black: rgb(19, 25, 32, 0.2);
         --bd-white-black: rgb(18, 18, 18, 0.2);
-        --gray: #F8F8F8;
-        --red: rgb(253, 80, 86, 0.6);
-        --cyan: rgb(66, 218, 245, 0.6);
-        --sea-green: rgb(64, 181, 138, 0.6);
-        --yellow: rgb(252, 193, 1, 0.6);
+        --grey: #1a1a1a;
+        --red: rgba(34, 34, 34, 0.8);
+        --cyan: rgb(66, 218, 245, 0.8);
+        --sea-green: rgb(64, 181, 138, 0.8);
+        --yellow: rgb(252, 193, 1, 0.8);
         --yellow-light: rgb(254, 230, 94, 0.8);
     }
 
@@ -153,13 +71,120 @@ h1 ,h2, h3, h4, h5, h6{
         --bd-off-white-black: rgb(239, 246, 255, 0.2);
         --bd-off-black-white: rgb(19, 25, 32, 0.2);
         --bd-black-white: rgb(18, 18, 18, 0.2);
-        --gray: #F8F8F8;
+        --grey: #F8F8F8;
         --red: #FD5056;
         --cyan: #42DAF5;
         --sea-green: #40B58A;
         --yellow: #FCC101;
         --yellow-light: #FEE65E;
     }
+}
+
+i{
+    color: inherit;
+}
+input{
+    border: 0;
+    outline: none;
+}
+a,a:visited,a:hover{
+    text-decoration: none;
+    color: inherit;
+}
+h1 ,h2, h3, h4, h5, h6{
+    font-family: var(--font-heading) !important;
+}
+
+ul{
+    list-style-type: none;
+}
+
+*.btn-primary, *.btn-primary.share{
+    font-family: var(--font-heading) !important;
+    background-color: var(--blue-blue) !important;
+    color: var(--font--white-white) !important;
+    height: 40px !important;
+    width: fit-content !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    display: flex !important;
+    align-content: center !important;
+    justify-content: center !important;
+    padding: 0 10px !important;
+    line-height: 36px !important;
+    border: 2px solid var(--blue-blue) !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -ms-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
+}
+
+*.btn{
+    font-family: var(--font-heading) !important;
+    color: var(--font--white-white) !important;
+    height: 40px !important;
+    width: fit-content !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    display: flex !important;
+    align-content: center !important;
+    justify-content: center !important;
+    padding: 0 10px !important;
+    line-height: 36px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -ms-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
+}
+
+*.btn-primary i, *.btn i, *.btn-primary.share i{
+    padding-left: 6px;
+    font-size: 95%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+*.btn-primary:hover, div.btn-primary.share:hover{
+    background-color: transparent !important;
+    color: var(--blue-blue) !important;
+}
+
+*.btn.btn-blue:hover, *.btn.btn-cyan:hover, *.btn.btn-red:hover, *.btn.btn-sea-green:hover, *.btn.btn-yellow:hover{
+    opacity: 0.7;
+}
+
+.btn-red{
+    border: 2px solid var(--red);
+    background-color: var(--red);
+}
+
+.btn-cyan{
+    border: 2px solid var(--cyan);
+    background-color: var(--cyan);
+}
+
+.btn-sea-green{
+    border: 2px solid var(--sea-green);
+    background-color: var(--sea-green);
+}
+
+.btn-yellow{
+    border: 2px solid var(--yellow);
+    background-color: var(--yellow);
+}
+
+.btn-blue{
+    border: 2px solid var(--blue-blue);
+    background-color: var(--blue-blue);
 }
 
 #bgcolor{
@@ -256,12 +281,12 @@ h1 ,h2, h3, h4, h5, h6{
                 translate(25%)
                 rotate(-360deg);
     }
-  }
+}
 
 .wrapper{
     background-color: var(--white-black);
     height: fit-content;
-    scroll-snap-type: y proximity;
+    scroll-snap-type: y mandatory;
     overflow: auto;
     position: relative;
 }
@@ -278,11 +303,13 @@ h1 ,h2, h3, h4, h5, h6{
     width: 100vw;
     height: auto;
     background-color: var(--white-black);
+    scroll-snap-align: start;
 }
 
 .section.bd{
     background-color: var(--bd-off-white);
     backdrop-filter: blur(10vw);
+    scroll-snap-align: start;
 }
 
 .red-grey{
@@ -322,8 +349,10 @@ h1 ,h2, h3, h4, h5, h6{
     height: 54px;
     width: 100vw;
     font-size: 10px;
-    background-color: var(--off-white-black);
-    box-shadow: 0 0 7px -4px var(--off-black-white);
+    background-color: var(--white-black);
+    backdrop-filter: blur(4px);
+    color: var(--font-black-white);
+    /* box-shadow: 0 0 6px -4px var(--black-white); */
     z-index: 25;
     position: fixed;
     top: 0;
@@ -450,24 +479,17 @@ h1 ,h2, h3, h4, h5, h6{
     padding-top: 54px;
     top: 0;
     position: fixed;
-    box-shadow: 0 0 7px -4px var(--off-black-white);
     display: flex;
-    opacity: 1;
-    background-color: var(--bd-off-white-black);
-    backdrop-filter: blur(10vw);
+    background-color: var(--grey);
     color: var(--font-black-white);
-    font-family: var(--font-custom);
-    font-weight: bold;
+    font-family: var(--font-heading);
+    font-weight: 500;
     font-size: 15px;
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
     z-index: 20;
     overflow-y: scroll;
-}
-
-ul{
-    list-style-type: none;
 }
 
 #navmenu li, #navmenu a{
@@ -488,7 +510,7 @@ ul{
 }
 
 #navmenu li i{
-    font-size: 14px;
+    font-size: 95%;
     padding: 20px 10px 20px 20px;
     display: flex;
     justify-content: center;
@@ -578,7 +600,7 @@ ul{
 .subscribe input{
     padding: 5px 10px;
     font-size: 16px;
-    width: 52%;
+    width: calc(100% - 95px);
     font-family: var(--font-heading);
     background-color: var(--font--white-white);
 }
