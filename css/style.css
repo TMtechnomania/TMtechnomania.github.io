@@ -614,24 +614,34 @@ ul{
     text-align: center;
 }
 
-span.blue{
+*.blue{
     color: var(--blue-blue);
 }
 
-span.red{
+*.red{
     color: var(--red);
 }
 
-span.cyan{
+*.cyan{
     color: var(--cyan);
 }
 
-span.sea-green{
+*.sea-green{
     color: var(--sea-green);
 }
 
-span.yellow{
+*.yellow{
     color: var(--yellow);
+}
+
+.section lottie-player{
+    width: 90vw;
+    translate: -9vw 0;
+}
+
+lottie-player.centre{
+    translate: 0 0;
+    width: 80vw;
 }
 
 /* Tablet View */
@@ -733,7 +743,10 @@ span.yellow{
 
     .section{
         aspect-ratio: 2 / 1;
-        max-height: 50vw;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .section.bd{
@@ -752,5 +765,19 @@ span.yellow{
                     translate(25%)
                     rotate(-360deg);
         }
-      }
+    
+    }
+    #searchbar{
+        display: none;
+    }
+
+    .section lottie-player{
+        width: 50vw;
+        translate: -5vw 0;
+    }
+
+    lottie-player.centre{
+        translate: 0 0;
+        width: 36vw;
+    }
 }
