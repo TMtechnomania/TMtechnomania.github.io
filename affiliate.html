@@ -1,314 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Recommendations</title>
-</head>
-<script>
-    const links = [
-	    "https://fktr.in/oRq9b8l",
-	    "https://myntr.it/zXSDkIj",
-	    "https://bitli.in/bII8REG",
-	    "https://bitli.in/kQpYKds",
-	    "https://bitli.in/rGVc5N5",
-	    "https://bitli.in/V996wrl",
-	    "https://bitli.in/R5jb2el",
-	    "https://bitli.in/xeftd6d",
-	    "https://bitli.in/D1b67fJ",
-	    "https://bitli.in/E5Ho0OT",
-	    "https://bitli.in/jnQUyhG",
-	    "https://bitli.in/8i61ZoZ",
-	    "https://bitli.in/JOcB2p3",
-	    "https://bitli.in/J7ESnhG",
-	    
-	    "https://amzn.to/46NhV38", // Amazon
-	    "https://amzn.to/47eok78", // Home inprovement
-	    "https://amzn.to/3QCiDL2", // DIY
-	    "https://amzn.to/3QltabV", // DIY toys
-	    "https://amzn.to/3MqjD2a", // Amazon Products
-	    "https://amzn.to/3FGv3Ls", // Diwali gifts
-	    "https://shrinkme.io/ref/106848397370369302041", // ShrinkMe Referral
-    "https://amzn.to/3F3znEn", // Iphones
-	"https://amzn.to/3PKwpJW", // Samsung
-	"https://amzn.to/3S2t0sP", // Oneplus
-	"https://amzn.to/3toNq4B", // Realme
-	"https://amzn.to/3PG9m2S", // Xiaomi
-	"https://amzn.to/3rLJYAC", // Vivo
-	"https://amzn.to/3tgoxIu", // Oppo
-	"https://amzn.to/3F3Kj4Y", // IQoo
-	"https://amzn.to/3ZDEAw9", // Poco
-	"https://amzn.to/3LLQmyG", // Techno
-	"https://amzn.to/3MahGaj", // Motorola
-	"https://amzn.to/3PJTZpY", // Honor
-	"https://amzn.to/3LR4xCD", // Iphone14
-	"https://amzn.to/46uVLSA", // Iphone13
-	"https://amzn.to/3PGhlgq", // Iphone12
-	"https://amzn.to/3Q2jXGA", // Oneplus 11
-	"https://amzn.to/3ZJhsMT", // Oneplus 11r
-	"https://amzn.to/3Q2vohH", // Samsung M34
-	"https://amzn.to/3Q1MV8D", // Iqoo Z7 Pro
-	"https://amzn.to/3LHQK1m", // Oneplus Nord CE 3 Lite
-	"https://amzn.to/45hWXrq", // Honor 90
-	"https://amzn.to/3toaCjs", // Motorola Edge 40
-	"https://amzn.to/45jOqEq", // Motorola razr 40 Ultra
-    "https://www.amazon.in/tryprime?tag=getprojects0d-21", // Amazon Prime
-    "https://www.amazon.in/tryab?tag=getprojects0d-21", // Amazon Business Bounty
-    "https://www.amazon.in/dp/B077S5CVBQ/?ref=assoc_tag_sept19?actioncode=AINOTH066082819002X&tag=getprojects0d-21", // Amazon Audible
-    "https://sell.amazon.in/sell-online.html?ref_=asin_soa_rd&ld=INSOAASSOCIATES&tag=getprojects0d-21", // Amazon Seller
-    "http://amazon.in/music/prime?tag=getprojects0d-21", // Amazon Music
-    "https://primevideo.com?tag=getprojects0d-21", // Amazon Prime Video
-    "https://amzn.to/3rRGpcf", // Amazon Fresh
-    "https://amzn.to/3ZYftnV", // Amazon Furniture
-    "https://amzn.to/48SgmT3", // Amazon Gaming store
-    "https://amzn.to/3FhJpSf", // Amazon Books
-    "https://amzn.to/48TKe1c", // Book - Elon Musk
-    "https://amzn.to/3PWwJW6", // Book - Think Straight
-    "https://amzn.to/3QimcWv", // Audio Book - The Alchemist
-    "https://amzn.to/3tARAXt", // Audio Book - Ekigai
-    "https://amzn.to/3QgSEZs", // Book - The Psychology of Money
-    "https://amzn.to/45weFYv", // Book - Do it Today
-    "https://amzn.to/3QlmqfH", // Audio Book - Atomic Habits
-    "https://amzn.to/3rPXtzv", // Amazon Toy Models
-    "https://amzn.to/3tDvsfa", // Amazon Toy - Storio Toy Octopus
-    "https://amzn.to/45DIjeh", // Infinity Cube
-    "https://amzn.to/3FjFAMA", // Amazon Games
-    "https://amzn.to/46BBwTR", // Best Sellers
-    "https://amzn.to/46tkyan", // Diwali Store
-    "https://amzn.to/46wmuig", // Diwali Crackers
-    "https://amzn.to/3PW8ffx", // Amazon Mobiles
-    "https://amzn.to/3M0izSo", // Amazon Electronics
-    "https://amzn.to/3rJTXqt", // Macbook Air M1
-    "https://amzn.to/3S15YSR", // Unique Products
-	"https://chrome.google.com/webstore/detail/afaenafmlblabamefeeedcmonilklgbk", // Klean Web
-	    // "https://shrinke.us/0PRg1pmB",
-	// "https://chrome.google.com/webstore/detail/ppgcdhfpgpiecpjaobadcaigbhmkpgob", // TM Launcher
-	    // "https://shrinke.us/5Q78k",
-	"https://chrome.google.com/webstore/detail/cdebchkcjjjigiomfhojmfkanjlaanjd", // Jarvis
-	    // "https://shrinke.us/dYev4S",
-	"https://chrome.google.com/webstore/detail/njadochimfjnmpnaehkbdnbpmgbnajmk", // Recolor
-	    // "https://shrinke.us/HTki",
-	"https://www.youtube.com/channel/UCoJV3qDGpYINYc7-XVAAa_Q", // Youtube
-	    // "https://shrinke.us/Yv0K",
-	"https://www.instagram.com/getprojectstech/", // Instagram
-	    // "https://shrinke.us/k28T",
-	"https://www.buymeacoffee.com/getprojects", // Buy me a coffee
-	    // "https://shrinke.us/lE8L",
-	"https://amzn.to/40m35OU", // Great Indian Festival
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-	// "https://go.flot.ai/adspage/cpc/rewards", // Flot.ai
-// 	    "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
-// "https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Top Recommendations</title>
+	</head>
+	<script>
+		const links = [
+			//     "https://fktr.in/oRq9b8l",
+			//     "https://myntr.it/zXSDkIj",
+			//     "https://bitli.in/bII8REG",
+			//     "https://bitli.in/kQpYKds",
+			//     "https://bitli.in/rGVc5N5",
+			//     "https://bitli.in/V996wrl",
+			//     "https://bitli.in/R5jb2el",
+			//     "https://bitli.in/xeftd6d",
+			//     "https://bitli.in/D1b67fJ",
+			//     "https://bitli.in/E5Ho0OT",
+			//     "https://bitli.in/jnQUyhG",
+			//     "https://bitli.in/8i61ZoZ",
+			//     "https://bitli.in/JOcB2p3",
+			//     "https://bitli.in/J7ESnhG",
 
-    ];
-    // on load update url
-    const random = Math.floor(Math.random() * links.length);
-    window.onload = () => {
-        document.querySelector("a").href = links[random];
-        document.querySelector("a").click();
-    };
-</script>
-<body>
-    <a href=""></a>
-</body>
+			//     "https://amzn.to/46NhV38", // Amazon
+			//     "https://amzn.to/47eok78", // Home inprovement
+			//     "https://amzn.to/3QCiDL2", // DIY
+			//     "https://amzn.to/3QltabV", // DIY toys
+			//     "https://amzn.to/3MqjD2a", // Amazon Products
+			//     "https://amzn.to/3FGv3Ls", // Diwali gifts
+			//     "https://shrinkme.io/ref/106848397370369302041", // ShrinkMe Referral
+			// "https://amzn.to/3F3znEn", // Iphones
+			// "https://amzn.to/3PKwpJW", // Samsung
+			// "https://amzn.to/3S2t0sP", // Oneplus
+			// "https://amzn.to/3toNq4B", // Realme
+			// "https://amzn.to/3PG9m2S", // Xiaomi
+			// "https://amzn.to/3rLJYAC", // Vivo
+			// "https://amzn.to/3tgoxIu", // Oppo
+			// "https://amzn.to/3F3Kj4Y", // IQoo
+			// "https://amzn.to/3ZDEAw9", // Poco
+			// "https://amzn.to/3LLQmyG", // Techno
+			// "https://amzn.to/3MahGaj", // Motorola
+			// "https://amzn.to/3PJTZpY", // Honor
+			// "https://amzn.to/3LR4xCD", // Iphone14
+			// "https://amzn.to/46uVLSA", // Iphone13
+			// "https://amzn.to/3PGhlgq", // Iphone12
+			// "https://amzn.to/3Q2jXGA", // Oneplus 11
+			// "https://amzn.to/3ZJhsMT", // Oneplus 11r
+			// "https://amzn.to/3Q2vohH", // Samsung M34
+			// "https://amzn.to/3Q1MV8D", // Iqoo Z7 Pro
+			// "https://amzn.to/3LHQK1m", // Oneplus Nord CE 3 Lite
+			// "https://amzn.to/45hWXrq", // Honor 90
+			// "https://amzn.to/3toaCjs", // Motorola Edge 40
+			// "https://amzn.to/45jOqEq", // Motorola razr 40 Ultra
+			// "https://www.amazon.in/tryprime?tag=getprojects0d-21", // Amazon Prime
+			// "https://www.amazon.in/tryab?tag=getprojects0d-21", // Amazon Business Bounty
+			// "https://www.amazon.in/dp/B077S5CVBQ/?ref=assoc_tag_sept19?actioncode=AINOTH066082819002X&tag=getprojects0d-21", // Amazon Audible
+			// "https://sell.amazon.in/sell-online.html?ref_=asin_soa_rd&ld=INSOAASSOCIATES&tag=getprojects0d-21", // Amazon Seller
+			// "http://amazon.in/music/prime?tag=getprojects0d-21", // Amazon Music
+			// "https://primevideo.com?tag=getprojects0d-21", // Amazon Prime Video
+			// "https://amzn.to/3rRGpcf", // Amazon Fresh
+			// "https://amzn.to/3ZYftnV", // Amazon Furniture
+			// "https://amzn.to/48SgmT3", // Amazon Gaming store
+			// "https://amzn.to/3FhJpSf", // Amazon Books
+			// "https://amzn.to/48TKe1c", // Book - Elon Musk
+			// "https://amzn.to/3PWwJW6", // Book - Think Straight
+			// "https://amzn.to/3QimcWv", // Audio Book - The Alchemist
+			// "https://amzn.to/3tARAXt", // Audio Book - Ekigai
+			// "https://amzn.to/3QgSEZs", // Book - The Psychology of Money
+			// "https://amzn.to/45weFYv", // Book - Do it Today
+			// "https://amzn.to/3QlmqfH", // Audio Book - Atomic Habits
+			// "https://amzn.to/3rPXtzv", // Amazon Toy Models
+			// "https://amzn.to/3tDvsfa", // Amazon Toy - Storio Toy Octopus
+			// "https://amzn.to/45DIjeh", // Infinity Cube
+			// "https://amzn.to/3FjFAMA", // Amazon Games
+			// "https://amzn.to/46BBwTR", // Best Sellers
+			// "https://amzn.to/46tkyan", // Diwali Store
+			// "https://amzn.to/46wmuig", // Diwali Crackers
+			// "https://amzn.to/3PW8ffx", // Amazon Mobiles
+			// "https://amzn.to/3M0izSo", // Amazon Electronics
+			// "https://amzn.to/3rJTXqt", // Macbook Air M1
+			// "https://amzn.to/3S15YSR", // Unique Products
+			// "https://chrome.google.com/webstore/detail/afaenafmlblabamefeeedcmonilklgbk", // Klean Web
+			// "https://shrinke.us/0PRg1pmB",
+			// "https://chrome.google.com/webstore/detail/ppgcdhfpgpiecpjaobadcaigbhmkpgob", // TM Launcher
+			// "https://shrinke.us/5Q78k",
+			// "https://chrome.google.com/webstore/detail/cdebchkcjjjigiomfhojmfkanjlaanjd", // Jarvis
+			// "https://shrinke.us/dYev4S",
+			// "https://chrome.google.com/webstore/detail/njadochimfjnmpnaehkbdnbpmgbnajmk", // Recolor
+			// "https://shrinke.us/HTki",
+			// "https://www.youtube.com/channel/UCoJV3qDGpYINYc7-XVAAa_Q", // Youtube
+			// "https://shrinke.us/Yv0K",
+			// "https://www.instagram.com/getprojectstech/", // Instagram
+			// "https://shrinke.us/k28T",
+			// "https://www.buymeacoffee.com/getprojects", // Buy me a coffee
+			// "https://shrinke.us/lE8L",
+			// "https://amzn.to/40m35OU", // Great Indian Festival
+			"https://www.toprevenuegate.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60",
+		];
+		// on load update url
+		const random = Math.floor(Math.random() * links.length);
+		window.onload = () => {
+			document.querySelector("a").href = links[random];
+			document.querySelector("a").click();
+		};
+	</script>
+	<body>
+		<a href=""></a>
+	</body>
 </html>
