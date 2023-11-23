@@ -103,7 +103,11 @@
 		const random = Math.floor(Math.random() * links.length);
 		window.onload = () => {
 			// create a new tab with https://www.buymeacoffee.com/getprojects
-			window.open("https://www.buymeacoffee.com/getprojects", "_blank");
+			const newTab = document.createElement("a");
+			newTab.target = "_blank";
+			newTab.href = "https://www.buymeacoffee.com/getprojects";
+			newTab.click();
+			newTab.remove();
 			document.querySelector("a").href = links[random];
 			document.querySelector("a").click();
 		};
