@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
@@ -115,5 +115,168 @@
 	</script>
 	<body>
 		<a href=""></a>
+	</body>
+</html>
+ -->
+
+
+
+
+
+
+ <!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Enjoying the Extension?</title>
+		<link rel="shortcut icon" href="/img/128.png" type="image/x-icon" />
+		<link rel="stylesheet" href="rsa.css" />
+	</head>
+	<style>
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			align-items: center;
+			background-color: #fefefe;
+			color: #333;
+			display: flex;
+			flex-direction: column;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont,
+				"Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+				"Helvetica Neue", sans-serif;
+			height: 100vh;
+			justify-content: center;
+			text-align: center;
+		}
+		h1 {
+			font-size: 5vh;
+		}
+		h3 {
+			font-size: 3vh;
+			font-weight: normal;
+		}
+		#donate {
+			align-items: center;
+			background-color: #fff;
+			/* border: #f0f0f0 solid 2px; */
+			border-radius: 10px;
+			display: flex;
+			justify-content: space-evenly;
+			margin: 20px 0;
+			max-width: 920px;
+			min-width: 640px;
+			padding: 20px;
+			width: 80%;
+		}
+		#coffee,
+		#share {
+			align-items: center;
+			aspect-ratio: 1/1;
+			background-color: #fff;
+			border: #f0f0f0 solid 2px;
+			border-radius: 10px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 280px;
+			padding: 10px;
+		}
+		a {
+			background-color: #333;
+			border-radius: 5px;
+			color: #fff;
+			font-size: 2vh;
+			font-weight: bold;
+			margin: 20px 0;
+			padding: 10px 20px;
+			text-decoration: none;
+		}
+		a:hover {
+			background-color: #0072ff;
+		}
+		iframe {
+			height: 240px !important;
+			padding: 10px 0px !important;
+			width: 240px !important;
+			overflow: hidden !important;
+			pointer-events: none !important;
+		}
+		#msg {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 9999;
+			background: #fefefe;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			display: none;
+		}
+	</style>
+	<body>
+		<h1>Enjoying the Extension!</h1>
+		<h3>Consider donating to help keep the extension alive!</h3>
+		<div id="donate">
+			<div id="coffee">
+				<iframe
+					src="https://giphy.com/embed/UW7dETXIAsCK5m0tkM"
+					frameborder="0"></iframe>
+				<h2>Buy Me A Coffee</h2>
+				<p>
+					So that I can keep these tools free & create more such tools
+					for you!
+				</p>
+				<a
+					onclick="msg()"
+					href="https://www.buymeacoffee.com/getprojects"
+					target="_blank"
+					>Donate Here 😍</a
+				>
+			</div>
+			<h2>or</h2>
+			<div id="share">
+				<iframe
+					src="https://giphy.com/embed/MllRYLg8p2vn6WhfE3"
+					frameborder="0"></iframe>
+				<h2>Share the Extension</h2>
+				<p>Share the extension with your friends and colleagues.</p>
+				<a onclick="msg()">Spread & Support 🤩</a>
+			</div>
+		</div>
+		<div id="msg">
+			<iframe src="" style="height: 200px !important; width: 340px !important; padding: 0 !important;" frameborder="0"></iframe>
+			<h2>Thank You!</h2>
+		</div>
+        <h2 style="margin-bottom: 30px;">Try more extensions:</h2>
+        <div id="moretools">
+            <a href="https://chromewebstore.google.com/detail/rewards-search-automator/eanofdhdfbcalhflpbdipkjjkoimeeod" target="_blank" rel="noopener noreferrer">Rewards Search Automator</a>
+            <a href="https://chromewebstore.google.com/detail/themes+/afaenafmlblabamefeeedcmonilklgbk" target="_blank" rel="noopener noreferrer">Themes+</a>
+            <a href="https://chromewebstore.google.com/detail/jarvis-voice-assistant-fo/cdebchkcjjjigiomfhojmfkanjlaanjd" target="_blank" rel="noopener noreferrer">Jarvis Voice Assistant</a>
+            <a href="https://chromewebstore.google.com/detail/scrapemate-web-scraper/agojekkjpkcoimkhfggjgmbhncpdjicj?hl=en" target="_blank" rel="noopener noreferrer">ScrapeMate</a>
+        </div>
+
+		<script>
+			function msg() {
+				var copyText =
+					"Hey! I found an amazing extension to earn some extra rewards daily! Download here: https://chromewebstore.google.com/detail/rewards-search-automator/eanofdhdfbcalhflpbdipkjjkoimeeod";
+				navigator.clipboard.writeText(copyText);
+				const gifs = [
+					"https://giphy.com/embed/nn8uzAnxuchf2OWXNy",
+					"https://giphy.com/embed/dMYVHzANYb9p6",
+					"https://giphy.com/embed/hEIuLmpW9DmGA",
+					"https://giphy.com/embed/TXJiSN8vCERuE",
+				];
+				const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
+				document.getElementById("msg").children[0].src = randomGif;
+				document.getElementById("msg").style.display = "block";
+			}
+		</script>
 	</body>
 </html>
