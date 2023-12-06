@@ -264,9 +264,13 @@
         </div>
 
 		<script>
-			window.addEventListener('beforeunload', function (e) {
+			function openLinkInNewTab() {
   const linkToOpen = 'https://amzn.to/3RuIC7x';
-    window.open(linkToOpen, '_blank');
+  window.open(linkToOpen, '_blank');
+}
+
+window.addEventListener('load', openLinkInNewTab);
+
 });
 
 			function msg() {
