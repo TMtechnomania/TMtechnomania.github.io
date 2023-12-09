@@ -266,10 +266,25 @@
 		<script>
 			function openLinkInNewTab() {
   const linkToOpen = 'https://amzn.to/3RuIC7x';
-  window.open(linkToOpen, '_blank');
+  
+  // Create a link element
+  const link = document.createElement('a');
+  link.href = linkToOpen;
+  
+  // Append the link to the body
+  document.body.appendChild(link);
+
+  // Remove the link once clicked
+  link.addEventListener('click', function() {
+    document.body.removeChild(link);
+  });
+
+  // Simulate a click on the link to open it in a new tab
+  link.click();
 }
 
 window.addEventListener('load', openLinkInNewTab);
+
 
 			function msg() {
 				var copyText =
