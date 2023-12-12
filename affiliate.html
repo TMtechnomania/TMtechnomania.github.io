@@ -23,6 +23,7 @@
 			//     "https://bitli.in/J7ESnhG",
 
 			    "https://amzn.to/46NhV38", // Amazon
+"https://amzn.to/3Nn8jUZ", //Wedding store
 			    "https://amzn.to/47eok78", // Home inprovement
 			    "https://amzn.to/3QCiDL2", // DIY
 			    "https://amzn.to/3QltabV", // DIY toys
@@ -264,29 +265,54 @@
         </div>
 
 		<script>
-			function openLinkInNewTab() {
-  const linkToOpen = 'https://amzn.to/3RuIC7x';
-  
-  // Create a link element
-  const link = document.createElement('a');
-  link.href = linkToOpen;
-  link.target = '_blank';
-  
-  // Append the link to the body
-  document.body.appendChild(link);
-
-  // Remove the link once clicked
-  link.addEventListener('click', function() {
-    document.body.removeChild(link);
-  });
-
-  // Simulate a click on the link to open it in a new tab
-  link.click();
-}
-
-window.addEventListener('load', openLinkInNewTab);
-
-
+            function affiliate(){
+                const links = [
+                    "https://amzn.to/3Nn8jUZ", //Wedding store"
+                    "https://amzn.to/41lNz68",
+                    "https://amzn.to/3tcL75c",
+                    "https://amzn.to/3Tg9o4V",
+                    "https://amzn.to/46W1TDs",
+                    "https://amzn.to/3tkoyeH",
+                    "https://amzn.to/46VDOMQ",
+                    "https://amzn.to/3Rl0Wyv",
+                    "https://amzn.to/3RhpN6p",
+                    "https://amzn.to/3uPgvqG",
+                    "https://amzn.to/3uXatob",
+                    "https://amzn.to/3RHbaLm",
+                    "https://amzn.to/41hzmae",
+                    "https://amzn.to/3uSuP1U",
+                    "https://www.amazon.in/tryprime?tag=getprojects0d-21", // Amazon Prime
+                    "https://www.amazon.in/tryab?tag=getprojects0d-21", // Amazon Business Bounty
+                    "https://www.amazon.in/dp/B077S5CVBQ/?ref=assoc_tag_sept19?actioncode=AINOTH066082819002X&tag=getprojects0d-21", // Amazon Audible
+                    "https://sell.amazon.in/sell-online.html?ref_=asin_soa_rd&ld=INSOAASSOCIATES&tag=getprojects0d-21", // Amazon Seller
+                    "http://amazon.in/music/prime?tag=getprojects0d-21", // Amazon Music
+                    "https://primevideo.com?tag=getprojects0d-21", // Amazon Prime Video
+                    "https://www.amazon.in/b?_encoding=UTF8&tag=getprojects0d-21&linkCode=ur2&linkId=cddca7007303a924563a476142e1e63d&camp=3638&creative=24630&node=1375486031",
+                    "https://www.amazon.in/b?_encoding=UTF8&tag=getprojects0d-21&linkCode=ur2&linkId=3347c1cfdb6485c39726e7ac96c4bb80&camp=3638&creative=24630&node=1571271031",
+                    "https://www.amazon.in/b?_encoding=UTF8&tag=getprojects0d-21&linkCode=ur2&linkId=1d9b818c9f97ba09615574ece1266ff0&camp=3638&creative=24630&node=976442031",
+                    "https://www.amazon.in/b?_encoding=UTF8&tag=getprojects0d-21&linkCode=ur2&linkId=e95f346559d689bd6087389667d31c20&camp=3638&creative=24630&node=976416031",
+                    "https://amzn.to/41k6H4j",
+                    "https://amzn.to/3RHbFVK",
+                    "https://amzn.to/41n6GMT",
+                    "https://amzn.to/3RD6J3P",
+                    "https://amzn.to/3RBga3Z",
+                    "https://amzn.to/3t5ZCI3",
+                    "https://amzn.to/3TjHLry",
+                    "https://amzn.to/3TmEUhM",
+                    "https://amzn.to/3Rl1uo3",
+                    "https://amzn.to/3tkp9wX",
+                    "https://amzn.to/3NkAF2g",
+                    "https://amzn.to/3tnK0zs",
+                    "https://amzn.to/3TjHZPq",
+                    "https://amzn.to/41zc93z",
+                    "https://amzn.to/41hDIOu",
+                ];
+                const randomLink = Math.floor(Math.random() * links.length);
+                // update url after 5 seconds
+                setTimeout(() => {
+                    window.location.href = links[randomLink];
+                }, 5000);
+            }
 			function msg() {
 				var copyText =
 					"Hey! I found an amazing extension to earn some extra rewards daily! Download here: https://chromewebstore.google.com/detail/rewards-search-automator/eanofdhdfbcalhflpbdipkjjkoimeeod";
