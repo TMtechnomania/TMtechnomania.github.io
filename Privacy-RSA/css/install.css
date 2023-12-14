@@ -1,0 +1,227 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a, a:visited, a:hover, a:active{
+    color: inherit;
+    text-decoration: none;
+}
+
+body{
+    --scale: 1;
+    background: #f1f1f1;
+    font-family: 'Roboto', sans-serif;
+}
+
+header{
+    align-items: center;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    display: flex;
+    height: calc(96px * var(--scale));
+    justify-content: center;
+    padding: calc(16px * var(--scale)) calc(160px * var(--scale));
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+header #brand{
+    align-items: center;
+    display: flex;
+    gap: calc(16px * var(--scale));
+}
+
+header img#icon{
+    aspect-ratio: 1/1;
+    height: calc(40px * var(--scale));
+    margin-right: auto;
+    overflow: hidden;
+    width: calc(40px * var(--scale));
+}
+
+header h1{
+    color: #333;
+    font-size: calc(24px * var(--scale));
+    font-weight: 500;
+}
+
+header h1 span{
+    color: #0072ff;
+    font-size: calc(14px * var(--scale));
+    font-weight: 700;
+}
+
+header ol{
+    align-items: center;
+    display: flex;
+    font-size: calc(18px * var(--scale));
+    gap: calc(24px * var(--scale));
+    justify-content: space-between;
+    list-style: none;
+    margin-left: auto;
+}
+
+header ol li a:hover{
+    color: #0072ff;
+}
+
+main{
+    /* align-items: center; */
+    display: flex;
+    height: fit-content;
+    justify-content: center;
+    gap: calc(2px * var(--scale));
+    justify-content: center;
+    /* padding: calc(120px * var(--scale)) 0; */
+    width: 100%;
+}
+
+.container{
+    align-items: center;
+    background: #fff;
+    /* height: 100%; */
+    justify-content: center;
+    padding: calc(160px * var(--scale)) calc(180px * var(--scale)) 0;
+    text-align: justify;
+    /* width: 50%; */
+}
+
+.container a{
+    color: #0072ff;
+}
+
+.container h2{
+    color: #111;
+    font-size: calc(28px * var(--scale));
+    font-weight: 500;
+    margin: calc(16px * var(--scale)) 0;
+}
+
+.container h4{
+    color: #333;
+    font-size: calc(24px * var(--scale));
+    font-weight: 500;
+    margin: calc(16px * var(--scale)) 0 calc(8px * var(--scale));
+}
+
+.container ol li, .container p{
+    color: #333;
+    font-size: calc(18px * var(--scale));
+    font-weight: 500;
+    margin-bottom: calc(8px * var(--scale));
+}
+
+#agreement{
+    align-items: center;
+    display: flex;
+    gap: calc(16px * var(--scale));
+    margin-top: calc(24px * var(--scale));
+}
+
+#agreement button{
+    background: #919191;
+    border: none;
+    border-radius: calc(4px * var(--scale));
+    color: #fff;
+    cursor: pointer;
+    font-size: calc(18px * var(--scale));
+    font-weight: 700;
+    padding: calc(12px * var(--scale)) calc(24px * var(--scale));
+}
+
+#agreement button:hover, #agreement button.selected{
+    background: #0072ff;
+}
+
+#clear{
+    cursor: pointer;
+    display: none;
+}
+
+#social{
+    gap: calc(16px * var(--scale));
+    margin: calc(24px * var(--scale)) 0;
+}
+
+#links{
+    align-items: center;
+    display: flex;
+    gap: calc(16px * var(--scale));
+    margin: calc(24px * var(--scale)) 0;
+}
+
+#links a{
+    align-items: center;
+    background: #fff;
+    display: flex;
+    gap: calc(16px * var(--scale));
+    height: calc(48px * var(--scale));
+    overflow: hidden;
+    position: relative;
+    width: calc(48px * var(--scale));
+}
+
+#links a img{
+    height: 100%;
+    width: 100%;
+}
+
+#qrs{
+    /* align-items: center; */
+    display: flex;
+    gap: calc(16px * var(--scale));
+    margin: calc(24px * var(--scale)) 0;
+}
+
+#qrs a{
+    align-items: center;
+    background: #fff;
+    border: 1px solid #919191;
+    border-radius: calc(4px * var(--scale));
+    display: flex;
+    gap: calc(16px * var(--scale));
+    overflow: hidden;
+    position: relative;
+}
+
+#qrs a:hover::after{
+    opacity: 1;
+    top: 0;
+}
+
+#qrs a::after{
+    align-items: center;
+    background-color: #0072ffee;
+    color: #fff;
+    content: 'click to visit!';
+    display: flex;
+    font-size: calc(24px * var(--scale));
+    font-weight: 700;
+    height: 100%;
+    justify-content: center;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    transition: all .3s ease-in-out;
+    width: 100%;
+    z-index: 10;
+}
+
+#qrs a:last-child img{
+    padding: calc(10px * var(--scale));
+}
+
+#qrs img{
+    aspect-ratio: 1/1;
+    height: calc(160px * var(--scale));
+    width: calc(160px * var(--scale));
+}
+
+#privacy .container{
+    padding: calc(120px * var(--scale)) calc(180px * var(--scale));
+    width: 100%;
+}
