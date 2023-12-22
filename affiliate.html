@@ -4,6 +4,9 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Thanks for using Extension by GetProjects</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 		<script
 			src="https://code.jquery.com/jquery-3.7.1.min.js"
 			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
@@ -14,9 +17,7 @@
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
-			font-family: system-ui, -apple-system, BlinkMacSystemFont,
-				"Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-				"Helvetica Neue", sans-serif;
+			font-family: outfit;
 		}
 		a, a:visited, a:active{
 			color: inherit;
@@ -45,7 +46,7 @@
         #donation span {
             font-size: calc(20px * var(--scale));
         }
-		#qrs {
+		#qrs, #qrs2 {
 			align-items: center;
             background: #0003;
             border-radius: calc(20px * var(--scale));
@@ -55,7 +56,16 @@
 			margin: calc(10px * var(--scale)) 0;
             padding: calc(10px * var(--scale));
 		}
-		#qrs img {
+		#qrs2{
+			display: none;
+			flex-direction: column;
+			position: fixed;
+			bottom: calc(30px * var(--scale));
+			left: calc(30px * var(--scale));
+			width: fit-content;
+			z-index: 1;
+		}
+		#qrs img, #qrs2 img {
             background: #000;
             border-radius: calc(10px * var(--scale));
 			height: calc(160px * var(--scale));
@@ -63,7 +73,7 @@
 			width: calc(160px * var(--scale));
 		}
         main{
-            padding: calc(60px * var(--scale)) calc(240px * var(--scale));
+            padding: calc(40px * var(--scale)) calc(240px * var(--scale));
 			position: relative;
         }
 		#users{
@@ -74,10 +84,10 @@
 			height: calc(64px * var(--scale));
 			justify-content: center;
 			gap: calc(160px * var(--scale));
-			left: 0;
-			position: absolute;
+			/* left: 0; */
+			/* position: absolute; */
 			overflow: hidden;
-			top: 0;
+			/* top: 0; */
 			width: 100%;
 		}
 		#users div{
@@ -93,7 +103,6 @@
 		#users div p{
 			align-items: center;
 			background: #111;
-			/* animation: scroll 2s linear infinite; */
 			display: flex;
 			height: calc(64px * var(--scale));
 			justify-content: center;
@@ -101,61 +110,53 @@
 			text-align: center;
 			width: calc(240px * var(--scale));
 		}
-		@keyframes scroll {
-			0% {
-				transform: translateX(-200%);
-			}
-			100% {
-				transform: translateX(200%);
-			}
-		}
         main h2{
             font-size: calc(36px * var(--scale));
             font-weight: bold;
-            padding: 0 0 calc(10px * var(--scale)) 0;
+			padding-top: calc(20px * var(--scale));
         }
         main h3{
-            font-size: calc(28px * var(--scale));
-            font-weight: normal;
-            padding: 0 0 calc(10px * var(--scale)) 0;
+            font-size: calc(24px * var(--scale));
+            font-weight: 500;
+			padding: calc(10px * var(--scale)) 0;
         }
-        main h4{
+        main h4, summary{
             font-size: calc(28px * var(--scale));
-            font-weight: bold;
-            padding: 0 0 calc(20px * var(--scale)) 0;
+            font-weight: 500;
+			padding: 0 0 calc(10px * var(--scale)) 0;
         }
-        main > div > div{
-            background: #f3f3f3;
-            border-radius: calc(10px * var(--scale));
+		main h4:not(:first-child), summary:not(:first-child){
+			padding: calc(20px * var(--scale)) 0 calc(10px * var(--scale)) 0;
+		}
+		main p{
+			font-size: calc(20px * var(--scale));
+			font-weight: normal;
+			text-align: justify;
+		}
+        main div{
+            background: #f1f1f3;
+            border-radius: calc(20px * var(--scale));
             padding: calc(60px * var(--scale)) calc(80px * var(--scale));
             margin: calc(20px * var(--scale)) 0;
         }
+		main div p{
+			font-size: calc(22px * var(--scale));
+			font-weight: 500;
+			text-align: justify;
+			padding: 0 0 calc(5px * var(--scale)) 0;
+		}
+		main div p:not(:first-child){
+			padding: calc(10px * var(--scale)) 0 calc(5px * var(--scale)) 0;
+		}
 		main iframe{
 			aspect-ratio: 16/9;
 			width: 100%;
 		}
-        main ol{
+        main div ol{
             font-size: calc(20px * var(--scale));
-            font-weight: normal;
+            font-weight: 300;
+			margin-left: calc(22px * var(--scale));
         }
-        main p{
-            font-size: calc(22px * var(--scale));
-            padding-bottom: calc(20px * var(--scale));
-        }
-		#ad{
-			background: #fff;
-			display: none;
-			position: fixed;
-			top: 0;
-			right: 0;
-		}
-		#close{
-			background: #0072ff;
-			color: #fff;
-			cursor: pointer;
-			margin-left: auto;
-			padding: calc(10px * var(--scale)) calc(20px * var(--scale));
-		}
 	</style>
 	<body>
 		<div id="donation">
@@ -169,7 +170,8 @@
 					rel="noopener noreferrer">
 					<img
 						src="https://tmtechnomania.github.io/Privacy-RSA/img/paypal_qr.png"
-						alt="" />
+						alt="Paypal"
+						loading="lazy" />
 				</a>
 				<a
 					href="https://www.buymeacoffee.com/getprojects"
@@ -177,121 +179,260 @@
 					rel="noopener noreferrer">
 					<img
 						src="https://tmtechnomania.github.io/Privacy-RSA/img/bmc_qr.png"
-						alt="" />
+						alt="Buy Me A Coffee"
+						loading="lazy" />
 				</a>
                 <a href="https://ko-fi.com/getprojects" target="_blank" rel="noopener noreferrer">
                     <img
                         src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
-                        alt="" />
+                        alt="Kofi"
+						loading="lazy" />
                 </a>
 			</div>
 			<h2><a href="https://chromewebstore.google.com/detail/eanofdhdfbcalhflpbdipkjjkoimeeod/reviews/my-review" target="_blank" rel="noopener noreferrer">⚡ Following users consider updating review ⚡</a></h2>
 		</div>
-        <main>
-			<div id="users">
-				<div id="set1">
-					<p>hunntik (5)</p>
-					<p>Wensley Oliveira (5)</p>
-					<p>Henrique Santana (5)</p>
-					<p>Maks B (mxksxm) (5)</p>
-					<p>Lucas De Oliveira (4)</p>
-					<p>MengLuo RJ (4)</p>
-					<p>Djinn Emrys (4)</p>
-					<p>Soumik Bose (4)</p>
-					<p>Nicholas Williams (4)</p>
-					<p>Cris Dcruz (4)</p>
-					<p>gentle man (4)</p>
-					<p>KIREN RAJ (4)</p>
-					<p>Nicole C (4)</p>
-				</div>
-				<div id="set2">
-					<p>El Canal de Mabus (4)</p>
-					<p>J S (3)</p>
-					<p>Dhruv Varshney (3)</p>
-					<p>Aman Aditya Pandey (3)</p>
-					<p>John Brown (3)</p>
-					<p>Bruce (3)</p>
-					<p>Steve Bluck (3)</p>
-					<p>Cres Zuriel Goring (3)</p>
-					<p>Eric Silva (3)</p>
-					<p>Luis Bravo (3)</p>
-					<p>Xbox Mik29 (2)</p>
-					<p>Chance Kennedy (2)</p>
-					<p>Mc Melon (1)</p>
-				</div>
-				<div id="set3">
-					<p>Eric MK (1)</p>
-					<p>jianam green (1)</p>
-					<p>Giuseppe Valletta (1)</p>
-					<p>Srush (1)</p>
-					<p>Gumpreeeng Time wisang (1)</p>
-					<p>WMN1206 (1)</p>
-					<p>varun palepu (1)</p>
-					<p>Daniele Passegua (1)</p>
-					<p>OoWah (1)</p>
-					<p>Mohammad Rafi (1)</p>
-					<p>Hong Quan (1)</p>
-					<p>suco Carozac (1)</p>
-					<p>Ken L (1)</p>
-				</div>
+		<div id="users">
+			<div id="set1">
+				<p>hunntik (5)</p>
+				<p>Wensley Oliveira (5)</p>
+				<p>Henrique Santana (5)</p>
+				<p>Maks B (mxksxm) (5)</p>
+				<p>Lucas De Oliveira (4)</p>
+				<p>MengLuo RJ (4)</p>
+				<p>Djinn Emrys (4)</p>
+				<p>Soumik Bose (4)</p>
+				<p>Nicholas Williams (4)</p>
+				<p>Cris Dcruz (4)</p>
+				<p>gentle man (4)</p>
+				<p>KIREN RAJ (4)</p>
+				<p>Nicole C (4)</p>
 			</div>
-            <h2>Announcements & Updates:</h2>
-            <h3><strong>v1.3.7</strong> has been launched for everyone</h3>
+			<div id="set2">
+				<p>El Canal de Mabus (4)</p>
+				<p>J S (3)</p>
+				<p>Dhruv Varshney (3)</p>
+				<p>Aman Aditya Pandey (3)</p>
+				<p>John Brown (3)</p>
+				<p>Bruce (3)</p>
+				<p>Steve Bluck (3)</p>
+				<p>Cres Zuriel Goring (3)</p>
+				<p>Eric Silva (3)</p>
+				<p>Luis Bravo (3)</p>
+				<p>Xbox Mik29 (2)</p>
+				<p>Chance Kennedy (2)</p>
+				<p>Mc Melon (1)</p>
+			</div>
+			<div id="set3">
+				<p>Eric MK (1)</p>
+				<p>jianam green (1)</p>
+				<p>Giuseppe Valletta (1)</p>
+				<p>Srush (1)</p>
+				<p>Gumpreeeng Time wisang (1)</p>
+				<p>WMN1206 (1)</p>
+				<p>varun palepu (1)</p>
+				<p>Daniele Passegua (1)</p>
+				<p>OoWah (1)</p>
+				<p>Mohammad Rafi (1)</p>
+				<p>Hong Quan (1)</p>
+				<p>suco Carozac (1)</p>
+				<p>Ken L (1)</p>
+			</div>
+		</div>
+        <main>
+			<div id="qrs2">
+				<a
+					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/paypal_qr.png"
+						alt="Paypal"
+						loading="lazy" />
+				</a>
+				<a
+					href="https://www.buymeacoffee.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/bmc_qr.png"
+						alt="Buy Me A Coffee"
+						loading="lazy" />
+				</a>
+                <a href="https://ko-fi.com/getprojects" target="_blank" rel="noopener noreferrer">
+                    <img
+                        src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
+                        alt="Kofi"
+						loading="lazy" />
+                </a>
+			</div>
+            <h2>Announcements & Updates (v1.3.7):</h2>
+            <h3>v1.3.7 has been launched for everyone</h3>
             <p>This update introduces a brand-new feature allowing you to toggle any tab between mobile and your regular desktop, enabling the use of a simulated mobile device for other websites. This functionality is especially useful for developers, providing a list of over 60+ different devices to choose from. It aids in debugging websites and testing mobile compatibility and responsiveness.</p>
-            <h2>Still confused how to use the extension?</h2>
+
+            <h2>Still confused how to install and use the extension?</h2>
             <h3>Here is a step by step guide for you.</h3>
+			<iframe src="https://www.youtube.com/embed/5CU1gvnsaEg?si=88Gj0Cf5gxrLIuhc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             <div id="howto">
-				<iframe src="https://www.youtube.com/embed/5CU1gvnsaEg?si=88Gj0Cf5gxrLIuhc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                <div class="search">
-                    <h4>Instant Search</h4>
-                    <ol>
-                        <li>Click on the Rewards Search Automator's icon available in the right side of the address bar of your browser. If not, click on the extension icon that looks like a piece of puzzle.</li>
-                        <li>Then, scroll to the Rewards Search Automator and there will be a pin icon in the right that either looks like a pin or a closed eye, click on it to pin the extension.</li>
-                        <li>Launch the Rewards Search Automator</li>
-                        <li>Now, based on your region, you must know how many points are given per search, if not, choose the predefined search button from the third section just above the footer.</li>
-                        <li>Set the minimum and maximum delay somewhere between 10-12s and 15-20s respectively.</li>
-                        <li>Click on the start button and let the extension do the work for you.</li>
-                    </ol>
-                </div>
-                <div class="schedule">
-                    <h4>Schedule Search</h4>
-                    <ol>
-                        <li>Click on the Rewards Search Automator's icon available in the right side of the address bar of your browser. If not, click on the extension icon that looks like a piece of puzzle.</li>
-                        <li>Then, scroll to the Rewards Search Automator and there will be a pin icon in the right that either looks like a pin or a closed eye, click on it to pin the extension.</li>
-                        <li>Launch the Rewards Search Automator</li>
-                        <li>Click on the Schedule tab.</li>
-                        <li>Now, based on your region, you must know how many points are given per search, if not, choose the predefined search button from the third section just above the footer.</li>
-                        <li>Choose "Startup", if you want the extension perform the searches automatically everytime you open your browser.</li>
-                        <li>Choose "After 5 Minutes", if you want the extension perform searches every 5 to 7.5 minutes. You need to click on the "Start now - Every 5 Minutes" button in order to use this from the current session.</li>
-                        <li>Choose "After 15 Minutes", if you want the extension perform searches every 15 to 20 minutes. You need to click on the "Start now - Every 15 Minutes" button in order to use this from the current session.</li>
-                        <li>Set the minimum and maximum delay between each search somewhere between 10-12s and 15-20s respectively.</li>
-                        <li>Click on the schedule button and set the time when you want to start the search.</li>
-                        <li>Click on the start button and let the extension do the work for you.</li>
-                    </ol>
-                </div>
+				<!-- <div id="install"> -->
+					<h4>Installation and Setup:</h4>
+					<strong><p>
+						Step 1: Install the Extension
+					</p></strong>
+					<ol>
+						<li>Visit the Chrome Web Store.</li>
+						<li>Search for "Rewards Search Automator."</li>
+						<li>Click on "Add to Chrome" and confirm the installation.</li>
+					</ol>
+					<strong><p>
+						Step 2: Accessing the Extension
+					</p></strong>
+					<ol>
+						<li>Locate the extension icon in your browser toolbar.</li>
+						<li>Click on the icon to open Rewards Search Automator.</li>
+					</ol>
+					<h4>Performing Searches (Search Tab)</h4>
+					<strong><p>Step 1: Manual Entry</p></strong>
+					<ol>
+						<li>Navigate to the "Search" tab.</li>
+						<li>Manually enter the number of desktop and mobile searches.</li>
+						<li>Specify the minimum and maximum delay (in seconds) between each search.</li>
+						<li>Click "Search" to perform searches.</li>
+					</ol>
+					<strong><p>Step 2: Predefined Search Buttons</p></strong>
+					<ol>
+						<li>Choose one of the four predefined search buttons to quickly set search parameters.</li>
+						<li>Specify the minimum and maximum delay (in seconds) between each search.</li>
+						<li>Click "Search" to perform searches.</li>
+					</ol>
+
+					<h4>Scheduling Searches (Schedule Tab):</h4>
+					<strong><p>Step 1: Accessing the Schedule Tab</p></strong>
+					<ol>
+						<li>Switch to the "Schedule" tab to set up automated search schedules.</li>
+						<li>Manually enter the number of desktop and mobile searches.</li>
+						<li>Specify the minimum and maximum delay (in seconds) between each search.</li>
+						<li>Choose from four predefined schedules: Never, Startup, Every 5 Minutes, and Every 15 Minutes.</li>
+						<strong><p>NOTE: Understand that "Every 5 Minutes" includes a random delay of 5-7.5 minutes to prevent automation detection. Similarly, "Every 15 Minutes" includes a random delay of 15-20 minutes.</p></strong>
+					</ol>
+					<h4>Footer Features:</h4>
+					<p>Important Links:</p>
+					<ol><li>Access important links in the footer for additional resources or support.</li></ol>
+					<p>Device Toggle Mode:</p>
+					<ol><li>Use the toggle switch to enable or disable simulation mode.</li>
+					<li>Simulation mode helps users test functionality without actual searches.</li></ol>
+					<p>Mobile Device Name:</p>
+					<ol>
+						<li>View the allotted mobile device name.</li>
+						<li>Click on it to switch to another mobile device name.</li>
+					</ol>
+				<!-- </div> -->
             </div>
             <h2>Facing issues in earning points?</h2>
             <h3>Here is a troubleshooting guide for you.</h3>
             <div id="troubleshoot">
-                <div class="search">
-                    <h4>Common Troubleshooting methods:</h4>
-                    <ol>
-                        <li>Schedule searches are not working as expected? Try checking if your browser is allowed to run in background or any setting is allowing extensions to run in the background even when the app is closed. Close your browser well, so that the startup trigger help you with automated schedule searches!</li>
-                        <li>Pupop is not lauching, or opening install tab instead? You need to agree with the Terms & Conditions of the extension in order to use it.</li>
-                        <li>Searches are not performed with Instant Search option? You can try changing the values of the Desktop and Mobile searches or try reinstalling the extension to remove any corrupt storage.</li>
-                        <li>Searches performed but points not collected? Consider checking the Microsoft's Policy in your region, or perform some manual search without extension, or sometimes you may need to perform some extra searches in order to start collecting points.</li>
-                        <li>Mobile searches performed but not rewarded? Try changing your emulation device by clicking on the mobile name in the bottom right of popup.</li>
-                        <li>Less or no points rewarded even after performing manual searches? You must check if there is a time limit in your region for obtaining a fix amount of points.</li>
-                        <li>Closed the search tab but the stop button is still showing in the popup? You should not interupt any extension process, you can stop the searches using stop button in the popup anytime.</li>
-                        <li>Mobile simulation is not working right? Try changing your mobile device by clicking on the mobile name in bottom right of the popup, Also, you may need to follow some speed-up tricks because the simulation might not start as expected on slower devices.</li>
-                    </ol>
-                </div>
+                <!-- <div> -->
+					<details>
+						<summary>Points Not Collected After Searches</summary>
+						<ol>
+							<li>
+								<p>Adjust Delay Settings:</p>
+								<ul>
+									<li>Change the minimum delay to 10-12 seconds and the maximum to 15-18 seconds.</li>
+									<li>Perform searches to see if points are collected.</li>
+								</ul>
+							</li>
+							<li>
+								<p>Check Microsoft Points Availability:</p>
+								<ul>
+									<li>Verify if Microsoft has slowed down points collection in your region.</li>
+									<li>If yes, wait for 15 minutes before attempting searches again.</li>
+								</ul>
+							</li>
+							<li>
+								<p>Mobile Search Issues:</p>
+								<ul>
+									<li>If mobile searches are not yielding points, change the mobile simulation device from the popup.</li>
+									<li>Retry mobile searches.</li>
+								</ul>
+							</li>
+							<li>
+								<p>Mobile Search Not Counting:</p>
+								<ul>
+									<li>If mobile searches still don't count, run desktop searches after setting mobile searches to 0.</li>
+									<li>Refer to the "Searching Tab" for instructions on inspecting the tab and simulating iPhone 12.</li>
+								</ul>
+							</li>
+						</ol>
+					</details>
+					<details>
+						<summary>Popup Not Launching or Opening Install Page</summary>
+						<ol>
+							<li>
+								<p>Accept Terms and Conditions:</p>
+								<ul>
+									<li>If the popup is not launching or the install page is not opening, ensure you have agreed to the terms and conditions on the install page.</li>
+								</ul>
+							</li>
+							<li>
+								<p>Reinstall Extension:</p>
+								<ul>
+									<li>Reinstall the extension if the popup issues persist, as storage might be corrupted.</li>
+								</ul>
+							</li>
+						</ol>
+					</details>
+					<details>
+							<summary>Points Not Collected on First Search</summary>
+							<ol>
+								<li>
+									<p>Explanation:</p>
+									<ul>
+										<li>Microsoft requires two additional searches in the beginning to start earning points for both desktop and mobile.</li>
+									</ul>
+								</li>
+							</ol>
+					</details>
+					<details>
+						<summary>Searches Are Not Performed</summary>
+						<ol>
+							<li>
+								<p>Reinstall or Change Number of Searches:</p>
+								<ul>
+									<li>Try reinstalling the extension.</li>
+									<li>If searches are still not performed, consider changing the number of searches.</li>
+								</ul>
+							</li>
+						</ol>
+					</details>
+					<details>
+						<summary>Schedule Not Working</summary>
+						<ol>
+							<li>
+								<p>Browser Settings:</p>
+								<ul>
+									<li>Check and disable your browser from running in the background.</li>
+									<li>Disable power-saving mode in your browser.</li>
+								</ul>
+							</li>
+							<li>
+								<p>Confirmation for Scheduled Searches:</p>
+								<ul>
+									<li>Confirm if you clicked on "Start Now" in the case of every 5 minutes and 15 minutes schedules to initiate searches in the same session.</li>
+								</ul>
+							</li>
+						</ol>
+					</details>
+                <!-- </div> -->
             </div>
             <h2>Still facing issues?</h2>
             <p>Feel free to contact me <a href="https://www.instagram.com/getprojectstech/" target="_blank" rel="noopener noreferrer">@getprojectstech</a></p>
         </main>
 	</body>
 	<script>
+		const width = screen.width;
+		const scale = width / 1920;
+		console.log(scale);
+		$("body").css("--scale", scale);
 		$(document).ready(function () {
 			const width = screen.width;
 			const scale = width / 1920;
@@ -316,6 +457,18 @@
 					users.scrollTop(0);
 				}
 			}, 2000);
+			const donate = $("#donation");
+			window.addEventListener("scroll", () => {
+				const donateHeight = donate.height();
+				const scrollPosition = window.scrollY || window.pageYOffset;
+				if (scrollPosition > donateHeight) {
+					$("#qrs2").css("display", "flex");
+					console.log("#donation is now invisible");
+				} else {
+					$("#qrs2").css("display", "none");
+					console.log("#donation is now visible");
+				}
+			});
 		});
 	</script>
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="getprojects" data-description="Support me on Buy me a coffee!" data-message="" data-color="#0072ff" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
