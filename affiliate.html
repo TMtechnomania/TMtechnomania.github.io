@@ -512,7 +512,7 @@
 			const set3 = $("#set3");
 			let currentItem = 1;
 			setInterval(() => {
-				const scrollPosition = (currentItem - 1) * 64;
+				const scrollPosition = (currentItem - 1) * 64 * scale;
 				users.animate(
 					{
 						scrollTop: scrollPosition,
