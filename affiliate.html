@@ -4,9 +4,11 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Thanks for using Extension by GetProjects</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap"
+			rel="stylesheet" />
 		<script
 			src="https://code.jquery.com/jquery-3.7.1.min.js"
 			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
@@ -19,23 +21,28 @@
 			box-sizing: border-box;
 			font-family: outfit;
 		}
-		a, a:visited, a:active{
+		a,
+		a:visited,
+		a:active {
 			color: #0072ff;
 			text-decoration: none;
 		}
 		#donation {
 			align-items: center;
-            background: #0072ff;
+			background: #0072ff;
 			color: #fff;
 			display: flex;
 			justify-content: center;
 			flex-direction: column;
 			height: fit-content;
-            padding: calc(30px * var(--scale)) 0;
-            text-shadow: 0 calc(2px * var(--scale)) calc(2px * var(--scale)) #000;
+			padding: calc(30px * var(--scale)) 0;
+			text-shadow: 0 calc(2px * var(--scale)) calc(2px * var(--scale))
+				#000;
 			width: 100%;
 		}
-		#donation a, #donation a:visited, #donation a:active{
+		#donation a,
+		#donation a:visited,
+		#donation a:active {
 			color: #fff;
 			text-decoration: none;
 		}
@@ -47,20 +54,21 @@
 			font-weight: normal;
 			padding: 0 0 calc(10px * var(--scale)) 0;
 		}
-        #donation span {
-            font-size: calc(20px * var(--scale));
-        }
-		#qrs, #qrs2 {
+		#donation span {
+			font-size: calc(20px * var(--scale));
+		}
+		#qrs,
+		#qrs2 {
 			align-items: center;
-            background: #0003;
-            border-radius: calc(20px * var(--scale));
+			background: #0003;
+			border-radius: calc(20px * var(--scale));
 			display: flex;
 			gap: calc(10px * var(--scale));
 			justify-content: space-between;
 			margin: calc(10px * var(--scale)) 0;
-            padding: calc(10px * var(--scale));
+			padding: calc(10px * var(--scale));
 		}
-		#qrs2{
+		#qrs2 {
 			display: none;
 			flex-direction: column;
 			position: fixed;
@@ -69,18 +77,19 @@
 			width: fit-content;
 			z-index: 1;
 		}
-		#qrs img, #qrs2 img {
-            background: #000;
-            border-radius: calc(10px * var(--scale));
+		#qrs img,
+		#qrs2 img {
+			background: #000;
+			border-radius: calc(10px * var(--scale));
 			height: calc(160px * var(--scale));
-            padding: calc(6px * var(--scale));
+			padding: calc(6px * var(--scale));
 			width: calc(160px * var(--scale));
 		}
-        main{
-            padding: calc(40px * var(--scale)) calc(240px * var(--scale));
+		main {
+			padding: calc(40px * var(--scale)) calc(240px * var(--scale));
 			position: relative;
-        }
-		#users{
+		}
+		#users {
 			align-items: flex-start;
 			background: #111;
 			color: #fff;
@@ -94,7 +103,7 @@
 			/* top: 0; */
 			width: 100%;
 		}
-		#users div{
+		#users div {
 			align-items: center;
 			background: #111;
 			display: flex;
@@ -104,7 +113,7 @@
 			margin: 0 !important;
 			width: calc(240px * var(--scale));
 		}
-		#users div p{
+		#users div p {
 			align-items: center;
 			background: #111;
 			display: flex;
@@ -115,60 +124,62 @@
 			text-align: center;
 			width: calc(240px * var(--scale));
 		}
-        main h2{
-            font-size: calc(36px * var(--scale));
-            font-weight: bold;
+		main h2 {
+			font-size: calc(36px * var(--scale));
+			font-weight: bold;
 			padding-top: calc(20px * var(--scale));
-        }
-        main h3{
-            font-size: calc(24px * var(--scale));
-            font-weight: 500;
+		}
+		main h3 {
+			font-size: calc(24px * var(--scale));
+			font-weight: 500;
 			padding: calc(10px * var(--scale)) 0;
-        }
-        main h4, summary{
-            font-size: calc(28px * var(--scale));
-            font-weight: 500;
+		}
+		main h4,
+		summary {
+			font-size: calc(28px * var(--scale));
+			font-weight: 500;
 			padding: 0 0 calc(10px * var(--scale)) 0;
-        }
-		main h4:not(:first-child), summary:not(:first-child){
+		}
+		main h4:not(:first-child),
+		summary:not(:first-child) {
 			padding: calc(20px * var(--scale)) 0 calc(10px * var(--scale)) 0;
 		}
-		main p{
+		main p {
 			font-size: calc(20px * var(--scale));
 			font-weight: normal;
 			text-align: justify;
 		}
-        main div{
-            background: #f1f1f3;
-            border-radius: calc(20px * var(--scale));
-            padding: calc(60px * var(--scale)) calc(80px * var(--scale));
-            margin: calc(20px * var(--scale)) 0;
-        }
-		main div p{
+		main div {
+			background: #f1f1f3;
+			border-radius: calc(20px * var(--scale));
+			padding: calc(60px * var(--scale)) calc(80px * var(--scale));
+			margin: calc(20px * var(--scale)) 0;
+		}
+		main div p {
 			font-size: calc(22px * var(--scale));
 			font-weight: 500;
 			text-align: justify;
 			padding: 0 0 calc(5px * var(--scale)) 0;
 		}
-		main div p:not(:first-child){
+		main div p:not(:first-child) {
 			padding: calc(10px * var(--scale)) 0 calc(5px * var(--scale)) 0;
 		}
-		main iframe{
+		main iframe {
 			aspect-ratio: 16/9;
 			display: inline;
 			width: 49.5%;
 		}
-        main div ol{
-            font-size: calc(20px * var(--scale));
-            font-weight: 300;
+		main div ol {
+			font-size: calc(20px * var(--scale));
+			font-weight: 300;
 			margin-left: calc(22px * var(--scale));
-        }
+		}
 	</style>
 	<body>
 		<div id="donation">
 			<h1>Happy with the extension!</h1>
 			<h2>Fuel the extension to keep it running!!</h2>
-            <span>Scan / Click to visit:</span>
+			<span>Scan / Click to visit:</span>
 			<div id="qrs">
 				<a
 					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
@@ -188,24 +199,37 @@
 						alt="Buy Me A Coffee"
 						loading="lazy" />
 				</a>
-                <a href="https://ko-fi.com/getprojects" target="_blank" rel="noopener noreferrer">
-                    <img
-                        src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
-                        alt="Kofi"
+				<a
+					href="https://ko-fi.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
+						alt="Kofi"
 						loading="lazy" />
-                </a>
+				</a>
 			</div>
-			<script type="text/javascript">
-				atOptions = {
-					'key' : 'e8105a7670134344bc98b1ea9766961c',
-					'format' : 'iframe',
-					'height' : 60,
-					'width' : 468,
-					'params' : {}
-				};
-				document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
+			<script
+				async
+				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+				crossorigin="anonymous"></script>
+			<!-- rsa -->
+			<ins
+				class="adsbygoogle"
+				style="display: inline-block; width: 728px; height: 90px"
+				data-ad-client="ca-pub-2108654491305511"
+				data-ad-slot="8191899919"></ins>
+			<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
 			</script>
-			<h2><a href="https://chromewebstore.google.com/detail/eanofdhdfbcalhflpbdipkjjkoimeeod/reviews/my-review" target="_blank" rel="noopener noreferrer">⚡ Following users consider updating review ⚡</a></h2>
+			<h2>
+				<a
+					href="https://chromewebstore.google.com/detail/eanofdhdfbcalhflpbdipkjjkoimeeod/reviews/my-review"
+					target="_blank"
+					rel="noopener noreferrer"
+					>⚡ Following users consider updating review ⚡</a
+				>
+			</h2>
 		</div>
 		<div id="users">
 			<div id="set1">
@@ -254,7 +278,7 @@
 				<p>Ken L (1)</p>
 			</div>
 		</div>
-        <main>
+		<main>
 			<div id="qrs2">
 				<a
 					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
@@ -274,287 +298,507 @@
 						alt="Buy Me A Coffee"
 						loading="lazy" />
 				</a>
-                <a href="https://ko-fi.com/getprojects" target="_blank" rel="noopener noreferrer">
-                    <img
-                        src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
-                        alt="Kofi"
+				<a
+					href="https://ko-fi.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
+						alt="Kofi"
 						loading="lazy" />
-                </a>
+				</a>
 			</div>
-            <h2>Announcements & Updates (v1.3.8): <a href="https://tmtechnomania.github.io/Bing-Search-Automator-Mobile-Edition/" target="_blank" rel="noopener noreferrer">Automate Your Mobile Searches</a></h2>
-			<h3>Mobile searches on desktop has been blocked by MS, Use this website on your phone to automate your searches: <a href="https://tmtechnomania.github.io/Bing-Search-Automator-Mobile-Edition/" target="_blank" rel="noopener noreferrer">Automate Your Mobile Searches</a></h3>
-            <p>v1.3.8 has been launched for everyone</p>
-            <p>This update introduces a brand-new feature allowing you to toggle any tab between mobile and your regular desktop, enabling the use of a simulated mobile device for other websites. This functionality is especially useful for developers, providing a list of over 60+ different devices to choose from. It aids in debugging websites and testing mobile compatibility and responsiveness.</p>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-
-            <h2>Still confused how to install and use the extension?</h2>
-            <h3>Here is a step by step guide for you.</h3>
-			<iframe src="https://www.youtube.com/embed/5CU1gvnsaEg?si=88Gj0Cf5gxrLIuhc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-			<iframe src="https://www.youtube.com/embed/We1iXIlTuMo?si=2x_140udMgv5X2u2" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-            <div id="howto">
+			<h2>
+				Announcements & Updates (v1.3.8):
+				<a
+					href="https://tmtechnomania.github.io/Bing-Search-Automator-Mobile-Edition/"
+					target="_blank"
+					rel="noopener noreferrer"
+					>Automate Your Mobile Searches</a
+				>
+			</h2>
+			<h3>
+				Mobile searches on desktop has been blocked by MS, Use this
+				website on your phone to automate your searches:
+				<a
+					href="https://tmtechnomania.github.io/Bing-Search-Automator-Mobile-Edition/"
+					target="_blank"
+					rel="noopener noreferrer"
+					>Automate Your Mobile Searches</a
+				>
+			</h3>
+			<script
+				async
+				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+				crossorigin="anonymous"></script>
+			<!-- rsa -->
+			<ins
+				class="adsbygoogle"
+				style="display: inline-block; width: 728px; height: 90px"
+				data-ad-client="ca-pub-2108654491305511"
+				data-ad-slot="8191899919"></ins>
+			<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+			<p>v1.3.8 has been launched for everyone</p>
+			<p>
+				This update introduces a brand-new feature allowing you to
+				toggle any tab between mobile and your regular desktop, enabling
+				the use of a simulated mobile device for other websites. This
+				functionality is especially useful for developers, providing a
+				list of over 60+ different devices to choose from. It aids in
+				debugging websites and testing mobile compatibility and
+				responsiveness.
+			</p>
+			<h2>Still confused how to install and use the extension?</h2>
+			<h3>Here is a step by step guide for you.</h3>
+			<iframe
+				src="https://www.youtube.com/embed/5CU1gvnsaEg?si=88Gj0Cf5gxrLIuhc"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<iframe
+				src="https://www.youtube.com/embed/We1iXIlTuMo?si=2x_140udMgv5X2u2"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<script
+				async
+				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+				crossorigin="anonymous"></script>
+			<!-- rsa -->
+			<ins
+				class="adsbygoogle"
+				style="display: inline-block; width: 728px; height: 90px"
+				data-ad-client="ca-pub-2108654491305511"
+				data-ad-slot="8191899919"></ins>
+			<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+			<div id="howto">
 				<!-- <div id="install"> -->
-					<h4>Installation and Setup:</h4>
-					<strong><p>
-						Step 1: Install the Extension
-					</p></strong>
-					<ol>
-						<li>Visit the Chrome Web Store.</li>
-						<li>Search for "Rewards Search Automator."</li>
-						<li>Click on "Add to Chrome" and confirm the installation.</li>
-					</ol>
-					<strong><p>
-						Step 2: Accessing the Extension
-					</p></strong>
-					<ol>
-						<li>Locate the extension icon in your browser toolbar.</li>
-						<li>Click on the icon to open Rewards Search Automator.</li>
-					</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-					<h4>Performing Searches (Search Tab)</h4>
-					<strong><p>Step 1: Manual Entry</p></strong>
-					<ol>
-						<li>Navigate to the "Search" tab.</li>
-						<li>Manually enter the number of desktop and mobile searches.</li>
-						<li>Specify the minimum and maximum delay (in seconds) between each search.</li>
-						<li>Click "Search" to perform searches.</li>
-					</ol>
-					<strong><p>Step 2: Predefined Search Buttons</p></strong>
-					<ol>
-						<li>Choose one of the four predefined search buttons to quickly set search parameters.</li>
-						<li>Specify the minimum and maximum delay (in seconds) between each search.</li>
-						<li>Click "Search" to perform searches.</li>
-					</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
+				<h4>Installation and Setup:</h4>
+				<strong><p>Step 1: Install the Extension</p></strong>
+				<ol>
+					<li>Visit the Chrome Web Store.</li>
+					<li>Search for "Rewards Search Automator."</li>
+					<li>
+						Click on "Add to Chrome" and confirm the installation.
+					</li>
+				</ol>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+					crossorigin="anonymous"></script>
+				<!-- rsa -->
+				<ins
+					class="adsbygoogle"
+					style="display: inline-block; width: 728px; height: 90px"
+					data-ad-client="ca-pub-2108654491305511"
+					data-ad-slot="8191899919"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+				<strong><p>Step 2: Accessing the Extension</p></strong>
+				<ol>
+					<li>Locate the extension icon in your browser toolbar.</li>
+					<li>Click on the icon to open Rewards Search Automator.</li>
+				</ol>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+					crossorigin="anonymous"></script>
+				<!-- rsa -->
+				<ins
+					class="adsbygoogle"
+					style="display: inline-block; width: 728px; height: 90px"
+					data-ad-client="ca-pub-2108654491305511"
+					data-ad-slot="8191899919"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+				<h4>Performing Searches (Search Tab)</h4>
+				<strong><p>Step 1: Manual Entry</p></strong>
+				<ol>
+					<li>Navigate to the "Search" tab.</li>
+					<li>
+						Manually enter the number of desktop and mobile
+						searches.
+					</li>
+					<li>
+						Specify the minimum and maximum delay (in seconds)
+						between each search.
+					</li>
+					<li>Click "Search" to perform searches.</li>
+				</ol>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+					crossorigin="anonymous"></script>
+				<!-- rsa -->
+				<ins
+					class="adsbygoogle"
+					style="display: inline-block; width: 728px; height: 90px"
+					data-ad-client="ca-pub-2108654491305511"
+					data-ad-slot="8191899919"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+				<strong><p>Step 2: Predefined Search Buttons</p></strong>
+				<ol>
+					<li>
+						Choose one of the four predefined search buttons to
+						quickly set search parameters.
+					</li>
+					<li>
+						Specify the minimum and maximum delay (in seconds)
+						between each search.
+					</li>
+					<li>Click "Search" to perform searches.</li>
+				</ol>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+					crossorigin="anonymous"></script>
+				<!-- rsa -->
+				<ins
+					class="adsbygoogle"
+					style="display: inline-block; width: 728px; height: 90px"
+					data-ad-client="ca-pub-2108654491305511"
+					data-ad-slot="8191899919"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+				<h4>Scheduling Searches (Schedule Tab):</h4>
+				<strong><p>Step 1: Accessing the Schedule Tab</p></strong>
+				<ol>
+					<li>
+						Switch to the "Schedule" tab to set up automated search
+						schedules.
+					</li>
+					<li>
+						Manually enter the number of desktop and mobile
+						searches.
+					</li>
+					<li>
+						Specify the minimum and maximum delay (in seconds)
+						between each search.
+					</li>
+					<li>
+						Choose from four predefined schedules: Never, Startup,
+						Every 5 Minutes, and Every 15 Minutes.
+					</li>
+					<strong
+						><p>
+							NOTE: Understand that "Every 5 Minutes" includes a
+							random delay of 5-7.5 minutes to prevent automation
+							detection. Similarly, "Every 15 Minutes" includes a
+							random delay of 15-20 minutes.
+						</p></strong
+					>
+				</ol>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+					crossorigin="anonymous"></script>
+				<!-- rsa -->
+				<ins
+					class="adsbygoogle"
+					style="display: inline-block; width: 728px; height: 90px"
+					data-ad-client="ca-pub-2108654491305511"
+					data-ad-slot="8191899919"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
 
-					<h4>Scheduling Searches (Schedule Tab):</h4>
-					<strong><p>Step 1: Accessing the Schedule Tab</p></strong>
-					<ol>
-						<li>Switch to the "Schedule" tab to set up automated search schedules.</li>
-						<li>Manually enter the number of desktop and mobile searches.</li>
-						<li>Specify the minimum and maximum delay (in seconds) between each search.</li>
-						<li>Choose from four predefined schedules: Never, Startup, Every 5 Minutes, and Every 15 Minutes.</li>
-						<strong><p>NOTE: Understand that "Every 5 Minutes" includes a random delay of 5-7.5 minutes to prevent automation detection. Similarly, "Every 15 Minutes" includes a random delay of 15-20 minutes.</p></strong>
-					</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-					<h4>Footer Features:</h4>
-					<p>Important Links:</p>
-					<ol><li>Access important links in the footer for additional resources or support.</li></ol>
-					<p>Device Toggle Mode:</p>
-					<ol><li>Use the toggle switch to enable or disable simulation mode.</li>
-					<li>Simulation mode helps users test functionality without actual searches.</li></ol>
-					<p>Mobile Device Name:</p>
-					<ol>
-						<li>View the allotted mobile device name.</li>
-						<li>Click on it to switch to another mobile device name.</li>
-					</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
+				<h4>Footer Features:</h4>
+				<p>Important Links:</p>
+				<ol>
+					<li>
+						Access important links in the footer for additional
+						resources or support.
+					</li>
+				</ol>
+				<p>Device Toggle Mode:</p>
+				<ol>
+					<li>
+						Use the toggle switch to enable or disable simulation
+						mode.
+					</li>
+					<li>
+						Simulation mode helps users test functionality without
+						actual searches.
+					</li>
+				</ol>
+				<p>Mobile Device Name:</p>
+				<ol>
+					<li>View the allotted mobile device name.</li>
+					<li>
+						Click on it to switch to another mobile device name.
+					</li>
+				</ol>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+					crossorigin="anonymous"></script>
+				<!-- rsa -->
+				<ins
+					class="adsbygoogle"
+					style="display: inline-block; width: 728px; height: 90px"
+					data-ad-client="ca-pub-2108654491305511"
+					data-ad-slot="8191899919"></ins>
+				<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+				</script>
+
 				<!-- </div> -->
-            </div>
-            <h2>Facing issues in earning points?</h2>
-            <h3>Here is a troubleshooting guide for you.</h3>
-            <div id="troubleshoot">
-                <!-- <div> -->
-					<details>
-						<summary>Points Not Collected After Searches</summary>
-						<ol>
-							<li>
-								<p>Adjust Delay Settings:</p>
-								<ul>
-									<li>Change the minimum delay to 10-12 seconds and the maximum to 15-18 seconds.</li>
-									<li>Perform searches to see if points are collected.</li>
-								</ul>
-							</li>
-							<li>
-								<p>Check Microsoft Points Availability:</p>
-								<ul>
-									<li>Verify if Microsoft has slowed down points collection in your region.</li>
-									<li>If yes, wait for 15 minutes before attempting searches again.</li>
-								</ul>
-							</li>
-							<li>
-								<p>Mobile Search Issues:</p>
-								<ul>
-									<li>If mobile searches are not yielding points, change the mobile simulation device from the popup.</li>
-									<li>Retry mobile searches.</li>
-								</ul>
-							</li>
-							<li>
-								<p>Mobile Search Not Counting:</p>
-								<ul>
-									<li>If mobile searches still don't count, run desktop searches after setting mobile searches to 0.</li>
-									<li>Refer to the "Searching Tab" for instructions on inspecting the tab and simulating iPhone 12.</li>
-								</ul>
-							</li>
-						</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-					</details>
-					<details>
-						<summary>Popup Not Launching or Opening Install Page</summary>
-						<ol>
-							<li>
-								<p>Accept Terms and Conditions:</p>
-								<ul>
-									<li>If the popup is not launching or the install page is not opening, ensure you have agreed to the terms and conditions on the install page.</li>
-								</ul>
-							</li>
-							<li>
-								<p>Reinstall Extension:</p>
-								<ul>
-									<li>Reinstall the extension if the popup issues persist, as storage might be corrupted.</li>
-								</ul>
-							</li>
-						</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-					</details>
-					<details>
-							<summary>Points Not Collected on First Search</summary>
-							<ol>
+			</div>
+			<h2>Facing issues in earning points?</h2>
+			<h3>Here is a troubleshooting guide for you.</h3>
+			<div id="troubleshoot">
+				<!-- <div> -->
+				<details>
+					<summary>Points Not Collected After Searches</summary>
+					<ol>
+						<li>
+							<p>Adjust Delay Settings:</p>
+							<ul>
 								<li>
-									<p>Explanation:</p>
-									<ul>
-										<li>Microsoft requires two additional searches in the beginning to start earning points for both desktop and mobile.</li>
-									</ul>
+									Change the minimum delay to 10-12 seconds
+									and the maximum to 15-18 seconds.
 								</li>
-							</ol>
-							<script type="text/javascript">
-								atOptions = {
-									'key' : 'e8105a7670134344bc98b1ea9766961c',
-									'format' : 'iframe',
-									'height' : 60,
-									'width' : 468,
-									'params' : {}
-								};
-								document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-							</script>
-					</details>
-					<details>
-						<summary>Searches Are Not Performed</summary>
-						<ol>
-							<li>
-								<p>Reinstall or Change Number of Searches:</p>
-								<ul>
-									<li>Try reinstalling the extension.</li>
-									<li>If searches are still not performed, consider changing the number of searches.</li>
-								</ul>
-							</li>
-						</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-					</details>
-					<details>
-						<summary>Schedule Not Working</summary>
-						<ol>
-							<li>
-								<p>Browser Settings:</p>
-								<ul>
-									<li>Check and disable your browser from running in the background.</li>
-									<li>Disable power-saving mode in your browser.</li>
-								</ul>
-							</li>
-							<li>
-								<p>Confirmation for Scheduled Searches:</p>
-								<ul>
-									<li>Confirm if you clicked on "Start Now" in the case of every 5 minutes and 15 minutes schedules to initiate searches in the same session.</li>
-								</ul>
-							</li>
-						</ol>
-						<script type="text/javascript">
-							atOptions = {
-								'key' : 'e8105a7670134344bc98b1ea9766961c',
-								'format' : 'iframe',
-								'height' : 60,
-								'width' : 468,
-								'params' : {}
-							};
-							document.write('<scr' + 'ipt type="text/javascript" src="//livingshedhowever.com/e8105a7670134344bc98b1ea9766961c/invoke.js"></scr' + 'ipt>');
-						</script>
-					</details>
-                <!-- </div> -->
-            </div>
-            <h2>Still facing issues?</h2>
-            <p>Feel free to contact me <a href="https://www.instagram.com/getprojectstech/" target="_blank" rel="noopener noreferrer">@getprojectstech</a></p>
-        </main>
+								<li>
+									Perform searches to see if points are
+									collected.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Check Microsoft Points Availability:</p>
+							<ul>
+								<li>
+									Verify if Microsoft has slowed down points
+									collection in your region.
+								</li>
+								<li>
+									If yes, wait for 15 minutes before
+									attempting searches again.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Mobile Search Issues:</p>
+							<ul>
+								<li>
+									If mobile searches are not yielding points,
+									change the mobile simulation device from the
+									popup.
+								</li>
+								<li>Retry mobile searches.</li>
+							</ul>
+						</li>
+						<li>
+							<p>Mobile Search Not Counting:</p>
+							<ul>
+								<li>
+									If mobile searches still don't count, run
+									desktop searches after setting mobile
+									searches to 0.
+								</li>
+								<li>
+									Refer to the "Searching Tab" for
+									instructions on inspecting the tab and
+									simulating iPhone 12.
+								</li>
+							</ul>
+						</li>
+					</ol>
+					<script
+						async
+						src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+						crossorigin="anonymous"></script>
+					<!-- rsa -->
+					<ins
+						class="adsbygoogle"
+						style="
+							display: inline-block;
+							width: 728px;
+							height: 90px;
+						"
+						data-ad-client="ca-pub-2108654491305511"
+						data-ad-slot="8191899919"></ins>
+					<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</details>
+				<details>
+					<summary>
+						Popup Not Launching or Opening Install Page
+					</summary>
+					<ol>
+						<li>
+							<p>Accept Terms and Conditions:</p>
+							<ul>
+								<li>
+									If the popup is not launching or the install
+									page is not opening, ensure you have agreed
+									to the terms and conditions on the install
+									page.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Reinstall Extension:</p>
+							<ul>
+								<li>
+									Reinstall the extension if the popup issues
+									persist, as storage might be corrupted.
+								</li>
+							</ul>
+						</li>
+					</ol>
+					<script
+						async
+						src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+						crossorigin="anonymous"></script>
+					<!-- rsa -->
+					<ins
+						class="adsbygoogle"
+						style="
+							display: inline-block;
+							width: 728px;
+							height: 90px;
+						"
+						data-ad-client="ca-pub-2108654491305511"
+						data-ad-slot="8191899919"></ins>
+					<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</details>
+				<details>
+					<summary>Points Not Collected on First Search</summary>
+					<ol>
+						<li>
+							<p>Explanation:</p>
+							<ul>
+								<li>
+									Microsoft requires two additional searches
+									in the beginning to start earning points for
+									both desktop and mobile.
+								</li>
+							</ul>
+						</li>
+					</ol>
+					<script
+						async
+						src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+						crossorigin="anonymous"></script>
+					<!-- rsa -->
+					<ins
+						class="adsbygoogle"
+						style="
+							display: inline-block;
+							width: 728px;
+							height: 90px;
+						"
+						data-ad-client="ca-pub-2108654491305511"
+						data-ad-slot="8191899919"></ins>
+					<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</details>
+				<details>
+					<summary>Searches Are Not Performed</summary>
+					<ol>
+						<li>
+							<p>Reinstall or Change Number of Searches:</p>
+							<ul>
+								<li>Try reinstalling the extension.</li>
+								<li>
+									If searches are still not performed,
+									consider changing the number of searches.
+								</li>
+							</ul>
+						</li>
+					</ol>
+					<script
+						async
+						src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+						crossorigin="anonymous"></script>
+					<!-- rsa -->
+					<ins
+						class="adsbygoogle"
+						style="
+							display: inline-block;
+							width: 728px;
+							height: 90px;
+						"
+						data-ad-client="ca-pub-2108654491305511"
+						data-ad-slot="8191899919"></ins>
+					<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</details>
+				<details>
+					<summary>Schedule Not Working</summary>
+					<ol>
+						<li>
+							<p>Browser Settings:</p>
+							<ul>
+								<li>
+									Check and disable your browser from running
+									in the background.
+								</li>
+								<li>
+									Disable power-saving mode in your browser.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Confirmation for Scheduled Searches:</p>
+							<ul>
+								<li>
+									Confirm if you clicked on "Start Now" in the
+									case of every 5 minutes and 15 minutes
+									schedules to initiate searches in the same
+									session.
+								</li>
+							</ul>
+						</li>
+					</ol>
+					<script
+						async
+						src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2108654491305511"
+						crossorigin="anonymous"></script>
+					<!-- rsa -->
+					<ins
+						class="adsbygoogle"
+						style="
+							display: inline-block;
+							width: 728px;
+							height: 90px;
+						"
+						data-ad-client="ca-pub-2108654491305511"
+						data-ad-slot="8191899919"></ins>
+					<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</details>
+				<!-- </div> -->
+			</div>
+			<h2>Still facing issues?</h2>
+			<p>
+				Feel free to contact me
+				<a
+					href="https://www.instagram.com/getprojectstech/"
+					target="_blank"
+					rel="noopener noreferrer"
+					>@getprojectstech</a
+				>
+			</p>
+		</main>
 	</body>
 	<script>
 		const width = screen.width;
@@ -577,7 +821,7 @@
 					{
 						scrollTop: scrollPosition,
 					},
-					1000
+					2000,
 				);
 				currentItem++;
 				if (currentItem > 13) {
@@ -591,14 +835,24 @@
 				const scrollPosition = window.scrollY || window.pageYOffset;
 				if (scrollPosition > donateHeight) {
 					$("#qrs2").css("display", "flex");
-					console.log("#donation is now invisible");
+					// console.log("#donation is now invisible");
 				} else {
 					$("#qrs2").css("display", "none");
-					console.log("#donation is now visible");
+					// console.log("#donation is now visible");
 				}
 			});
 		});
 	</script>
-    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="getprojects" data-description="Support me on Buy me a coffee!" data-message="" data-color="#0072ff" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
-	<script async src="//www.instagram.com/embed.js"></script>
+	<script
+		data-name="BMC-Widget"
+		data-cfasync="false"
+		src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+		data-id="getprojects"
+		data-description="Support me on Buy me a coffee!"
+		data-message=""
+		data-color="#0072ff"
+		data-position="Right"
+		data-x_margin="18"
+		data-y_margin="18"></script>
+	<!-- <script async src="//www.instagram.com/embed.js"></script> -->
 </html>
