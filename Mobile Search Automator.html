@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Mobile Search Automator by GetProjects</title>
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+			crossorigin="anonymous"></script>
+	</head>
+	<style>
+		* {
+			border: none;
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			outline: none;
+		}
+		main {
+			align-items: center;
+			background: #0072ff;
+			display: flex;
+			height: 160px;
+			gap: 10px;
+			justify-content: center;
+		}
+		input {
+			font-size: 20px;
+			padding: 8px;
+			width: fit-content;
+		}
+		#input {
+			text-align: right;
+			width: 16%;
+		}
+		section {
+			padding: 10vw;
+		}
+		#phone {
+			aspect-ratio: 9/18;
+			border: 10px solid #111;
+			border-radius: 20px;
+			gap: 0;
+			overflow: hidden;
+			width: 100%;
+		}
+		iframe {
+			aspect-ratio: 9/17;
+			width: 100%;
+		}
+		#searchbar {
+			aspect-ratio: 9/1.5;
+			align-items: center;
+			background: #f0f0f0;
+			border: 2px solid #aaa;
+			display: flex;
+			height: inherit;
+			justify-content: center;
+			padding: 5px 5px 10px;
+			width: inherit;
+		}
+		#searchbar input#search {
+			width: 80%;
+		}
+        #support{
+            align-items: center;
+            background: #111;
+            color: #f0f0f0;
+            display: flex;
+            font-weight: 600;
+            height: 15vw;
+            justify-content: center;
+            width: 100%;
+        }
+        @keyframes blink{
+            0%{
+                opacity: 50%;
+            }
+            50%{
+                opacity: 100%;
+            }
+            100%{
+                opacity: 50%;
+            }
+        }
+        a{
+            animation: blink 1s linear infinite;
+            color: inherit;
+            text-decoration: none;
+        }
+	</style>
+	<body>
+		<main>
+			<input type="number" id="input" value="10" min="0" max="50" />
+			<input type="submit" value="Start Searching" id="trigger" />
+		</main>
+        <div id="support"><a href="https://www.buymeacoffee.com/getprojects">Support Here!</a></div>
+		<section>
+			<div id="phone">
+				<iframe
+					src="https://tmtechnomania.github.io/affiliate.html"
+					frameborder="0"></iframe>
+				<div id="searchbar">
+					<input type="text" id="search" />
+					<input type="submit" value="Go" id="go" />
+				</div>
+			</div>
+		</section>
+	</body>
+	<script>
+		const searchQueries = [
+			"How to lose weight",
+			"Best smartphone reviews",
+			"Global warming effects",
+			"Learn coding online",
+			"Top movie releases",
+			"Travel destinations 2023",
+			"Healthy dinner recipes",
+			"Breaking news today",
+			"DIY home improvement",
+			"Space exploration latest",
+			"Funny cat videos",
+			"Social media marketing tips",
+			"Latest fashion trends",
+			"Financial planning for beginners",
+			"Upcoming video games",
+			"Job interview tips",
+			"Mindfulness meditation techniques",
+			"Political news updates",
+			"Learn a new language",
+			"Tech gadgets 2022",
+			"Popular book recommendations",
+			"Best budget travel destinations",
+			"How to start a small business",
+			"Healthy breakfast ideas",
+			"Home workout routines",
+			"Virtual reality technology",
+			"Current stock market trends",
+			"Photography tips for beginners",
+			"Healthy snack recipes",
+			"Effective time management strategies",
+			"Climate change solutions",
+			"New music releases",
+			"Cryptocurrency investment guide",
+			"Mind-bending riddles",
+			"Natural remedies for common ailments",
+			"Science behind dreams",
+			"DIY garden projects",
+			"Educational podcasts 2022",
+			"Artificial intelligence applications",
+			"SpaceX latest achievements",
+			"Motivational quotes for success",
+			"Tech trends for the future",
+			"Technology",
+			"Health",
+			"Travel",
+			"Coding",
+			"Movies",
+			"Recipes",
+			"News",
+			"DIY",
+			"Space",
+			"Cats",
+			"Fashion",
+			"Finance",
+			"Gaming",
+			"Interviews",
+			"Meditation",
+			"Politics",
+			"Language",
+			"Gadgets",
+			"Books",
+			"Business",
+			"Workout",
+			"Reality",
+			"Stocks",
+			"Photography",
+			"Podcasts",
+			"Riddles",
+			"Remedies",
+			"Dreams",
+			"Garden",
+			"Podcasts",
+			"AI",
+			"Motivation",
+		];
+
+		// Access a random search query
+		function getRandom() {
+			return encodeURIComponent(
+				searchQueries[Math.floor(Math.random() * searchQueries.length)],
+			);
+		}
+
+		const input = $("#input");
+		const trigger = $("#trigger");
+		const search = $("#search");
+		const go = $("#go");
+		let searchesToPerform;
+		input.on("input", function () {
+			searchesToPerform = input.val();
+			if (searchesToPerform == undefined || searchesToPerform == "") {
+				input.val(0);
+				searchesToPerform = 0;
+			}
+			console.log(searchesToPerform);
+		});
+		trigger.on("click", function () {
+			searchesToPerform = parseInt(input.val()) + 1;
+			if (searchesToPerform == undefined || searchesToPerform == "") {
+				input.val(0);
+				searchesToPerform = 0;
+				alert("Value is 0");
+			}
+			console.log(searchesToPerform);
+			async function performSearches() {
+				for (let i = 0; i < searchesToPerform; i++) {
+					const term = getRandom();
+					console.log(term);
+                    if (i != (parseInt(searchesToPerform) - 1)){
+					const urlToSearch =
+						"https://www.bing.com/?q=" + term + "&form=QBLH";
+					search.val(urlToSearch);
+                    } else {
+                        search.val("https://tmtechnomania.github.io/affiliate.html");
+                        alert("Searches completed!")
+                    }
+
+					await new Promise((resolve) => {
+						setTimeout(function () {
+							go.click();
+							resolve();
+						}, 100);
+					});
+
+					const randomDelay =
+						Math.floor(Math.random() * (20000 - 12000 + 1)) + 12000;
+
+					await new Promise((resolve) => {
+						setTimeout(function () {
+							console.log("searched: " + i);
+							resolve();
+						}, randomDelay);
+					});
+				}
+			}
+
+			// Call the function
+			performSearches();
+		});
+		go.on("click", function () {
+			const url = search.val();
+			$("iframe").attr("src", url);
+		});
+	</script>
+</html>
