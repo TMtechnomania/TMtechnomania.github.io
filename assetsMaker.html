@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #canvas {
+            display: grid;
+            grid-template-columns: repeat(32, 16px);
+            grid-template-rows: repeat(32, 16px);
+        }
+        .cell {
+            width: 16px;
+            height: 16px;
+            background-color: #FFFFFF;
+            position: relative;
+        }
+        .dot {
+            width: 1px;
+            height: 1px;
+            background-color: black;
+            position: absolute;
+        }
+        #recentColors, #usedColors {
+            display: flex;
+        }
+        .color-block {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas"></div>
+    <input type="color" id="colorPicker">
+    <div id="recentColors"></div>
+    <div id="usedColors"></div>
+    <a id="exportLink" download="image.png">Export</a>
+    <canvas id="exportCanvas" style="display: none;" width="512" height="512"></canvas>
+    <script>
+        let currentProject = localStorage.getItem('currentProject') ? JSON.parse(localStorage.getItem('currentProject')) : {};
+        document.querySelector('title').textContent = currentProject.name || 'Untitled Project';
+
+        const canvas = document.querySelector('#canvas');
+        const cells = [];
+
+        for (let i = 0; i < 1024; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.id = `cell-${i}`;
+
+            const celltopleft = document.createElement('div');
+            celltopleft.classList.add('dot');
+            celltopleft.style.top = '0';
+            celltopleft.style.left = '0';
+            cell.appendChild(celltopleft);
+
+            const celltopright = document.createElement('div');
+            celltopright.classList.add('dot');
+            celltopright.style.top = '0';
+            celltopright.style.right = '0';
+            cell.appendChild(celltopright);
+
+            const cellbottomleft = document.createElement('div');
+            cellbottomleft.classList.add('dot');
+            cellbottomleft.style.bottom = '0';
+            cellbottomleft.style.left = '0';
+            cell.appendChild(cellbottomleft);
+
+            const cellbottomright = document.createElement('div');
+            cellbottomright.classList.add('dot');
+            cellbottomright.style.bottom = '0';
+            cellbottomright.style.right = '0';
+            cell.appendChild(cellbottomright);
+
+            cell.addEventListener('mousedown', () => handleCellClick(cell));
+            cell.addEventListener('mouseover', (e) => handleCellDrag(e, cell));
+
+            canvas.appendChild(cell);
+            cells.push(cell);
+        }
+
+        let currentColor = '#000000';
+        const recentColorsArray = [];
+        let isMouseDown = false;
+
+        const colorPicker = $('#colorPicker').on('change', () => {
+            currentColor = $('#colorPicker').val();
+        });
+
+        document.addEventListener('mousedown', () => {
+            isMouseDown = true;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+
+        function handleCellClick(cell) {
+            cell.style.backgroundColor = currentColor;
+            addToRecentColors(currentColor);
+            updateUsedColors();
+        }
+
+        function handleCellDrag(e, cell) {
+            if (isMouseDown) {
+                cell.style.backgroundColor = currentColor;
+                addToRecentColors(currentColor);
+                updateUsedColors();
+            }
+        }
+
+        function addToRecentColors(color) {
+            if (!recentColorsArray.includes(color)) {
+                if (recentColorsArray.length >= 5) {
+                    recentColorsArray.shift();
+                }
+                recentColorsArray.push(color);
+                $('#recentColors').empty();
+                recentColorsArray.forEach(color => {
+                    $('#recentColors').append($('<div>').addClass('color-block').css('background-color', color).on('click', () => {
+                        currentColor = color;
+                        $('#colorPicker').val(color);
+                    }));
+                });
+            }
+        }
+
+        function updateUsedColors() {
+            const usedColors = [];
+            cells.forEach(cell => {
+                if (!usedColors.includes(cell.style.backgroundColor) && cell.style.backgroundColor !== 'rgb(255, 255, 255)') {
+                    usedColors.push(cell.style.backgroundColor);
+                }
+            });
+            $('#usedColors').empty();
+            usedColors.forEach(color => {
+                $('#usedColors').append($('<div>').addClass('color-block').css('background-color', color).on('click', () => {
+                    const rgb = color.match(/\d+/g).map(Number);
+                    const hex = `#${((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1)}`;
+                    currentColor = hex;
+                    $('#colorPicker').val(hex);
+                }));
+            });
+        }
+
+        const exportLink = $('#exportLink').on('click', () => {
+            const exportCanvas = document.querySelector('#exportCanvas');
+            const ctx = exportCanvas.getContext('2d');
+            ctx.clearRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+            cells.forEach((cell, index) => {
+                const x = index % 32;
+                const y = Math.floor(index / 32);
+                const bgColor = cell.style.backgroundColor === '' ? 'rgb(255, 255, 255)' : cell.style.backgroundColor;
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(x * 16, y * 16, 16, 16);
+
+                // Draw the dots
+                ctx.fillStyle = 'black';
+                ctx.fillRect(x * 16, y * 16, 1, 1); // Top-left
+                ctx.fillRect((x + 1) * 16 - 1, y * 16, 1, 1); // Top-right
+                ctx.fillRect(x * 16, (y + 1) * 16 - 1, 1, 1); // Bottom-left
+                ctx.fillRect((x + 1) * 16 - 1, (y + 1) * 16 - 1, 1, 1); // Bottom-right
+            });
+
+            const scaleCanvas = document.createElement('canvas');
+            scaleCanvas.width = 128;
+            scaleCanvas.height = 128;
+            const scaleCtx = scaleCanvas.getContext('2d');
+            scaleCtx.drawImage(exportCanvas, 0, 0, 128, 128);
+
+            const dataURL = scaleCanvas.toDataURL('image/png');
+            exportLink.attr('href', dataURL);
+        });
+    </script>
+</body>
+</html>
