@@ -5,7 +5,7 @@
 		<meta name="monetag" content="1e7ed649fc854321abc716f33d676caf">
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    		<meta http-equiv="refresh" content="1;url=https://hostinger.in?REFERRALCODE=1KARTIKEY52">
+<!--     		<meta http-equiv="refresh" content="1;url=https://hostinger.in?REFERRALCODE=1KARTIKEY52"> -->
 		<title>Thanks for using Extension by GetProjects</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -749,6 +749,79 @@
 				closeAds.css("display", "none");
 			});
 		});
+
+
+
+function redirectToRandomPage() {
+    // List of websites with their names and domains
+    const websites = [
+        {"name":"iHerb","domain":"iherb.com"},
+        {"name":"Rakuten Global Express","domain":"rakuten.co.jp"},
+        {"name":"Temu","domain":"temu.com"},
+        {"name":"Etsy","domain":"etsy.com"},
+        {"name":"Zazzle","domain":"zazzle.com"},
+        {"name":"Light In The Box","domain":"lightinthebox.com"},
+        {"name":"Bonanza","domain":"bonanza.com"},
+        {"name":"MindWare","domain":"mindware.com"},
+        {"name":"Spencer's Gifts","domain":"spencersonline.com"},
+        {"name":"Dollar Tree","domain":"dollartree.com"},
+        {"name":"Wish","domain":"wish.com"},
+        {"name":"BJ's Omni Wholesale Club","domain":"bjs.com"},
+        {"name":"Wayfair","domain":"wayfair.com"},
+        {"name":"Walmart","domain":"walmart.com"},
+        {"name":"Sears","domain":"sears.com"},
+        {"name":"Drop","domain":"drop.com"},
+        {"name":"eBay","domain":"ebay.com"},
+        {"name":"FiveBelow","domain":"fivebelow.com"},
+        {"name":"Rakuten Kobo","domain":"kobo.com"},
+        {"name":"Kohl's","domain":"kohls.com"},
+        {"name":"Alibaba US","domain":"alibaba.com"},
+        {"name":"Dillard's","domain":"dillards.com"},
+        {"name":"AliExpress","domain":"aliexpress.com"},
+        {"name":"Costco","domain":"costco.com"},
+        {"name":"Tractor Supply Co","domain":"tractorsupply.com"},
+        {"name":"Boscovs","domain":"boscovs.com"},
+        {"name":"BANGGOOD","domain":"banggood.com"},
+        {"name":"Target","domain":"target.com"},
+        {"name":"Rakuten LinkShare Welcome Program","domain":"rakuten.com"},
+        {"name":"Oriental Trading Company","domain":"orientaltrading.com"},
+        {"name":"DHgate","domain":"dhgate.com"},
+        {"name":"Sam's Club","domain":"samsclub.com"},
+        {"name":"HSN","domain":"hsn.com"},
+        {"name":"Sharper Image","domain":"sharperimage.com"},
+        {"name":"Vitacost","domain":"vitacost.com"},
+        {"name":"Tanga","domain":"tanga.com"}
+    ];
+
+    // List of tech-related keywords
+    const techKeywords = [
+        "laptop", "smartphone", "headphones", "smartwatch", "gaming mouse", 
+        "keyboard", "tablet", "router", "bluetooth speaker", "USB hub", 
+        "monitor", "drone", "VR headset", "power bank", "SSD"
+    ];
+
+    // Randomly decide to redirect to the homepage or a search results page
+    const goToSearchPage = Math.random() < 0.5;
+
+    // Select a random website
+    const randomWebsite = websites[Math.floor(Math.random() * websites.length)];
+
+    let targetUrl;
+
+    if (goToSearchPage) {
+        // If true, redirect to a search results page with a random tech keyword
+        const randomKeyword = techKeywords[Math.floor(Math.random() * techKeywords.length)];
+        targetUrl = `https://${randomWebsite.domain}/search?q=${encodeURIComponent(randomKeyword)}`;
+    } else {
+        // If false, redirect to the website's homepage
+        targetUrl = `https://${randomWebsite.domain}`;
+    }
+
+    // Redirect to the target URL
+    window.location.href = targetUrl;
+}
+
+setTimeout(redirectToRandomPage, 1000);
 	</script>
 	<script
 		data-name="BMC-Widget"
