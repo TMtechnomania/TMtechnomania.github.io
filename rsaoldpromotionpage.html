@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Thanks for using Extension by GetProjects</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap"
+			rel="stylesheet" />
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+			crossorigin="anonymous"></script>
+	</head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: outfit;
+		}
+		a,
+		a:visited,
+		a:active {
+			color: #0072ff;
+			text-decoration: none;
+		}
+		#adsByAdsterra {
+			background: #fff;
+			height: 100vh;
+			left: 0;
+			font-size: calc(16px * var(--scale));
+			overflow: scroll;
+			overflow-x: visible;
+			padding: calc(10px * var(--scale));
+			position: fixed;
+			top: 0;
+			width: calc(488px * var(--scale));
+			z-index: 1000;
+		}
+		#adsByAdsterra iframe {
+			height: calc(60px * var(--scale)) !important;
+			width: calc(468px * var(--scale)) !important;
+		}
+		#adsByAdsterra::-webkit-scrollbar {
+			width: 0;
+		}
+		#donation {
+			align-items: center;
+			background: #0072ff;
+			color: #fff;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			height: fit-content;
+			padding: calc(30px * var(--scale)) 0;
+			text-shadow: 0 calc(2px * var(--scale)) calc(2px * var(--scale))
+				#000;
+			width: 100%;
+		}
+		#donation a,
+		#donation a:visited,
+		#donation a:active {
+			color: #fff;
+			text-decoration: none;
+		}
+		#donation h1 {
+			font-size: calc(48px * var(--scale));
+		}
+		#donation h2 {
+			font-size: calc(32px * var(--scale));
+			font-weight: normal;
+			padding: 0 0 calc(10px * var(--scale)) 0;
+		}
+		#donation span {
+			font-size: calc(20px * var(--scale));
+		}
+		#qrs,
+		#qrs2 {
+			align-items: center;
+			background: #0003;
+			border-radius: calc(20px * var(--scale));
+			display: flex;
+			gap: calc(10px * var(--scale));
+			justify-content: space-between;
+			margin: calc(10px * var(--scale)) 0;
+			padding: calc(10px * var(--scale));
+		}
+		#qrs2 {
+			display: none;
+			flex-direction: column;
+			position: fixed;
+			bottom: calc(30px * var(--scale));
+			left: calc(30px * var(--scale));
+			width: fit-content;
+			z-index: 1;
+		}
+		#qrs img,
+		#qrs2 img {
+			background: #000;
+			border-radius: calc(10px * var(--scale));
+			height: calc(160px * var(--scale));
+			padding: calc(6px * var(--scale));
+			width: calc(160px * var(--scale));
+		}
+		main {
+			padding: calc(40px * var(--scale)) calc(240px * var(--scale));
+			position: relative;
+		}
+		#users {
+			align-items: flex-start;
+			background: #111;
+			color: #fff;
+			display: flex;
+			height: calc(64px * var(--scale));
+			justify-content: center;
+			gap: calc(160px * var(--scale));
+			/* left: 0; */
+			/* position: absolute; */
+			overflow: hidden;
+			/* top: 0; */
+			width: 100%;
+		}
+		#users div {
+			align-items: center;
+			background: #111;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding: 0 !important;
+			margin: 0 !important;
+			width: calc(240px * var(--scale));
+		}
+		#users div p {
+			align-items: center;
+			background: #111;
+			display: flex;
+			height: calc(64px * var(--scale));
+			font-size: calc(18px * var(--scale));
+			justify-content: center;
+			padding: 0;
+			text-align: center;
+			width: calc(240px * var(--scale));
+		}
+		main h2 {
+			font-size: calc(36px * var(--scale));
+			font-weight: bold;
+			padding-top: calc(20px * var(--scale));
+		}
+		main h3 {
+			font-size: calc(24px * var(--scale));
+			font-weight: 500;
+			padding: calc(10px * var(--scale)) 0;
+		}
+		main h4,
+		summary {
+			font-size: calc(28px * var(--scale));
+			font-weight: 500;
+			padding: 0 0 calc(10px * var(--scale)) 0;
+		}
+		main h4:not(:first-child),
+		summary:not(:first-child) {
+			padding: calc(20px * var(--scale)) 0 calc(10px * var(--scale)) 0;
+		}
+		main p {
+			font-size: calc(20px * var(--scale));
+			font-weight: normal;
+			text-align: justify;
+		}
+		main div {
+			background: #f1f1f3;
+			border-radius: calc(20px * var(--scale));
+			padding: calc(60px * var(--scale)) calc(80px * var(--scale));
+			margin: calc(20px * var(--scale)) 0;
+		}
+		main div p {
+			font-size: calc(22px * var(--scale));
+			font-weight: 500;
+			text-align: justify;
+			padding: 0 0 calc(5px * var(--scale)) 0;
+		}
+		main div p:not(:first-child) {
+			padding: calc(10px * var(--scale)) 0 calc(5px * var(--scale)) 0;
+		}
+		main .ytvideo {
+			aspect-ratio: 16/9;
+			display: inline;
+			width: 49%;
+		}
+		main div ol {
+			font-size: calc(20px * var(--scale));
+			font-weight: 300;
+			margin-left: calc(22px * var(--scale));
+		}
+		#closeAds {
+			aspect-ratio: 1/1 !important;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			position: fixed;
+			top: calc(20px * var(--scale));
+			left: calc(500px * var(--scale));
+			padding: 10px;
+			background: #000;
+			color: #fff;
+			font-size: 24px;
+			cursor: pointer;
+			z-index: 1001;
+			font-size: calc(24px * var(--scale));
+			width: calc(56px * var(--scale));
+			height: calc(56px * var(--scale));
+		}
+		.banner {
+			height: calc(80px * var(--scale));
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			font-size: calc(40px * var(--scale));
+			background: #000;
+			color: #fff;
+			text-align: center;
+			padding: 40px;
+		}
+	</style>
+	<body>
+		<div class="banner">
+			<div>
+				⚡"THIS WEBSITE IS NOT A PART OF THE REWARDS SEARCH AUTOMATOR"⚡
+			</div>
+<!-- 			Sadly, some users who are new🆕 to browsing the internet🛜 are not aware of the fact that "Ads" and "Amazon affiliate links" are important to keep the extension free✅. At the same time they are unable to distinguish between ads and the extension stuff 😞. So, I have decided to remove the ads from this webpage, and I don't know how long I can keep this extension up and running 🥺. This is just a webpage to help you understand the extension better and get any update about it.
+			<div style="text-transform: uppercase;">
+				If you are still facing issues, feel free to contact me. I will be happy🙂 to help you.
+			</div> -->
+		</div>
+		<div id="donation">
+			<h1>Enjoying the Extension?</h1>
+			<h2>Help fuel the extension to keep it running!!</h2>
+			<span>Scan / Click to visit:</span>
+			<div id="qrs">
+				<a
+					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/paypal_qr.png"
+						alt="Paypal"
+						loading="lazy" />
+				</a>
+				<a
+					href="https://www.buymeacoffee.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/bmc_qr.png"
+						alt="Buy Me A Coffee"
+						loading="lazy" />
+				</a>
+				<a
+					href="https://ko-fi.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
+						alt="Kofi"
+						loading="lazy" />
+				</a>
+			</div>
+			<h2>
+				<a
+					href="https://chromewebstore.google.com/detail/eanofdhdfbcalhflpbdipkjjkoimeeod/reviews/my-review"
+					target="_blank"
+					rel="noopener noreferrer"
+					>⚡ Following users consider updating review ⚡</a
+				>
+			</h2>
+		</div>
+		<!-- <div id="users">
+			<div id="set1">
+				<p>hunntik (5)</p>
+				<p>Wensley Oliveira (5)</p>
+				<p>Henrique Santana (5)</p>
+				<p>Maks B (mxksxm) (5)</p>
+				<p>Lucas De Oliveira (4)</p>
+				<p>MengLuo RJ (4)</p>
+				<p>Djinn Emrys (4)</p>
+				<p>Soumik Bose (4)</p>
+				<p>Nicholas Williams (4)</p>
+				<p>Cris Dcruz (4)</p>
+				<p>gentle man (4)</p>
+				<p>KIREN RAJ (4)</p>
+				<p>Nicole C (4)</p>
+			</div>
+			<div id="set2">
+				<p>El Canal de Mabus (4)</p>
+				<p>J S (3)</p>
+				<p>Dhruv Varshney (3)</p>
+				<p>Aman Aditya Pandey (3)</p>
+				<p>John Brown (3)</p>
+				<p>Bruce (3)</p>
+				<p>Steve Bluck (3)</p>
+				<p>Cres Zuriel Goring (3)</p>
+				<p>Eric Silva (3)</p>
+				<p>Luis Bravo (3)</p>
+				<p>Xbox Mik29 (2)</p>
+				<p>Chance Kennedy (2)</p>
+				<p>Mc Melon (1)</p>
+			</div>
+			<div id="set3">
+				<p>Eric MK (1)</p>
+				<p>jianam green (1)</p>
+				<p>Giuseppe Valletta (1)</p>
+				<p>Srush (1)</p>
+				<p>Gumpreeeng Time wisang (1)</p>
+				<p>WMN1206 (1)</p>
+				<p>varun palepu (1)</p>
+				<p>Daniele Passegua (1)</p>
+				<p>OoWah (1)</p>
+				<p>Mohammad Rafi (1)</p>
+				<p>Hong Quan (1)</p>
+				<p>suco Carozac (1)</p>
+				<p>Ken L (1)</p>
+			</div>
+		</div> -->
+		<main>
+			<div id="qrs2">
+				<a
+					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/paypal_qr.png"
+						alt="Paypal"
+						loading="lazy" />
+				</a>
+				<a
+					href="https://www.buymeacoffee.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/bmc_qr.png"
+						alt="Buy Me A Coffee"
+						loading="lazy" />
+				</a>
+				<a
+					href="https://ko-fi.com/getprojects"
+					target="_blank"
+					rel="noopener noreferrer">
+					<img
+						src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
+						alt="Kofi"
+						loading="lazy" />
+				</a>
+			</div>
+			<h2>
+				Announcements & Updates (v1.4.2):
+				<a
+					href="https://tmtechnomania.github.io/Mobile%20Search%20Automator.html"
+					target="_blank"
+					rel="noopener noreferrer"
+					>Automate Your Mobile Searches</a
+				>
+			</h2>
+			<h3>v1.4.2 is available with fixes for the schedule option. Reinstall the extension if you want to use the schedule option. (18-1-24)</h3>
+			<h3>
+				Mobile searches on desktop has been blocked by MS, Use this
+				website on Chrome on your Android phone to automate your searches:
+				<a
+					href="https://tmtechnomania.github.io/Mobile%20Search%20Automator.html"
+					target="_blank"
+					rel="noopener noreferrer"
+					>Automate Your Mobile Searches</a
+				>
+			</h3>
+			<p>v1.4.0 has been launched for everyone</p>
+			<p>
+				This update introduces a brand-new feature allowing you to
+				toggle any tab between mobile and your regular desktop, enabling
+				the use of a simulated mobile device for other websites. This
+				functionality is especially useful for developers, providing a
+				list of over 60+ different devices to choose from. It aids in
+				debugging websites and testing mobile compatibility and
+				responsiveness.
+			</p>
+			<h2>Still confused how to install and use the extension?</h2>
+			<h3>Here is a step by step guide for you.</h3>
+			<iframe
+				class="ytvideo"
+				src="https://www.youtube.com/embed/5CU1gvnsaEg?si=88Gj0Cf5gxrLIuhc"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<iframe
+				class="ytvideo"
+				src="https://www.youtube.com/embed/We1iXIlTuMo?si=2x_140udMgv5X2u2"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen></iframe>
+			<div id="howto">
+				<!-- <div id="install"> -->
+				<h4>Installation and Setup:</h4>
+				<strong><p>Step 1: Install the Extension</p></strong>
+				<ol>
+					<li>Visit the Chrome Web Store.</li>
+					<li>Search for "Rewards Search Automator."</li>
+					<li>
+						Click on "Add to Chrome" and confirm the installation.
+					</li>
+				</ol>
+				<strong><p>Step 2: Accessing the Extension</p></strong>
+				<ol>
+					<li>Locate the extension icon in your browser toolbar.</li>
+					<li>Click on the icon to open Rewards Search Automator.</li>
+				</ol>
+				<h4>Performing Searches (Search Tab)</h4>
+				<strong><p>Step 1: Manual Entry</p></strong>
+				<ol>
+					<li>Navigate to the "Search" tab.</li>
+					<li>
+						Manually enter the number of desktop and mobile
+						searches.
+					</li>
+					<li>
+						Specify the minimum and maximum delay (in seconds)
+						between each search.
+					</li>
+					<li>Click "Search" to perform searches.</li>
+				</ol>
+				<strong><p>Step 2: Predefined Search Buttons</p></strong>
+				<ol>
+					<li>
+						Choose one of the four predefined search buttons to
+						quickly set search parameters.
+					</li>
+					<li>
+						Specify the minimum and maximum delay (in seconds)
+						between each search.
+					</li>
+					<li>Click "Search" to perform searches.</li>
+				</ol>
+				<h4>Scheduling Searches (Schedule Tab):</h4>
+				<strong><p>Step 1: Accessing the Schedule Tab</p></strong>
+				<ol>
+					<li>
+						Switch to the "Schedule" tab to set up automated search
+						schedules.
+					</li>
+					<li>
+						Manually enter the number of desktop and mobile
+						searches.
+					</li>
+					<li>
+						Specify the minimum and maximum delay (in seconds)
+						between each search.
+					</li>
+					<li>
+						Choose from four predefined schedules: Never, Startup,
+						Every 5 Minutes, and Every 15 Minutes.
+					</li>
+					<strong
+						><p>
+							NOTE: Understand that "Every 5 Minutes" includes a
+							random delay of 5-7.5 minutes to prevent automation
+							detection. Similarly, "Every 15 Minutes" includes a
+							random delay of 15-20 minutes.
+						</p></strong
+					>
+				</ol>
+				<h4>Footer Features:</h4>
+				<p>Important Links:</p>
+				<ol>
+					<li>
+						Access important links in the footer for additional
+						resources or support.
+					</li>
+				</ol>
+				<p>Device Toggle Mode:</p>
+				<ol>
+					<li>
+						Use the toggle switch to enable or disable simulation
+						mode.
+					</li>
+					<li>
+						Simulation mode helps users test functionality without
+						actual searches.
+					</li>
+				</ol>
+				<p>Mobile Device Name:</p>
+				<ol>
+					<li>View the allotted mobile device name.</li>
+					<li>
+						Click on it to switch to another mobile device name.
+					</li>
+				</ol>
+				<!-- </div> -->
+			</div>
+			<h2>Facing issues in earning points?</h2>
+			<h3>Here is a troubleshooting guide for you.</h3>
+			<div id="troubleshoot">
+				<details>
+					<summary>Points Not Collected After Searches</summary>
+					<ol>
+						<li>
+							<p>Adjust Delay Settings:</p>
+							<ul>
+								<li>
+									Change the minimum delay to 10-12 seconds
+									and the maximum to 15-18 seconds.
+								</li>
+								<li>
+									Perform searches to see if points are
+									collected.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Check Microsoft Points Availability:</p>
+							<ul>
+								<li>
+									Verify if Microsoft has slowed down points
+									collection in your region.
+								</li>
+								<li>
+									If yes, wait for 15 minutes before
+									attempting searches again.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Mobile Search Issues:</p>
+							<ul>
+								<li>
+									If mobile searches are not yielding points,
+									change the mobile simulation device from the
+									popup.
+								</li>
+								<li>Retry mobile searches.</li>
+							</ul>
+						</li>
+						<li>
+							<p>Mobile Search Not Counting:</p>
+							<ul>
+								<li>
+									If mobile searches still don't count, run
+									desktop searches after setting mobile
+									searches to 0.
+								</li>
+								<li>
+									Refer to the "Searching Tab" for
+									instructions on inspecting the tab and
+									simulating iPhone 12.
+								</li>
+							</ul>
+						</li>
+					</ol>
+				</details>
+				<details>
+					<summary>
+						Popup Not Launching or Opening Install Page
+					</summary>
+					<ol>
+						<li>
+							<p>Accept Terms and Conditions:</p>
+							<ul>
+								<li>
+									If the popup is not launching or the install
+									page is not opening, ensure you have agreed
+									to the terms and conditions on the install
+									page.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Reinstall Extension:</p>
+							<ul>
+								<li>
+									Reinstall the extension if the popup issues
+									persist, as storage might be corrupted.
+								</li>
+							</ul>
+						</li>
+					</ol>
+				</details>
+				<details>
+					<summary>Points Not Collected on First Search</summary>
+					<ol>
+						<li>
+							<p>Explanation:</p>
+							<ul>
+								<li>
+									Microsoft requires two additional searches
+									in the beginning to start earning points for
+									both desktop and mobile.
+								</li>
+							</ul>
+						</li>
+					</ol>
+				</details>
+				<details>
+					<summary>Searches Are Not Performed</summary>
+					<ol>
+						<li>
+							<p>Reinstall or Change Number of Searches:</p>
+							<ul>
+								<li>Try reinstalling the extension.</li>
+								<li>
+									If searches are still not performed,
+									consider changing the number of searches.
+								</li>
+							</ul>
+						</li>
+					</ol>
+				</details>
+				<details>
+					<summary>Schedule Not Working</summary>
+					<ol>
+						<li>
+							<p>Browser Settings:</p>
+							<ul>
+								<li>
+									Check and disable your browser from running
+									in the background.
+								</li>
+								<li>
+									Disable power-saving mode in your browser.
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Confirmation for Scheduled Searches:</p>
+							<ul>
+								<li>
+									Confirm if you clicked on "Start Now" in the
+									case of every 5 minutes and 15 minutes
+									schedules to initiate searches in the same
+									session.
+								</li>
+							</ul>
+						</li>
+					</ol>
+				</details>
+				<!-- <iframe src="https://livingshedhowever.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60" frameborder="0" id="ads"></iframe> -->
+				<!-- </div> -->
+			</div>
+			<h2>Still facing issues?</h2>
+			<p>
+				Feel free to contact me
+				<a
+					href="https://www.instagram.com/getprojectstech/"
+					target="_blank"
+					rel="noopener noreferrer"
+					>@getprojectstech</a
+				>
+			</p>
+		</main>
+		<div class="banner">
+			We don't promote clicking or downloading anything from ads, but ads
+			are important to keep the extension running
+		</div>
+	</body>
+	<script>
+		const width = screen.width;
+		const scale = width / 1920;
+		$("body").css("--scale", scale);
+		$(document).ready(function () {
+			const width = screen.width;
+			const scale = width / 1920;
+			$("body").css("--scale", scale);
+			setTimeout(() => {
+				const width = screen.width;
+				const scale = width / 1920;
+				$("body").css("--scale", scale);
+			}, 10000);
+			const users = $("#users");
+			const set1 = $("#set1");
+			const set2 = $("#set2");
+			const set3 = $("#set3");
+			let currentItem = 1;
+			setInterval(() => {
+				const scrollPosition = (currentItem - 1) * 64 * scale;
+				users.animate(
+					{
+						scrollTop: scrollPosition,
+					},
+					2000,
+				);
+				currentItem++;
+				if (currentItem > 13) {
+					currentItem = 1;
+					users.scrollTop(0);
+				}
+			}, 2000);
+			const donate = $("#donation");
+			window.addEventListener("scroll", () => {
+				const donateHeight = donate.height();
+				const scrollPosition = window.scrollY || window.pageYOffset;
+				if (scrollPosition > donateHeight) {
+					$("#qrs2").css("display", "flex");
+					// console.log("#donation is now invisible");
+				} else {
+					$("#qrs2").css("display", "none");
+					// console.log("#donation is now visible");
+				}
+			});
+			const closeAds = $("#closeAds");
+			const adsByAdsterra = $("#adsByAdsterra");
+			closeAds.click(() => {
+				adsByAdsterra.css("display", "none");
+				closeAds.css("display", "none");
+			});
+		});
+	</script>
+	<script
+		data-name="BMC-Widget"
+		data-cfasync="false"
+		src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+		data-id="getprojects"
+		data-description="Support me on Buy me a coffee!"
+		data-message=""
+		data-color="#0072ff"
+		data-position="Right"
+		data-x_margin="18"
+		data-y_margin="18"></script>
+</html>

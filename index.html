@@ -1,728 +1,313 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Thanks for using Extension by GetProjects</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap"
-			rel="stylesheet" />
-		<script
-			src="https://code.jquery.com/jquery-3.7.1.min.js"
-			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-			crossorigin="anonymous"></script>
-	</head>
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-			font-family: outfit;
-		}
-		a,
-		a:visited,
-		a:active {
-			color: #0072ff;
-			text-decoration: none;
-		}
-		#adsByAdsterra {
-			background: #fff;
-			height: 100vh;
-			left: 0;
-			font-size: calc(16px * var(--scale));
-			overflow: scroll;
-			overflow-x: visible;
-			padding: calc(10px * var(--scale));
-			position: fixed;
-			top: 0;
-			width: calc(488px * var(--scale));
-			z-index: 1000;
-		}
-		#adsByAdsterra iframe {
-			height: calc(60px * var(--scale)) !important;
-			width: calc(468px * var(--scale)) !important;
-		}
-		#adsByAdsterra::-webkit-scrollbar {
-			width: 0;
-		}
-		#donation {
-			align-items: center;
-			background: #0072ff;
-			color: #fff;
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			height: fit-content;
-			padding: calc(30px * var(--scale)) 0;
-			text-shadow: 0 calc(2px * var(--scale)) calc(2px * var(--scale))
-				#000;
-			width: 100%;
-		}
-		#donation a,
-		#donation a:visited,
-		#donation a:active {
-			color: #fff;
-			text-decoration: none;
-		}
-		#donation h1 {
-			font-size: calc(48px * var(--scale));
-		}
-		#donation h2 {
-			font-size: calc(32px * var(--scale));
-			font-weight: normal;
-			padding: 0 0 calc(10px * var(--scale)) 0;
-		}
-		#donation span {
-			font-size: calc(20px * var(--scale));
-		}
-		#qrs,
-		#qrs2 {
-			align-items: center;
-			background: #0003;
-			border-radius: calc(20px * var(--scale));
-			display: flex;
-			gap: calc(10px * var(--scale));
-			justify-content: space-between;
-			margin: calc(10px * var(--scale)) 0;
-			padding: calc(10px * var(--scale));
-		}
-		#qrs2 {
-			display: none;
-			flex-direction: column;
-			position: fixed;
-			bottom: calc(30px * var(--scale));
-			left: calc(30px * var(--scale));
-			width: fit-content;
-			z-index: 1;
-		}
-		#qrs img,
-		#qrs2 img {
-			background: #000;
-			border-radius: calc(10px * var(--scale));
-			height: calc(160px * var(--scale));
-			padding: calc(6px * var(--scale));
-			width: calc(160px * var(--scale));
-		}
-		main {
-			padding: calc(40px * var(--scale)) calc(240px * var(--scale));
-			position: relative;
-		}
-		#users {
-			align-items: flex-start;
-			background: #111;
-			color: #fff;
-			display: flex;
-			height: calc(64px * var(--scale));
-			justify-content: center;
-			gap: calc(160px * var(--scale));
-			/* left: 0; */
-			/* position: absolute; */
-			overflow: hidden;
-			/* top: 0; */
-			width: 100%;
-		}
-		#users div {
-			align-items: center;
-			background: #111;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			padding: 0 !important;
-			margin: 0 !important;
-			width: calc(240px * var(--scale));
-		}
-		#users div p {
-			align-items: center;
-			background: #111;
-			display: flex;
-			height: calc(64px * var(--scale));
-			font-size: calc(18px * var(--scale));
-			justify-content: center;
-			padding: 0;
-			text-align: center;
-			width: calc(240px * var(--scale));
-		}
-		main h2 {
-			font-size: calc(36px * var(--scale));
-			font-weight: bold;
-			padding-top: calc(20px * var(--scale));
-		}
-		main h3 {
-			font-size: calc(24px * var(--scale));
-			font-weight: 500;
-			padding: calc(10px * var(--scale)) 0;
-		}
-		main h4,
-		summary {
-			font-size: calc(28px * var(--scale));
-			font-weight: 500;
-			padding: 0 0 calc(10px * var(--scale)) 0;
-		}
-		main h4:not(:first-child),
-		summary:not(:first-child) {
-			padding: calc(20px * var(--scale)) 0 calc(10px * var(--scale)) 0;
-		}
-		main p {
-			font-size: calc(20px * var(--scale));
-			font-weight: normal;
-			text-align: justify;
-		}
-		main div {
-			background: #f1f1f3;
-			border-radius: calc(20px * var(--scale));
-			padding: calc(60px * var(--scale)) calc(80px * var(--scale));
-			margin: calc(20px * var(--scale)) 0;
-		}
-		main div p {
-			font-size: calc(22px * var(--scale));
-			font-weight: 500;
-			text-align: justify;
-			padding: 0 0 calc(5px * var(--scale)) 0;
-		}
-		main div p:not(:first-child) {
-			padding: calc(10px * var(--scale)) 0 calc(5px * var(--scale)) 0;
-		}
-		main .ytvideo {
-			aspect-ratio: 16/9;
-			display: inline;
-			width: 49%;
-		}
-		main div ol {
-			font-size: calc(20px * var(--scale));
-			font-weight: 300;
-			margin-left: calc(22px * var(--scale));
-		}
-		#closeAds {
-			aspect-ratio: 1/1 !important;
-			align-items: center;
-			justify-content: center;
-			text-align: center;
-			position: fixed;
-			top: calc(20px * var(--scale));
-			left: calc(500px * var(--scale));
-			padding: 10px;
-			background: #000;
-			color: #fff;
-			font-size: 24px;
-			cursor: pointer;
-			z-index: 1001;
-			font-size: calc(24px * var(--scale));
-			width: calc(56px * var(--scale));
-			height: calc(56px * var(--scale));
-		}
-		.banner {
-			height: calc(80px * var(--scale));
-			align-items: center;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			font-size: calc(40px * var(--scale));
-			background: #000;
-			color: #fff;
-			text-align: center;
-			padding: 40px;
-		}
-	</style>
-	<body>
-		<div class="banner">
-			<div>
-				⚡"THIS WEBSITE IS NOT A PART OF THE REWARDS SEARCH AUTOMATOR"⚡
-			</div>
-<!-- 			Sadly, some users who are new🆕 to browsing the internet🛜 are not aware of the fact that "Ads" and "Amazon affiliate links" are important to keep the extension free✅. At the same time they are unable to distinguish between ads and the extension stuff 😞. So, I have decided to remove the ads from this webpage, and I don't know how long I can keep this extension up and running 🥺. This is just a webpage to help you understand the extension better and get any update about it.
-			<div style="text-transform: uppercase;">
-				If you are still facing issues, feel free to contact me. I will be happy🙂 to help you.
-			</div> -->
-		</div>
-		<div id="donation">
-			<h1>Enjoying the Extension?</h1>
-			<h2>Help fuel the extension to keep it running!!</h2>
-			<span>Scan / Click to visit:</span>
-			<div id="qrs">
-				<a
-					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
-					target="_blank"
-					rel="noopener noreferrer">
-					<img
-						src="https://tmtechnomania.github.io/Privacy-RSA/img/paypal_qr.png"
-						alt="Paypal"
-						loading="lazy" />
-				</a>
-				<a
-					href="https://www.buymeacoffee.com/getprojects"
-					target="_blank"
-					rel="noopener noreferrer">
-					<img
-						src="https://tmtechnomania.github.io/Privacy-RSA/img/bmc_qr.png"
-						alt="Buy Me A Coffee"
-						loading="lazy" />
-				</a>
-				<a
-					href="https://ko-fi.com/getprojects"
-					target="_blank"
-					rel="noopener noreferrer">
-					<img
-						src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
-						alt="Kofi"
-						loading="lazy" />
-				</a>
-			</div>
-			<h2>
-				<a
-					href="https://chromewebstore.google.com/detail/eanofdhdfbcalhflpbdipkjjkoimeeod/reviews/my-review"
-					target="_blank"
-					rel="noopener noreferrer"
-					>⚡ Following users consider updating review ⚡</a
-				>
-			</h2>
-		</div>
-		<!-- <div id="users">
-			<div id="set1">
-				<p>hunntik (5)</p>
-				<p>Wensley Oliveira (5)</p>
-				<p>Henrique Santana (5)</p>
-				<p>Maks B (mxksxm) (5)</p>
-				<p>Lucas De Oliveira (4)</p>
-				<p>MengLuo RJ (4)</p>
-				<p>Djinn Emrys (4)</p>
-				<p>Soumik Bose (4)</p>
-				<p>Nicholas Williams (4)</p>
-				<p>Cris Dcruz (4)</p>
-				<p>gentle man (4)</p>
-				<p>KIREN RAJ (4)</p>
-				<p>Nicole C (4)</p>
-			</div>
-			<div id="set2">
-				<p>El Canal de Mabus (4)</p>
-				<p>J S (3)</p>
-				<p>Dhruv Varshney (3)</p>
-				<p>Aman Aditya Pandey (3)</p>
-				<p>John Brown (3)</p>
-				<p>Bruce (3)</p>
-				<p>Steve Bluck (3)</p>
-				<p>Cres Zuriel Goring (3)</p>
-				<p>Eric Silva (3)</p>
-				<p>Luis Bravo (3)</p>
-				<p>Xbox Mik29 (2)</p>
-				<p>Chance Kennedy (2)</p>
-				<p>Mc Melon (1)</p>
-			</div>
-			<div id="set3">
-				<p>Eric MK (1)</p>
-				<p>jianam green (1)</p>
-				<p>Giuseppe Valletta (1)</p>
-				<p>Srush (1)</p>
-				<p>Gumpreeeng Time wisang (1)</p>
-				<p>WMN1206 (1)</p>
-				<p>varun palepu (1)</p>
-				<p>Daniele Passegua (1)</p>
-				<p>OoWah (1)</p>
-				<p>Mohammad Rafi (1)</p>
-				<p>Hong Quan (1)</p>
-				<p>suco Carozac (1)</p>
-				<p>Ken L (1)</p>
-			</div>
-		</div> -->
-		<main>
-			<div id="qrs2">
-				<a
-					href="https://www.paypal.com/paypalme/getprojects?country.x=IN&locale.x=en_GB"
-					target="_blank"
-					rel="noopener noreferrer">
-					<img
-						src="https://tmtechnomania.github.io/Privacy-RSA/img/paypal_qr.png"
-						alt="Paypal"
-						loading="lazy" />
-				</a>
-				<a
-					href="https://www.buymeacoffee.com/getprojects"
-					target="_blank"
-					rel="noopener noreferrer">
-					<img
-						src="https://tmtechnomania.github.io/Privacy-RSA/img/bmc_qr.png"
-						alt="Buy Me A Coffee"
-						loading="lazy" />
-				</a>
-				<a
-					href="https://ko-fi.com/getprojects"
-					target="_blank"
-					rel="noopener noreferrer">
-					<img
-						src="https://tmtechnomania.github.io/Privacy-RSA/img/kofi_qr.png"
-						alt="Kofi"
-						loading="lazy" />
-				</a>
-			</div>
-			<h2>
-				Announcements & Updates (v1.4.2):
-				<a
-					href="https://tmtechnomania.github.io/Mobile%20Search%20Automator.html"
-					target="_blank"
-					rel="noopener noreferrer"
-					>Automate Your Mobile Searches</a
-				>
-			</h2>
-			<h3>v1.4.2 is available with fixes for the schedule option. Reinstall the extension if you want to use the schedule option. (18-1-24)</h3>
-			<h3>
-				Mobile searches on desktop has been blocked by MS, Use this
-				website on Chrome on your Android phone to automate your searches:
-				<a
-					href="https://tmtechnomania.github.io/Mobile%20Search%20Automator.html"
-					target="_blank"
-					rel="noopener noreferrer"
-					>Automate Your Mobile Searches</a
-				>
-			</h3>
-			<p>v1.4.0 has been launched for everyone</p>
-			<p>
-				This update introduces a brand-new feature allowing you to
-				toggle any tab between mobile and your regular desktop, enabling
-				the use of a simulated mobile device for other websites. This
-				functionality is especially useful for developers, providing a
-				list of over 60+ different devices to choose from. It aids in
-				debugging websites and testing mobile compatibility and
-				responsiveness.
-			</p>
-			<h2>Still confused how to install and use the extension?</h2>
-			<h3>Here is a step by step guide for you.</h3>
-			<iframe
-				class="ytvideo"
-				src="https://www.youtube.com/embed/5CU1gvnsaEg?si=88Gj0Cf5gxrLIuhc"
-				title="YouTube video player"
-				frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-				allowfullscreen></iframe>
-			<iframe
-				class="ytvideo"
-				src="https://www.youtube.com/embed/We1iXIlTuMo?si=2x_140udMgv5X2u2"
-				title="YouTube video player"
-				frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-				allowfullscreen></iframe>
-			<div id="howto">
-				<!-- <div id="install"> -->
-				<h4>Installation and Setup:</h4>
-				<strong><p>Step 1: Install the Extension</p></strong>
-				<ol>
-					<li>Visit the Chrome Web Store.</li>
-					<li>Search for "Rewards Search Automator."</li>
-					<li>
-						Click on "Add to Chrome" and confirm the installation.
-					</li>
-				</ol>
-				<strong><p>Step 2: Accessing the Extension</p></strong>
-				<ol>
-					<li>Locate the extension icon in your browser toolbar.</li>
-					<li>Click on the icon to open Rewards Search Automator.</li>
-				</ol>
-				<h4>Performing Searches (Search Tab)</h4>
-				<strong><p>Step 1: Manual Entry</p></strong>
-				<ol>
-					<li>Navigate to the "Search" tab.</li>
-					<li>
-						Manually enter the number of desktop and mobile
-						searches.
-					</li>
-					<li>
-						Specify the minimum and maximum delay (in seconds)
-						between each search.
-					</li>
-					<li>Click "Search" to perform searches.</li>
-				</ol>
-				<strong><p>Step 2: Predefined Search Buttons</p></strong>
-				<ol>
-					<li>
-						Choose one of the four predefined search buttons to
-						quickly set search parameters.
-					</li>
-					<li>
-						Specify the minimum and maximum delay (in seconds)
-						between each search.
-					</li>
-					<li>Click "Search" to perform searches.</li>
-				</ol>
-				<h4>Scheduling Searches (Schedule Tab):</h4>
-				<strong><p>Step 1: Accessing the Schedule Tab</p></strong>
-				<ol>
-					<li>
-						Switch to the "Schedule" tab to set up automated search
-						schedules.
-					</li>
-					<li>
-						Manually enter the number of desktop and mobile
-						searches.
-					</li>
-					<li>
-						Specify the minimum and maximum delay (in seconds)
-						between each search.
-					</li>
-					<li>
-						Choose from four predefined schedules: Never, Startup,
-						Every 5 Minutes, and Every 15 Minutes.
-					</li>
-					<strong
-						><p>
-							NOTE: Understand that "Every 5 Minutes" includes a
-							random delay of 5-7.5 minutes to prevent automation
-							detection. Similarly, "Every 15 Minutes" includes a
-							random delay of 15-20 minutes.
-						</p></strong
-					>
-				</ol>
-				<h4>Footer Features:</h4>
-				<p>Important Links:</p>
-				<ol>
-					<li>
-						Access important links in the footer for additional
-						resources or support.
-					</li>
-				</ol>
-				<p>Device Toggle Mode:</p>
-				<ol>
-					<li>
-						Use the toggle switch to enable or disable simulation
-						mode.
-					</li>
-					<li>
-						Simulation mode helps users test functionality without
-						actual searches.
-					</li>
-				</ol>
-				<p>Mobile Device Name:</p>
-				<ol>
-					<li>View the allotted mobile device name.</li>
-					<li>
-						Click on it to switch to another mobile device name.
-					</li>
-				</ol>
-				<!-- </div> -->
-			</div>
-			<h2>Facing issues in earning points?</h2>
-			<h3>Here is a troubleshooting guide for you.</h3>
-			<div id="troubleshoot">
-				<details>
-					<summary>Points Not Collected After Searches</summary>
-					<ol>
-						<li>
-							<p>Adjust Delay Settings:</p>
-							<ul>
-								<li>
-									Change the minimum delay to 10-12 seconds
-									and the maximum to 15-18 seconds.
-								</li>
-								<li>
-									Perform searches to see if points are
-									collected.
-								</li>
-							</ul>
-						</li>
-						<li>
-							<p>Check Microsoft Points Availability:</p>
-							<ul>
-								<li>
-									Verify if Microsoft has slowed down points
-									collection in your region.
-								</li>
-								<li>
-									If yes, wait for 15 minutes before
-									attempting searches again.
-								</li>
-							</ul>
-						</li>
-						<li>
-							<p>Mobile Search Issues:</p>
-							<ul>
-								<li>
-									If mobile searches are not yielding points,
-									change the mobile simulation device from the
-									popup.
-								</li>
-								<li>Retry mobile searches.</li>
-							</ul>
-						</li>
-						<li>
-							<p>Mobile Search Not Counting:</p>
-							<ul>
-								<li>
-									If mobile searches still don't count, run
-									desktop searches after setting mobile
-									searches to 0.
-								</li>
-								<li>
-									Refer to the "Searching Tab" for
-									instructions on inspecting the tab and
-									simulating iPhone 12.
-								</li>
-							</ul>
-						</li>
-					</ol>
-				</details>
-				<details>
-					<summary>
-						Popup Not Launching or Opening Install Page
-					</summary>
-					<ol>
-						<li>
-							<p>Accept Terms and Conditions:</p>
-							<ul>
-								<li>
-									If the popup is not launching or the install
-									page is not opening, ensure you have agreed
-									to the terms and conditions on the install
-									page.
-								</li>
-							</ul>
-						</li>
-						<li>
-							<p>Reinstall Extension:</p>
-							<ul>
-								<li>
-									Reinstall the extension if the popup issues
-									persist, as storage might be corrupted.
-								</li>
-							</ul>
-						</li>
-					</ol>
-				</details>
-				<details>
-					<summary>Points Not Collected on First Search</summary>
-					<ol>
-						<li>
-							<p>Explanation:</p>
-							<ul>
-								<li>
-									Microsoft requires two additional searches
-									in the beginning to start earning points for
-									both desktop and mobile.
-								</li>
-							</ul>
-						</li>
-					</ol>
-				</details>
-				<details>
-					<summary>Searches Are Not Performed</summary>
-					<ol>
-						<li>
-							<p>Reinstall or Change Number of Searches:</p>
-							<ul>
-								<li>Try reinstalling the extension.</li>
-								<li>
-									If searches are still not performed,
-									consider changing the number of searches.
-								</li>
-							</ul>
-						</li>
-					</ol>
-				</details>
-				<details>
-					<summary>Schedule Not Working</summary>
-					<ol>
-						<li>
-							<p>Browser Settings:</p>
-							<ul>
-								<li>
-									Check and disable your browser from running
-									in the background.
-								</li>
-								<li>
-									Disable power-saving mode in your browser.
-								</li>
-							</ul>
-						</li>
-						<li>
-							<p>Confirmation for Scheduled Searches:</p>
-							<ul>
-								<li>
-									Confirm if you clicked on "Start Now" in the
-									case of every 5 minutes and 15 minutes
-									schedules to initiate searches in the same
-									session.
-								</li>
-							</ul>
-						</li>
-					</ol>
-				</details>
-				<!-- <iframe src="https://livingshedhowever.com/up4jggte4?key=3ede97f5a0607f61f9f55f8c2e630f60" frameborder="0" id="ads"></iframe> -->
-				<!-- </div> -->
-			</div>
-			<h2>Still facing issues?</h2>
-			<p>
-				Feel free to contact me
-				<a
-					href="https://www.instagram.com/getprojectstech/"
-					target="_blank"
-					rel="noopener noreferrer"
-					>@getprojectstech</a
-				>
-			</p>
-		</main>
-		<div class="banner">
-			We don't promote clicking or downloading anything from ads, but ads
-			are important to keep the extension running
-		</div>
-	</body>
-	<script>
-		const width = screen.width;
-		const scale = width / 1920;
-		$("body").css("--scale", scale);
-		$(document).ready(function () {
-			const width = screen.width;
-			const scale = width / 1920;
-			$("body").css("--scale", scale);
-			setTimeout(() => {
-				const width = screen.width;
-				const scale = width / 1920;
-				$("body").css("--scale", scale);
-			}, 10000);
-			const users = $("#users");
-			const set1 = $("#set1");
-			const set2 = $("#set2");
-			const set3 = $("#set3");
-			let currentItem = 1;
-			setInterval(() => {
-				const scrollPosition = (currentItem - 1) * 64 * scale;
-				users.animate(
-					{
-						scrollTop: scrollPosition,
-					},
-					2000,
-				);
-				currentItem++;
-				if (currentItem > 13) {
-					currentItem = 1;
-					users.scrollTop(0);
-				}
-			}, 2000);
-			const donate = $("#donation");
-			window.addEventListener("scroll", () => {
-				const donateHeight = donate.height();
-				const scrollPosition = window.scrollY || window.pageYOffset;
-				if (scrollPosition > donateHeight) {
-					$("#qrs2").css("display", "flex");
-					// console.log("#donation is now invisible");
-				} else {
-					$("#qrs2").css("display", "none");
-					// console.log("#donation is now visible");
-				}
-			});
-			const closeAds = $("#closeAds");
-			const adsByAdsterra = $("#adsByAdsterra");
-			closeAds.click(() => {
-				adsByAdsterra.css("display", "none");
-				closeAds.css("display", "none");
-			});
-		});
-	</script>
-	<script
-		data-name="BMC-Widget"
-		data-cfasync="false"
-		src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-		data-id="getprojects"
-		data-description="Support me on Buy me a coffee!"
-		data-message=""
-		data-color="#0072ff"
-		data-position="Right"
-		data-x_margin="18"
-		data-y_margin="18"></script>
+<!doctype html>
+<html
+  lang="en"
+  data-ws-project="02e8b729-6331-41fc-8d72-ae60cc3b4448"
+  data-ws-last-published="2025-06-19T16:29:37.523Z"
+>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/static/app_generated_index-6937cd5a.BwCFzAPO.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta property="og:url" content="https://url/" />
+    <title>BuildWithKT</title>
+    <meta property="og:title" content="BuildWithKT" />
+    <meta
+      name="description"
+      content="BuildWithKT is a platform that offers a variety of tools and resources for building by Kartikey."
+    />
+    <meta
+      property="og:description"
+      content="BuildWithKT is a platform that offers a variety of tools and resources for building by Kartikey."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BuildWithKT" />
+    <meta property="og:image" />
+    <meta property="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/assets/favicon_RQyg-x_KKgYoiBt8308eO.png" />
+    <link
+      rel="preload"
+      href="/assets/InterVariable_qDqxtwB6S7W69tcm-FSxu.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/assets/WhatsApp_Image_2025-06-19_at_21.08.24_60e86c7c_mXKs7jXPFYGEMINzeGsaq.jpg"
+      as="image"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Tesso",
+        "url": "https://url"
+      }
+    </script>
+  </head>
+  <body class="w-body">
+    <div
+      class="w-box cte3dqu c1vyjej4 cas45oq c1no5gp4 c10e2vss crx4hza c1pt1618 c8ocn8b c1907gka cjttqh0 cogqn7g ctedvvo cqx2say c1jz80a3 c1og2cs8 c11bi6xn cz7xkya cev8cdn c19tyro4 c1y1l7em"
+    >
+      <div
+        class="w-box csdtuf1 c1ykb922 c1vyjej4 c1kt1fsu cas45oq c1osh9b5 c1dzua9o cjttqh0 c1fu3rjz c17d6kk2 c1sfuasr cqx2say c1jz80a3 c1fnx1sz c1y64edw c155mt7o c1tjls5k c1mkvfhk c7eyijz"
+      >
+        <div
+          class="w-box c1inuj3g cqx2say c1jz80a3 c1yhf8l4 c1nckt3g c1vyjej4 c1kt1fsu cg1kwfu c1ef4es7 cbhlnmk cwlrc9s"
+        >
+          <img
+            alt=""
+            width="3119"
+            height="4160"
+            src="/assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg"
+            class="w-image c6ozc0d c1p4e5h c1ybr272 c14siavy c1i5cfmp cougj9x ci6jhd7 cssl045 cr447kk c1kpdtu6 cigutbq c40jw5q"
+            sizes="100vw"
+            srcset="
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg   16w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg   32w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg   48w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg   64w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg   96w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg  128w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg  256w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg  384w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg  640w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg  750w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg  828w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg 1080w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg 1200w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg 1920w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg 2048w,
+              /assets/WhatsApp_Image_2025-06-19_at_20.47.00_3e618ff6_oJ1jGGeT4YQWg_x9uGz4D.jpg 3840w
+            "
+            decoding="async"
+            loading="lazy"
+          />
+          <div class="w-box cmxvgrt">
+            <h1
+              class="w-heading c13v1604 c1o2mq5x cnymj4y c1wtekbi c17w28al ceayha6 c1vubki9 c1reabg1"
+            >
+              Kartikey Tiwari
+            </h1>
+            <h2
+              class="w-heading c13v1604 c51piig chgra7d cck28ou cd23fro c14ckt81 c13nugg0 c17w28al c1wp1spm"
+            >
+              Chrome Extensions, Photography, Music
+            </h2>
+          </div>
+        </div>
+        <p
+          class="w-paragraph cbq63cf cgmb64m c13v1604 c51piig cck28ou c144lot0 c17w28al c1j0p7si c1wp1spm c19wi915"
+        >
+          I&#x27;m Kartikey Tiwari — a solo Chrome extension &amp; web developer
+          who loves building websites, automation tools, and experimenting with
+          SaaS ideas. I am pursuing BCA from Manipal University Jaipur. I love
+          Bike-riding, travel, music and experimenting with aspects in life.
+        </p>
+      </div>
+      <div
+        class="w-box c1vyjej4 cwcmw8y c10e2vss cbi9v8h c1fhmq56 cef4656 c1ocq3aj cmxvgrt cw3b7bc c117vrdh cjqe4wz c19pljyg c33v7jp c17q5uv9 c1qnw43s c1gw9iwf c1btptgv copucx8"
+      >
+        <a
+          href="https://www.youtube.com/@GetProjectsOfficial"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1cvwj49 cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              YouTube
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              <b class="w-bold-text">GetProjects</b>
+            </p>
+          </div></a
+        ><a
+          href="https://www.instagram.com/iamkartikeyt/"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1907jsx cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm c6i5acx c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Instagram
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              @iamkartikeyt
+            </p>
+          </div></a
+        ><a
+          href="https://open.spotify.com/user/31labjhhvs5mgj3jjlhn6xsmau3a"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q cumok2k cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Spotify
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              Kartikey Tiwari
+            </p>
+          </div></a
+        ><a
+          href="https://www.linkedin.com/in/dev-kartikey-tiwari/"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q caheab6 cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              LinkedIn
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              @dev-kartikey-tiwari
+            </p>
+          </div></a
+        ><a
+          href="https://buymeacoffee.com/getprojects"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1n66io0 cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c6o37tz c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Buy Me Coffee
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">Donate</p>
+          </div></a
+        ><a
+          href="https://chromewebstore.google.com/search/buildwithkt"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1oafsa3 cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              WebStore
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              BuildWithKT.dev
+            </p>
+          </div></a
+        >
+        <div
+          class="w-box c1ocq3aj c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1907jsx cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad ci6n5yc cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p c1fm8odb cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cp0zba3 cyk2eco c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt cv5r2lr c1a6igw c8nwmir cxufkiy c1molcpo cixmpda c13ngu2k ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+        >
+          <div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Mobile Photography
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              Love to make portraits and street styles
+            </p>
+          </div>
+          <img
+            alt=""
+            width="3119"
+            height="4160"
+            src="/assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg"
+            class="w-image c1uet3di cxiw08b ci013jn c1u3mqi4 cz5hwuo cssl045 cjttqh0 c1xg4apz c1pk2eby c1an0i6m c1pelaax c1s8fgr0 c14649va ccaq60d c1a86x1q c7e90te c1ivowd6"
+            sizes="100vw"
+            srcset="
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg   16w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg   32w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg   48w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg   64w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg   96w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg  128w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg  256w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg  384w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg  640w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg  750w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg  828w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg 1080w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg 1200w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg 1920w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg 2048w,
+              /assets/WhatsApp_Image_2025-06-19_at_21.08.59_52214b9b_ROsHiGdhLBAf93bqcRVgG.jpg 3840w
+            "
+            decoding="async"
+            loading="lazy"
+          />
+        </div>
+        <a
+          href="https://discordapp.com/users/tiwarikartik3002"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c3rvpsr cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Discord
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              @tiwarikartik3002
+            </p>
+          </div></a
+        ><a
+          href="https://t.me/Kartikey_Tiwari_2003"
+          target="_blank"
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q chouu8l cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Telegram
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              @Kartikey_Tiwari_2003
+            </p>
+          </div></a
+        ><a
+          class="w-link c6tc5qb c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1907jsx cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1voknrm cskh9ze c14v6fbe c17w54mb cri43g1 c1xn6d2h c1xw635p cewh6rc crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq cjati97 cf18qxd c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt c1a6igw c8nwmir cxufkiy c1molcpo ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+          href="#"
+          ><div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Traveler
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              60+ Cities across India
+            </p>
+          </div></a
+        >
+        <div
+          class="w-box c1ocq3aj c6pc7uk cp85ck4 cqlumer cjhm3os c18dlzvr cjtu37 c2hrksz c5cdjkw c7x4xdz c16udnu7 c10yw2bs c11rmxyr caul4w1 ckc7pa0 cfdbx8x cy7vwz1 c1vyjej4 c1kt1fsu c4os49q c1907jsx cgmb64m c1yd9u9v c1yv71ef c1cufg7t ctagith c1mjylrw c14bi68y cyl3u0r c1w35yw5 c96i3cj cerxdze c1s76tad c1m5obqw ckfij1j c5r3c0b c132au8h c1i20xa ctd0fmi cmyxd4d c1fm8odb cmmb2o8 crjyusk c1g5wqhv cyoviax c1bezyo cib4kst c1hoebjq c1f2zn9b cyk2eco c1qj9kzl c90xryg c8epkjn ctt4p81 cfhqa8w cerj6ka c1ctjebo c1jjnzdt cv5r2lr c1a6igw c8nwmir cxufkiy c1molcpo cixmpda c13gnmsj ce1zgdp c15eh4y7 c1qxnpk2 clvdvor c181e04s c1oj5snp"
+        >
+          <div class="w-box c1vyjej4 c1kt1fsu cw2l5q8 c1yd9u9v ce0pkw">
+            <h3 class="w-heading c13v1604 c51piig cnymj4y c13nugg0 c1rjfme7">
+              Traveling
+            </h3>
+            <p class="w-paragraph c13v1604 c51piig c1cd0p5c cfwfiou">
+              450 KM Bike Ride in June 2025
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script id="vike_pageContext" type="application/json">
+      {
+        "_urlRewrite": null,
+        "pageId": "/pages/index",
+        "routeParams": {},
+        "data": {
+          "url": "https://url/",
+          "system": { "params": {}, "search": {}, "origin": "https://url" },
+          "resources": {},
+          "pageMeta": {
+            "title": "Tesso – WebStudio Template",
+            "description": "Minimalist WebStudio template in Bento style with flex blocks (1x1, 3x1, 3x2, 3x3). Choose between static or animated versions to create a unique portfolio",
+            "excludePageFromSearch": false,
+            "language": "!undefined",
+            "socialImageAssetName": "tesso-flex_zI2KvcGitetdIw9fTnF1M.jpg",
+            "socialImageUrl": "!undefined",
+            "status": "!undefined",
+            "redirect": "!undefined",
+            "custom": []
+          }
+        }
+      }
+    </script>
+    <script id="vike_globalContext" type="application/json">
+      {}
+    </script>
+    <script
+      src="/assets/entries/entry-server-routing.BE7fUGuF.js"
+      type="module"
+      async
+    ></script>
+    <link
+      rel="modulepreload"
+      href="/assets/entries/pages_index.B1dRF2l3.js"
+      as="script"
+      type="text/javascript"
+    />
+  </body>
 </html>
