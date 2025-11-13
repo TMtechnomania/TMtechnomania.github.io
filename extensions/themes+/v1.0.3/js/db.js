@@ -43,9 +43,7 @@ export async function getMediaEntry(key) {
         const tx = db.transaction(IDB_STORE_MEDIA, 'readonly');
         const store = tx.objectStore(IDB_STORE_MEDIA);
         const req = store.get(key);
-        req.onsuccess = () => resolve(req.result |
-
-| null);
+    req.onsuccess = () => resolve(req.result || null);
         req.onerror = () => reject(req.error);
     });
 }
