@@ -16,7 +16,8 @@
         "search", "storage"
     ],
     "background": {
-        "service_worker": "js/service.js"
+        "service_worker": "js/service.js",
+        "type": "module"
     },
 	"host_permissions": [
 		"https://buildwithkt.dev/*"
