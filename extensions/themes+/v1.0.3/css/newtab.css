@@ -194,6 +194,8 @@ body {
 	width: 100%;
 	height: var(--bar-h);
 	background: transparent;
+	pointer-events: auto; /* allow hover in transparent area */
+	z-index: 1; /* sit above wallpaper but below content */
 }
 #actionbar.autohide {
 	/* Hidden by default via class so we can toggle it without inline styles */
@@ -221,6 +223,22 @@ body {
 	margin: var(--bar-h) auto 0; /* Center vertically in the 2x height container */
 	width: 30vw; /* Same as searchbar */
 	min-width: calc(40rem * var(--scale));
+	position: relative;
+	z-index: 2; /* bring content above the pseudo-element */
+	transition: opacity 0.25s ease, transform 0.2s ease;
+}
+
+/* Hide content when autohide is active until hovered */
+#actionbar.autohide #actioncontent {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(8px);
+}
+#actionbar.autohide:hover #actioncontent,
+#actionbar.autohide:focus-within #actioncontent {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
 }
 
 /* Action bar items (buttons/shortcuts, similar to searchbar) */
