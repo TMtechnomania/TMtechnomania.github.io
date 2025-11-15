@@ -1,65 +1,141 @@
-// Step 1: Check the configuration setting for new tab page before rendering any content
-// The the config is stored in the browser.storage.local api as "config"
+// Import shared config and the new wallpaper renderer
+import {
+	STORAGE_KEY_DB,
+	STORAGE_KEY_SETTINGS,
+	DEFAULT_CONFIG,
+} from "./config.js";
+import { renderWallpaper } from "./wallpaper.js";
+import { renderSearchbar, removeSearchbar } from "./searchbar.js";
+import { renderActionbar } from "./actionbar.js";
 
-const app = chrome || browser; // Support both Chrome and Firefox
+const app = chrome || browser;
 
-const DEFAULT_CONFIG = {
-	wallpaper: {
-		wallpaper_type: "video", // img or video
-		wallpaper_mode: "random", // random, sequence, or specific
-		wallpaper_specific: null, // specific wallpaper id if mode is specific
-		last_wallpaper_id: null, // last displayed wallpaper id
-	},
-};
+/**
+ * Gets the user's config, merging it with defaults.
+ */
+async function getStoredConfig() {
+	return new Promise((resolve) => {
+		// Use a try/catch for the *initial* call
+		try {
+			app.storage.local.get(STORAGE_KEY_SETTINGS, (res) => {
+				// Use a try/catch *inside* the callback to handle async errors
+				try {
+					// Check for any runtime errors
+					if (app.runtime.lastError) {
+						console.error(app.runtime.lastError.message);
+						resolve(DEFAULT_CONFIG);
+						return;
+					}
 
-const WALLPAPERS = {
-	img: [{ id: 1, url: "image.jpg" }],
-	video: [{ id: 1, url: "video.mp4" }],
-};
+					// FIX: Use optional chaining. The old code failed when res[STORAGE_KEY_SETTINGS]
+					// was undefined, making 'stored' undefined and causing 'stored.wallpaper' to crash.
+					const stored = res?.[STORAGE_KEY_SETTINGS] ?? {};
 
-app.storage.local.get("config").then((data) => {
-	const config = data.config || DEFAULT_CONFIG;
-	console.log(config);
-	renderWallpaper(config.wallpaper);
-});
-
-function renderWallpaper(wallpaperConfig) {
-	// Logic to render wallpaper based on wallpaperConfig
-	console.log("Rendering wallpaper with config:", wallpaperConfig);
-	let wallpaperURL = `assets/${wallpaperConfig.wallpaper_type}`;
-	let wallpaperElement = document.createElement(
-		`${wallpaperConfig.wallpaper_type}`,
-	);
-	if (wallpaperConfig.wallpaper_mode === "random") {
-		const randomId =
-			Math.floor(
-				Math.random() *
-					WALLPAPERS[wallpaperConfig.wallpaper_type].length,
-			) + 1;
-		wallpaperURL += `/wallpaper_${randomId}`;
-	} else if (
-		wallpaperConfig.wallpaper_mode === "sequence" &&
-		wallpaperConfig.last_wallpaper_id
-	) {
-		let nextId = wallpaperConfig.last_wallpaper_id + 1;
-		if (nextId > WALLPAPERS[wallpaperConfig.wallpaper_type].length) {
-			nextId = 1; // Loop back to first wallpaper
+					// Deep merge with defaults to ensure all keys are present
+					const mergedConfig = {
+						...DEFAULT_CONFIG,
+						...stored,
+						wallpaper: {
+							...DEFAULT_CONFIG.wallpaper,
+							...(stored.wallpaper || {}),
+						},
+						searchbar: {
+							...DEFAULT_CONFIG.searchbar,
+							...(stored.searchbar || {}),
+						},
+						actionbar: {
+							...DEFAULT_CONFIG.actionbar,
+							...(stored.actionbar || {}),
+						},
+					};
+					console.log("Loaded stored config:", stored, "merged:", mergedConfig);
+					resolve(mergedConfig);
+				} catch (e) {
+					console.error("Failed to parse stored config:", e);
+					resolve(DEFAULT_CONFIG); // Fallback on any parsing error
+				}
+			});
+		} catch (e) {
+			// This outer catch handles immediate errors from app.storage.local.get itself
+			console.error("Failed to call app.storage.local.get:", e);
+			resolve(DEFAULT_CONFIG);
 		}
-		wallpaperURL += `/wallpaper_${nextId}`;
-	} else if (
-		wallpaperConfig.wallpaper_mode === "specific" &&
-		wallpaperConfig.wallpaper_specific
-	) {
-		wallpaperURL += `/wallpaper_${wallpaperConfig.wallpaper_specific}`;
-	}
-	wallpaperURL += wallpaperConfig.wallpaper_type === "img" ? ".jpg" : ".mp4";
-	wallpaperElement.src = wallpaperURL;
-	wallpaperElement.id = "wallpaper";
-	// set attributes for video like autoplay, loop, muted
-	if (wallpaperConfig.wallpaper_type === "video") {
-		wallpaperElement.autoplay = true;
-		wallpaperElement.loop = true;
-		wallpaperElement.muted = true;
-	}
-	document.body.appendChild(wallpaperElement);
+	});
 }
+
+/**
+ * Would save the ID of the last rendered wallpaper for 'sequence' mode.
+ * Disabled until a settings panel is created to handle config changes.
+ */
+async function setLastWallpaperId(id) {
+	// TODO: Implement saving last_id once settings panel exists
+	console.log(`Wallpaper rendered: ${id} (not saving last_id until settings panel)`);
+}
+
+/**
+ * Gets the wallpaper manifest from local storage.
+ */
+async function getManifest() {
+	return new Promise((resolve) => {
+		try {
+			app.storage.local.get(STORAGE_KEY_DB, (res) => {
+				if (app.runtime.lastError) {
+					console.error(app.runtime.lastError.message);
+					resolve(null);
+					return;
+				}
+				resolve(
+					res && res[STORAGE_KEY_DB] ? res[STORAGE_KEY_DB] : null,
+				);
+			});
+		} catch (e) {
+			console.error("Failed to call app.storage.local.get for manifest:", e);
+			resolve(null);
+		}
+	});
+}
+
+// --- Main Execution ---
+(async () => {
+	const config = await getStoredConfig();
+	const manifest = await getManifest();
+	let renderedId = null;
+
+	if (!manifest || !(manifest.images || manifest.videos)) {
+		console.warn("Manifest not found or is empty, using defaults.");
+		// Pass an empty object for manifest, renderWallpaper will handle it.
+		renderedId = await renderWallpaper(
+			config.wallpaper || DEFAULT_CONFIG.wallpaper,
+			{},
+		);
+	} else {
+		// Fetch config and manifest, then let the wallpaper module handle the rest
+		renderedId = await renderWallpaper(
+			config.wallpaper || DEFAULT_CONFIG.wallpaper,
+			manifest,
+		);
+	}
+
+	// Save the ID of the wallpaper that was just rendered
+	if (renderedId) {
+		await setLastWallpaperId(renderedId);
+	}
+
+	// Render or remove searchbar depending on settings
+	try {
+		if (config && config.searchbar && config.searchbar.enabled) {
+			await renderSearchbar(config.searchbar);
+		} else {
+			removeSearchbar();
+		}
+	} catch (e) {
+		console.error('Failed to render/remove searchbar', e);
+	}
+
+	// Render action bar
+	try {
+		await renderActionbar(config.actionbar || DEFAULT_CONFIG.actionbar);
+	} catch (e) {
+		console.error('Failed to render action bar', e);
+	}
+})();

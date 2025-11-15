@@ -13,3 +13,5 @@
 13. Theme - Opaque and Glass
 
 https://www.streamlinehq.com/icons/core-flat-free  #0072FF #ABD0FF
+
+https://www.streamlinehq.com/icons/material-symbols-outlined-line
