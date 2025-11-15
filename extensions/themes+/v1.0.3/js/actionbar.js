@@ -7,9 +7,15 @@ export async function renderActionbar(actionCfg = {}) {
 		// Clear existing content
 		actioncontent.innerHTML = '';
 
-		// Set initial position based on autohide
+		// Set initial position based on autohide by toggling classes (avoid inline style)
 		const autohide = actionCfg.autohide !== false; // Default true
-		actionbar.style.bottom = autohide ? `calc(-1 * var(--bar-h))` : '0';
+		if (autohide) {
+			actionbar.classList.add('autohide');
+			actionbar.classList.remove('no-autohide');
+		} else {
+			actionbar.classList.remove('autohide');
+			actionbar.classList.add('no-autohide');
+		}
 
 		// Example items: Settings button, separator, Quick shortcuts
 		const settingsBtn = document.createElement('button');
