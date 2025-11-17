@@ -1,0 +1,108 @@
+#tabs-ribbon {
+	position: fixed;
+	bottom: calc(var(--ui-bar-height) + var(--ui-gap));
+	left: 0;
+	width: 100%;
+	max-height: 50vh;
+	overflow-y: auto;
+	z-index: 100000; /* must be above bookmarks panel (99999) */
+	background: transparent;
+}
+
+.tabs-ribbon-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--ui-gap);
+	/* subtle shadow for the ribbon content so it sits above the page */
+	box-shadow: var(--ui-shadow-strong);
+}
+
+.window-group {
+	display: flex;
+	align-items: center;
+	gap: var(--ui-gap);
+	border-radius: var(--border-radius-full);
+	background: var(--color-surface);
+	padding: var(--ui-padding-block);
+}
+
+.window-selector {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--ui-chip-height);
+	width: var(--ui-chip-height);
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.window-selector:hover {
+	background: var(--color-primary-alpha);
+}
+
+.window-selector-icon {
+	width: 60%;
+	height: 60%;
+	object-fit: contain;
+}
+
+.tabs-ribbon-list {
+	display: flex;
+	gap: var(--ui-gap);
+	overflow-x: auto;
+	flex: 1;
+}
+
+.tab-item {
+	display: flex;
+	align-items: center;
+	gap: var(--ui-gap);
+	min-width: var(--ui-tab-min-width);
+	max-width: var(--ui-tab-max-width);
+	padding: var(--ui-padding-block);
+	border-radius: var(--border-radius-full);
+	background: transparent;
+	cursor: pointer;
+	transition: background var(--transition-fast), color var(--transition-fast);
+	flex-shrink: 0;
+}
+
+.tab-item:hover {
+	background: var(--color-primary-alpha);
+}
+
+.tab-item.active {
+	background: var(--color-primary-alpha);
+}
+
+.tab-icon {
+	width: var(--ui-chip-icon-size);
+	height: var(--ui-chip-icon-size);
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.tab-title {
+	flex: 1;
+	font-size: 1em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+}
+
+.merge-windows-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: calc(var(--ui-chip-height) + calc(var(--ui-padding-block) * 2));
+	width: calc(var(--ui-chip-height) + calc(var(--ui-padding-block) * 2));
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background 0.2s;
+	background: var(--color-surface);
+	padding: var(--ui-padding-block);
+}

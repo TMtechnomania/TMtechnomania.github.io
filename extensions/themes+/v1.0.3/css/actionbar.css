@@ -1,0 +1,60 @@
+#action-bar {
+	position: fixed;
+	bottom: calc(var(--ui-bar-height) * -1);
+	left: 0;
+	width: 100%;
+	height: calc(var(--ui-bar-height) * 2);
+	background: transparent;
+	transition: bottom var(--transition-normal);
+}
+
+#action-bar:hover {
+	bottom: 0;
+}
+
+#action-content {
+	height: var(--ui-bar-height);
+	background: var(--color-surface);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: var(--ui-bar-height);
+	padding: var(--ui-padding-block);
+	gap: var(--ui-gap);
+}
+
+.action-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--ui-chip-height);
+	width: var(--ui-chip-height);
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.action-item:hover {
+	background: var(--color-primary-alpha);
+	color: var(--color-surface);
+}
+
+.action-group .action-item.active {
+	background: var(--color-primary-alpha);
+	color: var(--color-surface);
+}
+
+.action-item img,
+.action-item svg {
+	width: 50%;
+	height: 50%;
+	object-fit: contain;
+}
+
+.action-group {
+	display: flex;
+	background: var(--color-primary-alpha);
+	gap: var(--ui-gap);
+	border-radius: var(--border-radius-full);
+	height: var(--ui-chip-height);
+}

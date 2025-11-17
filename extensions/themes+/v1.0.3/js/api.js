@@ -7,7 +7,6 @@ const app =
 		? browser
 		: null;
 
-// --- Network Helpers ---
 export async function fetchJson(url, timeoutMs = 15000) {
 	const controller = new AbortController();
 	const id = setTimeout(() => controller.abort(), timeoutMs);
@@ -42,16 +41,9 @@ export async function fetchWithRetries(url, maxAttempts = 3, baseDelay = 300) {
 	};
 }
 
-// ===================================================================
-//
-// 		THIS IS THE CORRECTED FUNCTION
-//
-// ===================================================================
 export function resolveAssetUrl(pathOrUrl) {
 	if (!pathOrUrl) return null;
 	try {
-		// This constructor safely handles both full URLs (like in your new JSON)
-		// and relative paths (like you had before), making it much more robust.
 		const u = new URL(pathOrUrl, "https://buildwithkt.dev");
 		return u.href;
 	} catch (e) {
@@ -59,9 +51,7 @@ export function resolveAssetUrl(pathOrUrl) {
 		return null;
 	}
 }
-// ===================================================================
 
-// --- Storage Helpers (Promisified) ---
 export async function getStorageLocal(key) {
 	if (!app || !app.storage || !app.storage.local) return null;
 	return new Promise((resolve) => {
@@ -90,13 +80,11 @@ export async function setStorageLocal(obj) {
 	});
 }
 
-// --- Combined Logic ---
 async function fetchAndStoreBlob(url, key, meta = {}, maxAttempts = 3) {
 	let status = "failed";
 	let errorMessage = null;
 	let blob = null;
 
-	// ** Use ID or Name for logging, fallback to key **
 	const logIdentifier = meta.id || meta.name || key;
 
 	const result = await fetchWithRetries(url, maxAttempts);
@@ -119,7 +107,6 @@ async function fetchAndStoreBlob(url, key, meta = {}, maxAttempts = 3) {
 		);
 		await putMediaEntry(entry);
 	} catch (dbErr) {
-		// ** Use concise identifier in log **
 		console.warn(`Failed to persist media entry ${logIdentifier}`, dbErr);
 		return {
 			ok: false,
@@ -128,11 +115,9 @@ async function fetchAndStoreBlob(url, key, meta = {}, maxAttempts = 3) {
 	}
 
 	if (status === "ok") {
-		// ** Use concise identifier in log **
 		console.info(`Resource stored: ${logIdentifier}`);
 		return { ok: true };
 	} else {
-		// ** Use concise identifier in log **
 		console.warn(
 			`Resource download failed for ${logIdentifier}: ${errorMessage}`,
 		);
@@ -153,7 +138,7 @@ export async function downloadAndStoreResource({
 	const key = `${assetPath}::${kind}`;
 	const meta = {
 		kind,
-		assetPath, // This is now the entry ID, e.g., "img-001"
+		assetPath, 
 		id: manifestEntry && manifestEntry.id ? manifestEntry.id : null,
 		name: manifestEntry && manifestEntry.name ? manifestEntry.name : null,
 		version:

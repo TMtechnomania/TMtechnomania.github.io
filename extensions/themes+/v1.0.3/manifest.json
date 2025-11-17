@@ -13,6 +13,7 @@
 		"newtab": "newtab.html"
 	},
 	"permissions": ["search", "storage", "tabs"],
+	"optional_permissions": ["bookmarks", "alarms", "notifications"],
 	"background": {
 		"service_worker": "js/service.js",
 		"type": "module"

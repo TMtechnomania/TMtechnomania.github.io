@@ -34,6 +34,13 @@ export const DEFAULT_CONFIG = {
 		target: "self", // 'self' for same tab, 'blank' for new tab
 	},
 	actionbar: {
-		autohide: true, // If true, hides below screen; shows on hover
-	},
+		autohide: false, // Auto-hide the action bar by setting the initial bottom position to -50%.
+	}
+,
+	// Font settings: default to Google Outfit
+	font: {
+		family: 'Outfit',
+		// Default import URL for Outfit with common weights
+		importUrl: 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap'
+	}
 };
