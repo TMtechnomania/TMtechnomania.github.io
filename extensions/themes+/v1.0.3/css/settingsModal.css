@@ -1,0 +1,320 @@
+/* Settings Modal */
+.settings-modal {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90%;
+	max-width: calc(800px * var(--ui-scale));
+	height: 80vh;
+	background: var(--color-modal-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid var(--color-modal-border);
+	border-radius: var(--radius-2);
+	z-index: 10000;
+	display: flex;
+	flex-direction: column;
+	color: var(--text-base);
+	font-family: var(--font-family);
+}
+
+.settings-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--dis-3) var(--dis-4);
+	border-bottom: 1px solid var(--color-off);
+}
+
+.settings-title {
+	font-size: calc(1.25rem * var(--ui-scale));
+	font-weight: 600;
+	color: var(--text-base);
+	display: flex;
+	align-items: center;
+	gap: var(--dis-1);
+}
+
+.settings-title img,
+.settings-title .ui-icon {
+	width: var(--dis-4);
+	height: var(--dis-4);
+}
+
+.settings-close {
+	background: var(--color-off);
+	border: none;
+	color: var(--text-base);
+	cursor: pointer;
+	padding: var(--dis-1);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--dis-6);
+	height: var(--dis-6);
+}
+
+.settings-close img,
+.settings-close .ui-icon {
+	width: 60%;
+	height: 60%;
+	object-fit: contain;
+}
+
+.settings-body {
+	flex: 1;
+	display: flex;
+	overflow: hidden;
+}
+
+/* Sidebar */
+.settings-sidebar {
+	width: calc(200px * var(--ui-scale));
+	border-right: 1px solid var(--color-off);
+	padding: var(--dis-2) 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-xs);
+	background: var(--color-off);
+}
+
+.settings-tab-btn {
+	background: none;
+	border: none;
+	color: var(--text-off);
+	padding: var(--dis-2) var(--dis-4);
+	text-align: left;
+	cursor: pointer;
+	font-size: calc(0.95rem * var(--ui-scale));
+	border-left: 3px solid transparent;
+	display: flex;
+	align-items: center;
+	gap: var(--dis-1);
+	font-family: var(--font-family);
+}
+
+.settings-tab-btn img,
+.settings-tab-btn .ui-icon {
+	width: var(--dis-3);
+	height: var(--dis-3);
+	object-fit: contain;
+}
+
+.settings-tab-btn.active {
+	color: var(--text-accent);
+	background: var(--color-base);
+	border-left-color: var(--color-accent);
+	font-weight: 500;
+}
+
+/* Content Area */
+.settings-content {
+	flex: 1;
+	overflow-y: auto;
+	padding: var(--dis-4);
+}
+
+.settings-section {
+	display: none;
+}
+
+.settings-section.active {
+	display: block;
+}
+
+.settings-group {
+	margin-bottom: var(--dis-5);
+}
+
+.settings-group-title {
+	font-size: calc(0.85rem * var(--ui-scale));
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: var(--text-off);
+	margin-bottom: var(--dis-2);
+	font-weight: 600;
+}
+
+/* Form Controls */
+.setting-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--dis-2) 0;
+	border-bottom: 1px solid var(--color-off);
+}
+
+.setting-row:last-child {
+	border-bottom: none;
+}
+
+.setting-info {
+	flex: 1;
+	padding-right: var(--dis-3);
+}
+
+.setting-label {
+	font-size: calc(1rem * var(--ui-scale));
+	color: var(--text-base);
+	margin-bottom: var(--dis-xs);
+	font-weight: 500;
+}
+
+.setting-desc {
+	font-size: calc(0.85rem * var(--ui-scale));
+	color: var(--text-off);
+}
+
+.setting-control {
+	flex-shrink: 0;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+	position: relative;
+	display: inline-block;
+	width: var(--dis-7);
+	height: var(--dis-4);
+}
+
+.toggle-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: var(--color-off);
+	border-radius: var(--radius-4);
+}
+
+.toggle-slider:before {
+	position: absolute;
+	content: "";
+	height: calc(var(--dis-4) - 6px);
+	width: calc(var(--dis-4) - 6px);
+	left: 3px;
+	bottom: 3px;
+	background-color: var(--color-base);
+	border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+	background-color: var(--color-accent);
+}
+
+input:checked + .toggle-slider:before {
+	transform: translateX(calc(var(--dis-3)));
+	background-color: var(--text-invert);
+}
+
+/* Select */
+.setting-select {
+	background: var(--color-off);
+	border: 1px solid var(--color-off);
+	color: var(--text-base);
+	padding: var(--dis-1) var(--dis-2);
+	border-radius: var(--radius-1);
+	font-size: calc(0.9rem * var(--ui-scale));
+	cursor: pointer;
+	outline: none;
+	min-width: calc(150px * var(--ui-scale));
+	font-family: var(--font-family);
+}
+
+.setting-select:focus {
+	border-color: var(--color-accent);
+	background: var(--color-base);
+}
+
+.setting-select option {
+	background: var(--color-base);
+	color: var(--text-base);
+}
+
+/* Range Slider */
+.range-wrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--dis-2);
+	width: calc(200px * var(--ui-scale));
+}
+
+.setting-range {
+	flex: 1;
+	-webkit-appearance: none;
+	appearance: none;
+	height: var(--dis-xs);
+	background: var(--color-off);
+	border-radius: var(--radius-xs);
+	outline: none;
+}
+
+.setting-range::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: var(--dis-2);
+	height: var(--dis-2);
+	background: var(--color-accent);
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.setting-range::-moz-range-thumb {
+	width: var(--dis-2);
+	height: var(--dis-2);
+	background: var(--color-accent);
+	border-radius: 50%;
+	cursor: pointer;
+	border: none;
+}
+
+.range-value {
+	font-size: calc(0.85rem * var(--ui-scale));
+	color: var(--text-off);
+	width: calc(32px * var(--ui-scale));
+	text-align: right;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+	.settings-modal {
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		border-radius: 0;
+		border: none;
+	}
+
+	.settings-body {
+		flex-direction: column;
+	}
+
+	.settings-sidebar {
+		width: 100%;
+		flex-direction: row;
+		overflow-x: auto;
+		border-right: none;
+		border-bottom: 1px solid var(--color-off);
+		padding: 0;
+	}
+
+	.settings-tab-btn {
+		padding: var(--dis-2);
+		white-space: nowrap;
+		border-left: none;
+		border-bottom: 3px solid transparent;
+	}
+
+	.settings-tab-btn.active {
+		border-left: none;
+		border-bottom-color: var(--color-accent);
+	}
+}

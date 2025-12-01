@@ -1,4 +1,5 @@
 import { loadCSS, unloadCSS } from './cssLoader.js';
+import { renderInlineIcon } from './brandIconLoader.js';
 
 const CSS_ID = 'alarm-modal-css';
 const CSS_PATH = 'css/alarmModal.css';
@@ -6,6 +7,25 @@ const AUDIO_SRC = 'assets/audio/mixkit-positive-interface-beep-221.wav';
 const STORAGE_KEY = 'alarms_list_v1';
 const PERMISSION_FLAG = 'alarms_permission_requested';
 const MAX_ALARMS = 3;
+
+function createIconSpan(iconPath, className = '') {
+    const icon = document.createElement('span');
+    icon.className = ['ui-icon', className].filter(Boolean).join(' ');
+    icon.setAttribute('aria-hidden', 'true');
+    renderInlineIcon(icon, iconPath);
+    return icon;
+}
+
+function addIconWithLabel(target, iconPath, labelText = '', className = 'tm-btn-icon') {
+    const icon = createIconSpan(iconPath, className);
+    target.appendChild(icon);
+    if (labelText) {
+        const span = document.createElement('span');
+        span.textContent = labelText;
+        target.appendChild(span);
+    }
+    return icon;
+}
 
 let _backdrop = null;
 let _state = {
@@ -179,14 +199,20 @@ function renderAlarms(modal) {
         const freq = document.createElement('div'); freq.className='alarm-freq'; freq.textContent = al.frequency === 'once' ? 'Once' : (al.frequency==='daily'?'Daily':'Weekdays');
         left.appendChild(label); left.appendChild(time); left.appendChild(freq);
         const right = document.createElement('div'); right.className='alarm-right';
-        const toggle = document.createElement('input'); toggle.type='checkbox'; toggle.className='alarm-toggle'; toggle.checked = !!al.on;
-        toggle.addEventListener('change', (ev)=>{
-            al.on = !!toggle.checked; saveState(); renderAlarms(modal);
+        const toggle = document.createElement('button'); toggle.className='tm-btn alarm-toggle round'; toggle.title = al.on ? 'Disable' : 'Enable';
+        toggle.setAttribute('aria-pressed', al.on ? 'true' : 'false');
+        const checkIcon = 'assets/svgs-fontawesome/solid/square-check.svg';
+        const uncheckIcon = 'assets/svgs-fontawesome/regular/square.svg';
+        addIconWithLabel(toggle, al.on ? checkIcon : uncheckIcon);
+        toggle.addEventListener('click', (ev)=>{
+            al.on = !al.on; saveState(); renderAlarms(modal);
             if (al.on) scheduleAlarm(al, modal); else { clearScheduled(al.id); clearChromeAlarm(al.id); }
         });
-        const edit = document.createElement('button'); edit.className='tm-btn alarm-edit round'; edit.title='Edit'; edit.innerHTML=`<img src="assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`;
+        const edit = document.createElement('button'); edit.className='tm-btn alarm-edit round'; edit.title='Edit';
+        addIconWithLabel(edit, 'assets/svgs-fontawesome/regular/pen-to-square.svg');
         edit.addEventListener('click', ()=> openEditForm(modal, al));
-        const del = document.createElement('button'); del.className='tm-btn alarm-del round'; del.title='Delete'; del.innerHTML=`<img src="assets/icons/Delete--Streamline-Outlined-Material-Symbols.svg" alt="Delete">`;
+        const del = document.createElement('button'); del.className='tm-btn alarm-del round'; del.title='Delete';
+        addIconWithLabel(del, 'assets/svgs-fontawesome/regular/circle-xmark.svg');
         del.addEventListener('click', ()=> { _state.alarms = _state.alarms.filter(x=>x.id!==al.id); clearScheduled(al.id); clearChromeAlarm(al.id); saveState(); renderAlarms(modal); });
         right.appendChild(toggle); right.appendChild(edit); right.appendChild(del);
         item.appendChild(left); item.appendChild(right); list.appendChild(item);
@@ -201,8 +227,8 @@ function openEditForm(modal, alarm) {
     const time = document.createElement('input'); time.type='time'; time.value = alarm ? formatTime(alarm.hour,alarm.minute) : '07:00';
     const freq = document.createElement('select'); freq.innerHTML = `<option value="once">Once</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option>`; freq.value = alarm ? alarm.frequency : 'once';
     const row = document.createElement('div'); row.className='alarm-form-row';
-    const save = document.createElement('button'); save.className='tm-btn'; save.title='Save'; save.innerHTML = `<img src="assets/icons/Save--Streamline-Outlined-Material-Symbols.svg" alt="Save"/><span>Save</span>`;
-    const cancel = document.createElement('button'); cancel.className='tm-btn'; cancel.title='Cancel'; cancel.innerHTML = `<img src="assets/icons/Delete--Streamline-Outlined-Material-Symbols.svg" alt="Cancel"/><span>Cancel</span>`;
+    const save = document.createElement('button'); save.className='tm-btn'; save.title='Save'; addIconWithLabel(save, 'assets/svgs-fontawesome/regular/floppy-disk.svg', 'Save');
+    const cancel = document.createElement('button'); cancel.className='tm-btn'; cancel.title='Cancel'; addIconWithLabel(cancel, 'assets/svgs-fontawesome/regular/circle-xmark.svg', 'Cancel');
     row.appendChild(save); row.appendChild(cancel);
     form.appendChild(label); form.appendChild(time); form.appendChild(freq); form.appendChild(row);
     modal.querySelector('.alarm-body').appendChild(form);
@@ -226,7 +252,9 @@ async function openAlarmModal() {
     await loadCSS(CSS_PATH, CSS_ID);
     _backdrop = document.createElement('div'); _backdrop.className='alarm-modal-backdrop';
     const modal = document.createElement('div'); modal.id='alarm-modal'; modal.className='alarm-modal'; modal.tabIndex=-1; modal.setAttribute('role','dialog');
-    const close = document.createElement('div'); close.className='tm-close'; close.innerHTML=`<img src="assets/icons/Delete--Streamline-Outlined-Material-Symbols.svg" alt="Close"/>`; close.addEventListener('click', closeAlarmModal);
+    const close = document.createElement('div'); close.className='tm-close';
+    close.appendChild(createIconSpan('assets/svgs-fontawesome/regular/circle-xmark.svg'));
+    close.addEventListener('click', closeAlarmModal);
     modal.appendChild(close);
     const header = document.createElement('div'); header.className='alarm-header'; header.innerHTML = `<h3>Alarms</h3>`;
     modal.appendChild(header);
@@ -235,7 +263,7 @@ async function openAlarmModal() {
     if (window.Notification && Notification.permission !== 'granted' && !_state.permissionAsked) {
         permText.textContent = 'Enable notifications to allow alarms to show notifications (optional).';
         const permBtn = document.createElement('button'); permBtn.className='tm-btn'; permBtn.title='Enable Notifications';
-        permBtn.innerHTML = `<img src="assets/icons/Alarm--Streamline-Outlined-Material-Symbols.svg" alt="Notify"/><span>Enable Notifications</span>`;
+        addIconWithLabel(permBtn, 'assets/svgs-fontawesome/regular/bell.svg', 'Enable Notifications');
         permBtn.addEventListener('click', async ()=>{
             try { const res = await Notification.requestPermission(); localStorage.setItem(PERMISSION_FLAG,'1'); _state.permissionAsked = true; permArea.remove(); } catch (e) { localStorage.setItem(PERMISSION_FLAG,'1'); _state.permissionAsked = true; permArea.remove(); }
         });
@@ -248,7 +276,7 @@ async function openAlarmModal() {
             chrome.permissions.contains({ permissions: ['alarms'] }, (has) => {
                 if (!has) {
                     const btn = document.createElement('button'); btn.className='tm-btn'; btn.title = 'Enable Background Alarms';
-                    btn.innerHTML = `<img src="assets/icons/Alarm--Streamline-Outlined-Material-Symbols.svg" alt="Background"/><span>Enable Background Alarms</span>`;
+                    addIconWithLabel(btn, 'assets/svgs-fontawesome/regular/bell.svg', 'Enable Background Alarms');
                     btn.addEventListener('click', () => {
                         try {
                             chrome.permissions.request({ permissions: ['alarms', 'notifications'] }, (granted) => {
@@ -272,10 +300,10 @@ async function openAlarmModal() {
     body.appendChild(list);
     const controls = document.createElement('div'); controls.className='alarm-controls';
     const add = document.createElement('button'); add.id='alarm-add'; add.className='tm-btn'; add.title='Add Alarm';
-    add.innerHTML = `<img src="assets/icons/Add--Streamline-Outlined-Material-Symbols.svg" alt="Add"/><span>Add Alarm</span>`;
+    addIconWithLabel(add, 'assets/svgs-fontawesome/solid/plus.svg', 'Add');
     add.addEventListener('click', ()=> openEditForm(modal, null));
     const test = document.createElement('button'); test.className='tm-btn'; test.title='Test Alarm';
-    test.innerHTML = `<img src="assets/icons/Alarm--Streamline-Outlined-Material-Symbols.svg" alt="Test"/><span>Test Alarm</span>`;
+    addIconWithLabel(test, 'assets/svgs-fontawesome/regular/bell.svg', 'Test');
     test.addEventListener('click', ()=>{ if (_state.audio) { _state.audio.currentTime = 0; _state.audio.loop = true; _state.audio.play(); setTimeout(() => { _state.audio.pause(); _state.audio.loop = false; }, 5000); } try{ if (window.Notification && Notification.permission==='granted') new Notification('Test Alarm',{body:'This is a test alarm', icon: chrome.runtime.getURL('icons/icon128.png')}); }catch(e){} });
     controls.appendChild(add); controls.appendChild(test);
     body.appendChild(controls);

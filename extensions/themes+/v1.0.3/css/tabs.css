@@ -1,11 +1,11 @@
 #tabs-ribbon {
 	position: fixed;
-	bottom: calc(var(--ui-bar-height) + var(--ui-gap));
+	bottom: calc(var(--dis-6) + var(--dis-xs));
 	left: 0;
 	width: 100%;
 	max-height: 50vh;
 	overflow-y: auto;
-	z-index: 100000; /* must be above bookmarks panel (99999) */
+	z-index: 100000;
 	background: transparent;
 }
 
@@ -13,33 +13,26 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--ui-gap);
-	/* subtle shadow for the ribbon content so it sits above the page */
-	box-shadow: var(--ui-shadow-strong);
+	gap: var(--dis-xs);
 }
 
 .window-group {
 	display: flex;
 	align-items: center;
-	gap: var(--ui-gap);
-	border-radius: var(--border-radius-full);
-	background: var(--color-surface);
-	padding: var(--ui-padding-block);
+	gap: var(--dis-xs);
+	border-radius: var(--radius-full);
+	background: var(--color-base);
+	padding: var(--dis-xs);
 }
 
 .window-selector {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--ui-chip-height);
-	width: var(--ui-chip-height);
+	height: var(--dis-4);
+	width: var(--dis-4);
 	border-radius: 50%;
 	cursor: pointer;
-	transition: background 0.2s;
-}
-
-.window-selector:hover {
-	background: var(--color-primary-alpha);
 }
 
 .window-selector-icon {
@@ -50,43 +43,55 @@
 
 .tabs-ribbon-list {
 	display: flex;
-	gap: var(--ui-gap);
+	gap: var(--dis-xs);
 	overflow-x: auto;
 	flex: 1;
+	scrollbar-width: none;
+}
+
+.tabs-ribbon-list::-webkit-scrollbar {
+	display: none;
 }
 
 .tab-item {
 	display: flex;
 	align-items: center;
-	gap: var(--ui-gap);
-	min-width: var(--ui-tab-min-width);
-	max-width: var(--ui-tab-max-width);
-	padding: var(--ui-padding-block);
-	border-radius: var(--border-radius-full);
+	gap: var(--dis-xs);
+	min-width: calc(120px * var(--ui-scale));
+	max-width: calc(200px * var(--ui-scale));
+	padding: var(--dis-xs);
+	border-radius: var(--radius-full);
 	background: transparent;
 	cursor: pointer;
-	transition: background var(--transition-fast), color var(--transition-fast);
 	flex-shrink: 0;
-}
-
-.tab-item:hover {
-	background: var(--color-primary-alpha);
+	color: var(--text-base);
 }
 
 .tab-item.active {
-	background: var(--color-primary-alpha);
+	background: var(--color-off);
 }
 
 .tab-icon {
-	width: var(--ui-chip-icon-size);
-	height: var(--ui-chip-icon-size);
-	object-fit: contain;
+	width: var(--dis-2);
+	height: var(--dis-2);
 	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-base);
+}
+
+.tab-icon svg,
+.tab-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	fill: currentColor;
 }
 
 .tab-title {
 	flex: 1;
-	font-size: 1em;
+	font-size: calc(0.95rem * var(--ui-scale));
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -98,11 +103,15 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: calc(var(--ui-chip-height) + calc(var(--ui-padding-block) * 2));
-	width: calc(var(--ui-chip-height) + calc(var(--ui-padding-block) * 2));
+	height: calc(var(--dis-4) + var(--dis-xs));
+	width: calc(var(--dis-4) + var(--dis-xs));
 	border-radius: 50%;
 	cursor: pointer;
-	transition: background 0.2s;
-	background: var(--color-surface);
-	padding: var(--ui-padding-block);
+	background: var(--color-base);
+	padding: var(--dis-xs);
+}
+
+.merge-windows-btn .ui-icon {
+	width: 100%;
+	height: 100%;
 }

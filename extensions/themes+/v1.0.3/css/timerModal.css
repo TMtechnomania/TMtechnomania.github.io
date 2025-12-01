@@ -1,143 +1,277 @@
 .timer-modal-backdrop {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    /* anchor modal above the tabs ribbon */
-    align-items: flex-end;
-    justify-content: center;
-     /* push modal above the bottom UI (tabs ribbon / action bar) */
-     /* Use margin on the modal itself so the modal behaves like a window
-         and does not increase backdrop size via padding. */
-    /* No backdrop: allow clicks to pass through behind the modal */
-    background: none;
-    pointer-events: none;
-    z-index: 200000; /* keep modal visually above other UI */
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	background: none;
+	pointer-events: none;
+	z-index: 200000;
 }
 
 .timer-modal {
-    width: calc(360px * var(--ui-scale, 1));
-    max-width: calc(92vw);
-    /* prevent modal from filling the viewport vertically */
-    max-height: calc(70vh);
-    overflow: auto;
-    /* match bookmark panel background and padding/rounded corners */
-    background: var(--color-surface-backdrop);
-    border-radius: var(--border-radius-chip);
-    box-shadow: var(--ui-shadow);
-    /* use the same padding as the bookmarks panel for visual parity */
-    padding: var(--ui-padding-inline);
-    display: flex;
-    flex-direction: column;
-    gap: var(--ui-gap);
-    font-family: var(--app-font);
-    position: relative;
-    /* keep the modal visually above the tabs ribbon by reserving the same
-       bottom margin used by the tabs ribbon so it lines up consistently */
-    margin-bottom: calc(var(--ui-bar-height) + var(--ui-gap));
-    /* ensure the modal stays interactive even when its parent/backdrop is non-interactive */
-    pointer-events: auto;
+	width: calc(360px * var(--ui-scale));
+	max-width: 92vw;
+	max-height: 70vh;
+	overflow: auto;
+	background: var(--color-base);
+	border-radius: var(--radius-3);
+	padding: var(--dis-1);
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-xs);
+	font-family: var(--font-family);
+	position: relative;
+	margin-bottom: calc(var(--dis-6) + var(--dis-xs));
+	pointer-events: auto;
 }
 
 .timer-tabs {
-    display: flex;
-    gap: calc(0.5rem * var(--ui-scale, 1));
-    /* push the tab selector to the bottom of the modal */
-    margin-top: auto;
-    align-self: stretch;
-    /* visual style: rounded container and subtle primary alpha background */
-    padding: calc(0.25rem * var(--ui-scale, 1));
-    border-radius: var(--border-radius-chip);
-    background: var(--color-primary-alpha);
-    align-items: center;
+	display: flex;
+	gap: var(--dis-xs);
+	margin-top: auto;
+	align-self: stretch;
+	padding: var(--dis-xs);
+	border-radius: var(--radius-3);
+	background: var(--color-off);
+	align-items: center;
 }
+
 .timer-tab {
-    flex: 1 1 auto;
-    text-align: center;
-    padding: calc(0.35rem * var(--ui-scale, 1));
-    border-radius: var(--border-radius-full);
-    cursor: pointer;
-    background: transparent;
-    transition: background 0.12s ease, color 0.12s ease;
+	flex: 1 1 0px;
+	width: 0;
+	text-align: center;
+	padding: var(--dis-xs);
+	border-radius: var(--radius-full);
+	cursor: pointer;
+	background: transparent;
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.95rem * var(--ui-scale));
+	font-weight: 500;
 }
+
 .timer-tab.active {
-    background: var(--color-primary-alpha);
-    color: var(--color-text-primary);
-    font-weight: 600;
+	background: var(--color-base);
 }
 
-.timer-body { display: flex; flex-direction: column; gap: calc(0.5rem * var(--ui-scale, 1)); align-items: center; }
-.timer-display-wrap { position: relative; width: 100%; display:flex; flex-direction: column; align-items: center; }
-.edit-btn { position: absolute; left: calc(0.5rem * var(--ui-scale,1)); top: calc(0.35rem * var(--ui-scale,1)); pointer-events: auto; background: transparent; border: none; padding: 0; }
-.edit-btn img { width: 60%; height: 60%; display:block; }
-.custom-time-input-inline { display: none; width: 78%; padding: calc(0.45rem * var(--ui-scale,1)); border-radius: 8px; border: 1px solid var(--color-border); font-size: calc(0.95rem * var(--ui-scale,1)); text-align:center; }
-.timer-display { font-size: calc(4.2rem * var(--ui-scale, 1)); font-weight: 500; color: var(--color-text-primary); }
-.timer-controls { display: flex; gap: calc(0.5rem * var(--ui-scale, 1)); align-items: center; }
-/* Match `.action-item` appearance used across the extension */
+.timer-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-xs);
+	align-items: center;
+}
+
+.timer-display-wrap {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.edit-btn {
+	position: absolute;
+	left: var(--dis-xs);
+	top: var(--dis-xs);
+	pointer-events: auto;
+	background: transparent;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	width: var(--dis-5);
+	height: var(--dis-5);
+	border-radius: 50%;
+}
+
+.edit-btn .ui-icon {
+	width: 60%;
+	height: 60%;
+}
+
+.custom-time-input-inline {
+	display: none;
+	width: 78%;
+	padding: var(--dis-xs);
+	border-radius: var(--radius-1);
+	border: 1px solid var(--color-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	text-align: center;
+	color: var(--text-base);
+	background: var(--color-off);
+	font-family: var(--font-family);
+}
+
+.timer-display {
+	font-size: calc(4.2rem * var(--ui-scale));
+	font-weight: 500;
+	color: var(--text-base);
+}
+
+.timer-controls {
+	display: flex;
+	gap: var(--dis-xs);
+	align-items: center;
+}
+
 .tm-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: var(--ui-chip-height);
-    width: var(--ui-chip-height);
-    min-width: var(--ui-chip-height);
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    transition: background 0.18s ease, color 0.18s ease;
-    padding: 0;
-}
-.tm-btn.primary { background: var(--primary); color: var(--color-surface-text-inverted); border-color: transparent; }
-.tm-btn img { width: 50%; height: 50%; object-fit: contain; display: block; }
-
-/* alert icon must be square and smaller visual footprint */
-.tm-btn.alert-btn { width: var(--ui-chip-height); height: var(--ui-chip-height); padding: 0; display: inline-grid; place-items: center; }
-.tm-btn.alert-btn img { width: 66%; height: 66%; display: block; }
-
-/* hover/focus state similar to action-item */
-.tm-btn:hover, .tm-btn:focus {
-    background: var(--primary-weak);
-    color: var(--surface);
-    outline: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--dis-4);
+	width: var(--dis-4);
+	min-width: var(--dis-4);
+	border-radius: 50%;
+	background: transparent;
+	cursor: pointer;
+	padding: 0;
+	border: none;
+	font-size: calc(0.95rem * var(--ui-scale));
+	font-weight: 500;
 }
 
-.stopwatch-laps { width: 100%; display: flex; flex-direction: column; gap: calc(0.5rem * var(--ui-scale, 1)); max-height: calc(8rem * var(--ui-scale, 1)); overflow: auto; }
-.lap-item { display: flex; justify-content: space-between; padding: 6px 8px; border-radius: 6px; background: var(--color-surface-hover); font-size: calc(0.95rem * var(--ui-scale, 1)); }
-.lap-list-empty { color: var(--color-text-secondary); font-size: calc(0.9rem * var(--ui-scale, 1)); }
+.tm-btn.primary {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.tm-btn .ui-icon {
+	width: 50%;
+	height: 50%;
+}
+
+.tm-btn.alert-btn {
+	width: var(--dis-4);
+	height: var(--dis-4);
+	padding: 0;
+	display: inline-grid;
+	place-items: center;
+}
+
+.tm-btn.alert-btn .ui-icon {
+	width: 66%;
+	height: 66%;
+}
+
+.stopwatch-laps {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-xs);
+	max-height: var(--dis-15);
+	overflow: auto;
+}
+
+.lap-item {
+	display: flex;
+	justify-content: space-between;
+	padding: var(--dis-1);
+	border-radius: var(--radius-1);
+	background: var(--color-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	color: var(--text-base);
+}
+
+.lap-list-empty {
+	color: var(--text-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	text-align: center;
+	padding: var(--dis-1);
+}
 
 .presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: calc(0.375rem * var(--ui-scale, 1));
-    width: 100%;
-    max-height: calc(30vh);
-    overflow: auto;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--dis-xs);
+	width: 100%;
+	max-height: 30vh;
+	overflow: auto;
 }
+
 .preset-btn {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding: calc(0.5rem * var(--ui-scale, 1)) calc(0.75rem * var(--ui-scale, 1));
-    border-radius: var(--border-radius-full);
-    cursor:pointer;
-    background: var(--color-primary-alpha);
-    border: none;
-    box-sizing: border-box;
-    /* 2 buttons max per row */
-    flex: 1 1 calc(50% - (var(--ui-gap) / 2));
-    min-width: calc(120px * var(--ui-scale, 1));
-    height: var(--ui-chip-height);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--dis-xs) var(--dis-1);
+	border-radius: var(--radius-full);
+	cursor: pointer;
+	background: var(--color-off);
+	border: none;
+	box-sizing: border-box;
+	flex: 1 1 calc(50% - (var(--dis-xs) / 2));
+	min-width: calc(120px * var(--ui-scale));
+	height: var(--dis-4);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.95rem * var(--ui-scale));
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-/* Custom time input row */
-.custom-time-row { display:flex; gap: calc(0.5rem * var(--ui-scale,1)); width:100%; align-items:center; }
-.custom-time-input { flex:1; padding: calc(0.45rem * var(--ui-scale,1)); border-radius: 8px; border: 1px solid var(--color-border); font-size: calc(0.95rem * var(--ui-scale,1)); }
-.custom-time-row .tm-btn { padding: calc(0.45rem * var(--ui-scale,1)) calc(0.6rem * var(--ui-scale,1)); }
+.preset-btn > div:first-child {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+	flex: 1;
+	text-align: left;
+	margin-right: var(--dis-xs);
+}
 
-/* footer removed: not used */
+.preset-btn > div:last-child {
+	flex-shrink: 0;
+}
 
-.tm-close { position: absolute; right: 12px; top: 10px; cursor: pointer; }
+.custom-time-row {
+	display: flex;
+	gap: var(--dis-xs);
+	width: 100%;
+	align-items: center;
+}
+
+.custom-time-input {
+	flex: 1;
+	padding: var(--dis-xs);
+	border-radius: var(--radius-1);
+	border: 1px solid var(--color-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	color: var(--text-base);
+	background: var(--color-off);
+	font-family: var(--font-family);
+}
+
+.custom-time-row .tm-btn {
+	padding: var(--dis-xs) var(--dis-1);
+}
+
+.tm-close {
+	position: absolute;
+	right: var(--dis-2);
+	top: var(--dis-1);
+	width: var(--dis-4);
+	height: var(--dis-4);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var(--color-off);
+	color: var(--text-base);
+	cursor: pointer;
+	padding: 0;
+}
+
+.tm-close .ui-icon {
+	width: 55%;
+	height: 55%;
+}
 
 @media (max-width: 420px) {
-    .timer-modal { width: 92vw; padding: 12px; }
-    .timer-display { font-size: calc(3.2rem * var(--ui-scale, 1)); }
+	.timer-modal {
+		width: 92vw;
+		padding: var(--dis-2);
+	}
+	.timer-display {
+		font-size: calc(3.2rem * var(--ui-scale));
+	}
 }

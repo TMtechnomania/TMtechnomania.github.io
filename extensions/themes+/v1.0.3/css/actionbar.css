@@ -1,11 +1,10 @@
 #action-bar {
 	position: fixed;
-	bottom: calc(var(--ui-bar-height) * -1);
+	bottom: calc(var(--dis-6) * -1);
 	left: 0;
 	width: 100%;
-	height: calc(var(--ui-bar-height) * 2);
+	height: calc(var(--dis-6) * 2);
 	background: transparent;
-	transition: bottom var(--transition-normal);
 }
 
 #action-bar:hover {
@@ -13,48 +12,49 @@
 }
 
 #action-content {
-	height: var(--ui-bar-height);
-	background: var(--color-surface);
+	height: var(--dis-6);
+	background: var(--color-base);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-top: var(--ui-bar-height);
-	padding: var(--ui-padding-block);
-	gap: var(--ui-gap);
+	margin-top: var(--dis-6);
+	padding: var(--dis-xs);
+	gap: var(--dis-xs);
 }
 
 .action-item {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--ui-chip-height);
-	width: var(--ui-chip-height);
+	height: var(--dis-4);
+	width: var(--dis-4);
 	border-radius: 50%;
 	cursor: pointer;
-	transition: background 0.2s;
 }
 
-.action-item:hover {
-	background: var(--color-primary-alpha);
-	color: var(--color-surface);
-}
-
-.action-group .action-item.active {
-	background: var(--color-primary-alpha);
-	color: var(--color-surface);
+.action-group .action-item.active,
+.action-group .action-item:hover,
+.action-group .action-item:active {
+	background: var(--color-base);
+	color: var(--text-accent);
 }
 
 .action-item img,
 .action-item svg {
-	width: 50%;
-	height: 50%;
+	width: 70%;
+	height: 70%;
 	object-fit: contain;
+}
+
+.action-item .ui-icon {
+	width: 70%;
+	height: 70%;
 }
 
 .action-group {
 	display: flex;
-	background: var(--color-primary-alpha);
-	gap: var(--ui-gap);
-	border-radius: var(--border-radius-full);
-	height: var(--ui-chip-height);
+	background: var(--color-off);
+	gap: var(--dis-xs);
+	border-radius: var(--radius-full);
+	height: var(--dis-4);
 }

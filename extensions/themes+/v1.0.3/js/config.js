@@ -16,7 +16,7 @@ export const STORAGE_KEY_SETTINGS = "userSettings"; // For user settings
 // Default settings
 export const DEFAULT_CONFIG = {
 	wallpaper: {
-		type: "img",
+		type: "img", //mono, img, vdo
 		mode: "random",
 		specific: null,
 		last_id: "img-001", // ID of last rendered wallpaper for 'sequence' mode
@@ -35,12 +35,33 @@ export const DEFAULT_CONFIG = {
 	},
 	actionbar: {
 		autohide: false, // Auto-hide the action bar by setting the initial bottom position to -50%.
-	}
-,
+	},
 	// Font settings: default to Google Outfit
 	font: {
 		family: 'Outfit',
 		// Default import URL for Outfit with common weights
 		importUrl: 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap'
-	}
+	},
+	theme: 'system'
 };
+
+const IMAGE_COLOR_STYLE_ID = 'theme-image-color-style';
+
+function updateImageColorStyle() {
+	let styleTag = document.getElementById(IMAGE_COLOR_STYLE_ID);
+	if (!styleTag) {
+		styleTag = document.createElement('style');
+		styleTag.id = IMAGE_COLOR_STYLE_ID;
+		document.head.appendChild(styleTag);
+	}
+	styleTag.textContent = 'img { color: var(--text-base); }';
+}
+
+export function applyTheme(theme) {
+	if (theme === 'system') {
+		document.documentElement.removeAttribute('data-theme');
+	} else {
+		document.documentElement.setAttribute('data-theme', theme);
+	}
+	updateImageColorStyle();
+}

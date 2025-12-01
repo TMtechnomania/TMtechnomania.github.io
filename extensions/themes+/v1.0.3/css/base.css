@@ -1,31 +1,97 @@
 :root {
+	/* UI Scale - Master multiplier for all sizing */
 	--ui-scale: 1;
-	--ui-gap: calc(0.5rem * var(--ui-scale));
-	--ui-padding-block: calc(0.5rem * var(--ui-scale));
-	--ui-padding-inline: calc(1.25rem * var(--ui-scale));
-	--ui-chip-height: calc(2.5rem * var(--ui-scale));
-	--ui-chip-icon-size: calc(1.5rem * var(--ui-scale));
-	--ui-pill-icon-size: calc(1.25rem * var(--ui-scale));
-	--ui-bar-height: calc(3.5rem * var(--ui-scale));
-	--ui-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	--color-primary: #0072ff;
-	--color-primary-alpha: #0072ff11;
-	--color-surface: #ffffff;
-	--color-surface-secondary: rgba(0, 0, 0, 0.02);
-	--color-text-primary: #111111;
-	--color-text-secondary: #444444;
-	--color-text-tertiary: #777777;
-	--color-surface-text-inverted: #ffffff;
-	--color-surface-backdrop: rgba(255, 255, 255, 0.97);
+
+	/* Distance Variables - 0.5rem increments from 0.5rem to 8rem */
+	--dis-xs: calc(0.5rem * var(--ui-scale));
+	--dis-1: calc(1rem * var(--ui-scale));
+	--dis-2: calc(1.5rem * var(--ui-scale));
+	--dis-3: calc(2rem * var(--ui-scale));
+	--dis-4: calc(2.5rem * var(--ui-scale));
+	--dis-5: calc(3rem * var(--ui-scale));
+	--dis-6: calc(3.5rem * var(--ui-scale));
+	--dis-7: calc(4rem * var(--ui-scale));
+	--dis-8: calc(4.5rem * var(--ui-scale));
+	--dis-9: calc(5rem * var(--ui-scale));
+	--dis-10: calc(5.5rem * var(--ui-scale));
+	--dis-11: calc(6rem * var(--ui-scale));
+	--dis-12: calc(6.5rem * var(--ui-scale));
+	--dis-13: calc(7rem * var(--ui-scale));
+	--dis-14: calc(7.5rem * var(--ui-scale));
+	--dis-15: calc(8rem * var(--ui-scale));
+
+	/* Border Radius Variables - 0.5rem increments from 0.5rem to 4rem */
+	--radius-xs: calc(0.5rem * var(--ui-scale));
+	--radius-1: calc(1rem * var(--ui-scale));
+	--radius-2: calc(1.5rem * var(--ui-scale));
+	--radius-3: calc(2rem * var(--ui-scale));
+	--radius-4: calc(2.5rem * var(--ui-scale));
+	--radius-5: calc(3rem * var(--ui-scale));
+	--radius-6: calc(3.5rem * var(--ui-scale));
+	--radius-7: calc(4rem * var(--ui-scale));
+	--radius-full: 999px;
+
+	/* Color Variables - Light Theme (Default) */
+	--color-base: #FFFFFF;
+	--color-off: #EEF6FF;
+	--color-inverse: #000000;
+	--color-accent: #0072ff;
+	--color-modal-bg: rgba(255, 255, 255, 0.85);
+	--color-modal-border: rgba(255, 255, 255, 0.5);
+
+	/* Text Color Variables - Light Theme */
+	--text-base: #111111;
+	--text-off: #333333;
+	--text-invert: #FFFFFF;
+	--text-accent: #0072ff;
+
+	/* Legacy/Utility Variables */
 	--font-family: "Outfit", Arial, Helvetica, sans-serif;
-	--border-radius-full: 999px;
-	--border-radius-chip: var(--ui-chip-height);
-	--transition-fast: 0.18s ease;
-	--transition-normal: 0.3s ease;
-	--ui-shadow-strong: 0 10px 30px rgba(0, 0, 0, 0.12);
-	--ui-tab-min-width: calc(120px * var(--ui-scale));
-	--ui-tab-max-width: calc(200px * var(--ui-scale));
 }
+
+/* Dark Theme Override */
+[data-theme="dark"] {
+	--color-base: #000000;
+	--color-off: #111111;
+	--color-inverse: #FFFFFF;
+	--color-accent: #0072ff;
+	--color-modal-bg: rgba(0, 0, 0, 0.85);
+	--color-modal-border: rgba(255, 255, 255, 0.1);
+
+	--text-base: #FFFFFF;
+	--text-off: #CCCCCC;
+	--text-invert: #111111;
+	--text-accent: #0072ff;
+}
+
+/* System Dark Mode (only if no explicit theme is set) */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--color-base: #000000;
+		--color-off: #111111;
+		--color-inverse: #FFFFFF;
+		--color-accent: #0072ff;
+		--color-modal-bg: rgba(0, 0, 0, 0.85);
+		--color-modal-border: rgba(255, 255, 255, 0.1);
+
+		--text-base: #FFFFFF;
+		--text-off: #CCCCCC;
+		--text-invert: #111111;
+		--text-accent: #0072ff;
+	}
+}
+
+/* Utility Size Classes - 2rem increments from 2rem to 20rem */
+.size-xs { width: calc(2rem * var(--ui-scale)); height: calc(2rem * var(--ui-scale)); }
+.size-sm { width: calc(4rem * var(--ui-scale)); height: calc(4rem * var(--ui-scale)); }
+.size-md { width: calc(6rem * var(--ui-scale)); height: calc(6rem * var(--ui-scale)); }
+.size-lg { width: calc(8rem * var(--ui-scale)); height: calc(8rem * var(--ui-scale)); }
+.size-xl { width: calc(10rem * var(--ui-scale)); height: calc(10rem * var(--ui-scale)); }
+.size-2xl { width: calc(12rem * var(--ui-scale)); height: calc(12rem * var(--ui-scale)); }
+.size-3xl { width: calc(14rem * var(--ui-scale)); height: calc(14rem * var(--ui-scale)); }
+.size-4xl { width: calc(16rem * var(--ui-scale)); height: calc(16rem * var(--ui-scale)); }
+.size-5xl { width: calc(18rem * var(--ui-scale)); height: calc(18rem * var(--ui-scale)); }
+.size-6xl { width: calc(20rem * var(--ui-scale)); height: calc(20rem * var(--ui-scale)); }
 
 * {
 	border: 0;
@@ -53,6 +119,8 @@ body {
 body {
 	font-family: var(--font-family);
 	position: relative;
+	background-color: var(--color-base);
+	color: var(--text-base);
 }
 
 #wallpaper {
@@ -63,3 +131,19 @@ body {
 	object-fit: cover;
 	z-index: -1;
 }
+
+.ui-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: inherit;
+}
+
+.ui-icon svg,
+.ui-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	fill: currentColor;
+}
+

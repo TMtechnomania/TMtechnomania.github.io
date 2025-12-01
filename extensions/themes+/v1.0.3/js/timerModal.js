@@ -1,4 +1,5 @@
 import { loadCSS, unloadCSS } from './cssLoader.js';
+import { renderInlineIcon } from './brandIconLoader.js';
 const CSS_ID = 'timer-modal-css';
 const CSS_PATH = 'css/timerModal.css';
 const AUDIO_SRC = 'assets/audio/mixkit-positive-interface-beep-221.wav';
@@ -20,6 +21,45 @@ const PRESETS = [
     { id: 'p_workout', title: 'Quick workout', seconds: 600 },
     { id: 'p_focus', title: 'Focus (Pomodoro)', seconds: 1500 }
 ];
+
+function createIconSpan(iconPath, className = 'tm-btn-icon') {
+    const icon = document.createElement('span');
+    icon.className = ['ui-icon', className].filter(Boolean).join(' ');
+    icon.setAttribute('aria-hidden', 'true');
+    renderInlineIcon(icon, iconPath);
+    return icon;
+}
+
+function attachIcon(target, iconPath, className = 'tm-btn-icon') {
+    if (!target) return null;
+    const icon = createIconSpan(iconPath, className);
+    target.appendChild(icon);
+    return icon;
+}
+
+function attachIconWithLabel(target, iconPath, labelText, className = 'tm-btn-icon') {
+    const icon = attachIcon(target, iconPath, className);
+    if (labelText) {
+        const label = document.createElement('span');
+        label.className = 'tm-btn-label';
+        label.textContent = labelText;
+        target.appendChild(label);
+    }
+    return icon;
+}
+
+function updateAttachedIcon(target, iconPath, className = 'tm-btn-icon') {
+    if (!target) return;
+    const icon = target.querySelector(`.${className}`) || target.querySelector('.tm-btn-icon');
+    if (icon) {
+        renderInlineIcon(icon, iconPath);
+    }
+}
+
+function updateIconById(elementId, iconPath, className = 'tm-btn-icon') {
+    const target = document.getElementById(elementId);
+    if (target) updateAttachedIcon(target, iconPath, className);
+}
 function formatTimeMs(ms, showMs = false) {
     const total = Math.max(0, Math.floor(ms));
     const s = Math.floor(total / 1000);
@@ -81,7 +121,7 @@ async function openTimerModal() {
     modal.tabIndex = -1;
     const close = document.createElement('div');
     close.className = 'tm-close';
-    close.innerHTML = '<img src="assets/icons/Delete--Streamline-Outlined-Material-Symbols.svg" alt="Close"/>';
+    attachIcon(close, 'assets/svgs-fontawesome/regular/circle-xmark.svg', 'tm-close-icon');
     close.addEventListener('click', closeTimerModal);
     modal.appendChild(close);
     const body = document.createElement('div'); body.className='timer-body';
@@ -89,7 +129,7 @@ async function openTimerModal() {
         const display = document.createElement('div'); display.className='timer-display'; display.id='timer-display'; display.textContent='00:00';
         const editBtn = document.createElement('button'); editBtn.className = 'tm-btn edit-btn'; editBtn.id = 'tm-edit';
         editBtn.title = 'Edit time';
-        editBtn.innerHTML = `<img src="assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`;
+        const editBtnIcon = attachIcon(editBtn, 'assets/svgs-fontawesome/regular/pen-to-square.svg');
         displayWrap.appendChild(display);
         displayWrap.appendChild(editBtn);
         body.append(displayWrap);
@@ -103,16 +143,16 @@ async function openTimerModal() {
                 _state.editing = false;
                 display.contentEditable = 'false';
                 display.classList.remove('editing');
-                editBtn.innerHTML = `<img src="assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`;
+                updateAttachedIcon(editBtn, 'assets/svgs-fontawesome/regular/pen-to-square.svg');
             } catch (e) {}
             _state.timerRemaining = p.seconds * 1000;
             updateDisplay();
-            try { const el = document.getElementById('tm-start-pause'); if (el) el.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`; } catch (e) {}
+            try { updateIconById('tm-start-pause', 'assets/svgs-fontawesome/regular/circle-play.svg'); } catch (e) {}
         });
         presets.appendChild(btn);
     });
     body.appendChild(presets);
-    const saveIcon = 'assets/icons/Save--Streamline-Outlined-Material-Symbols.svg';
+    const saveIcon = 'assets/svgs-fontawesome/regular/floppy-disk.svg';
     editBtn.addEventListener('click', (ev) => {
         ev.stopPropagation();
         if (!_state.editing) {
@@ -120,7 +160,7 @@ async function openTimerModal() {
             try { pauseTimer(); } catch (e) {}
             try { display.contentEditable = 'true'; display.classList.add('editing'); } catch (e) {}
             try {
-                editBtn.innerHTML = `<img src="${saveIcon}" alt="Save">`;
+                updateAttachedIcon(editBtn, saveIcon);
                 const sp = document.getElementById('tm-start-pause'); if (sp) sp.disabled = true;
             } catch (e) {}
             try { display.focus();
@@ -137,7 +177,7 @@ async function openTimerModal() {
         _state.timerRemaining = ms;
         _state.editing = false;
         try { display.contentEditable = 'false'; display.classList.remove('editing'); } catch (e) {}
-        try { editBtn.innerHTML = `<img src="assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`; } catch (e) {}
+        try { updateAttachedIcon(editBtn, 'assets/svgs-fontawesome/regular/pen-to-square.svg'); } catch (e) {}
         updateDisplay();
         try { const sp = document.getElementById('tm-start-pause'); if (sp) sp.disabled = !(_state.timerRemaining > 0); } catch (e) {}
     });
@@ -150,21 +190,22 @@ async function openTimerModal() {
         if (ev.key === 'Escape') {
             _state.editing = false;
             try { display.contentEditable = 'false'; display.classList.remove('editing'); } catch (e) {}
-            try { editBtn.innerHTML = `<img src="assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`; } catch (e) {}
+            try { updateAttachedIcon(editBtn, 'assets/svgs-fontawesome/regular/pen-to-square.svg'); } catch (e) {}
             try { const sp = document.getElementById('tm-start-pause'); if (sp) sp.disabled = !(_state.timerRemaining > 0); } catch (e) {}
             updateDisplay();
         }
     });
     const controls = document.createElement('div'); controls.className='timer-controls action-group'; controls.id = 'timer-controls';
     const startPauseBtn = document.createElement('button'); startPauseBtn.className='tm-btn action-item'; startPauseBtn.id='tm-start-pause';
-    startPauseBtn.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`;
-    const resetBtn = document.createElement('button'); resetBtn.className='tm-btn action-item'; resetBtn.id='tm-reset'; resetBtn.innerHTML = `<img src="assets/icons/Restart-Alt--Streamline-Outlined-Material-Symbols.svg" alt="Reset">`;
+    attachIcon(startPauseBtn, 'assets/svgs-fontawesome/regular/circle-play.svg');
+    const resetBtn = document.createElement('button'); resetBtn.className='tm-btn action-item'; resetBtn.id='tm-reset';
+    attachIcon(resetBtn, 'assets/svgs-fontawesome/solid/rotate-left.svg');
     const alertBtn = document.createElement('button'); alertBtn.className = 'tm-btn action-item alert-btn'; alertBtn.id = 'tm-alert';
     alertBtn.title = 'Alert on/off';
     alertBtn.setAttribute('aria-pressed', String(!!_state.alertEnabled));
-    const volOn = 'assets/icons/Volume-Up--Streamline-Outlined-Material-Symbols.svg';
-    const volOff = 'assets/icons/Volume-Off--Streamline-Outlined-Material-Symbols.svg';
-    alertBtn.innerHTML = `<img src="${_state.alertEnabled ? volOn : volOff}" alt="Alert">`;
+    const volOn = 'assets/svgs-fontawesome/solid/volume-high.svg';
+    const volOff = 'assets/svgs-fontawesome/solid/volume-xmark.svg';
+    attachIcon(alertBtn, _state.alertEnabled ? volOn : volOff);
     controls.appendChild(startPauseBtn);
     controls.appendChild(resetBtn);
     controls.appendChild(alertBtn);
@@ -174,9 +215,9 @@ async function openTimerModal() {
     const swLaps = document.createElement('div'); swLaps.className='stopwatch-laps'; swLaps.id='stopwatch-laps';
     body.appendChild(swLaps);
     const swControls = document.createElement('div'); swControls.className='timer-controls action-group'; swControls.id = 'stopwatch-controls';
-    const swStart = document.createElement('button'); swStart.className='tm-btn action-item'; swStart.id='sw-start'; swStart.innerHTML=`<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Play">`;
-    const swLap = document.createElement('button'); swLap.className='tm-btn action-item'; swLap.id='sw-lap'; swLap.innerHTML=`<img src="assets/icons/Avg-Time--Streamline-Outlined-Material-Symbols.svg" alt="Lap">`;
-    const swReset = document.createElement('button'); swReset.className='tm-btn action-item'; swReset.id='sw-reset'; swReset.innerHTML=`<img src="assets/icons/Restart-Alt--Streamline-Outlined-Material-Symbols.svg" alt="Reset">`;
+    const swStart = document.createElement('button'); swStart.className='tm-btn action-item'; swStart.id='sw-start'; attachIcon(swStart, 'assets/svgs-fontawesome/regular/circle-play.svg');
+    const swLap = document.createElement('button'); swLap.className='tm-btn action-item'; swLap.id='sw-lap'; attachIcon(swLap, 'assets/svgs-fontawesome/regular/flag.svg');
+    const swReset = document.createElement('button'); swReset.className='tm-btn action-item'; swReset.id='sw-reset'; attachIcon(swReset, 'assets/svgs-fontawesome/solid/rotate-left.svg');
     swControls.appendChild(swStart); swControls.appendChild(swLap); swControls.appendChild(swReset);
     body.appendChild(swControls);
     modal.appendChild(body);
@@ -198,10 +239,10 @@ async function openTimerModal() {
         const el = document.getElementById('tm-start-pause');
         if (_state.timerRunning) {
             pauseTimer();
-            if (el) el.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`;
+            if (el) updateAttachedIcon(el, 'assets/svgs-fontawesome/regular/circle-play.svg');
         } else {
             startTimer();
-            if (el) el.innerHTML = `<img src="assets/icons/Pause-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Pause">`;
+            if (el) updateAttachedIcon(el, 'assets/svgs-fontawesome/regular/circle-pause.svg');
         }
     });
     resetBtn.addEventListener('click', resetTimer);
@@ -214,10 +255,7 @@ async function openTimerModal() {
         _state.alertEnabled = !_state.alertEnabled;
         alertBtn.classList.toggle('active', _state.alertEnabled);
         alertBtn.setAttribute('aria-pressed', String(!!_state.alertEnabled));
-        try {
-            const img = alertBtn.querySelector('img');
-            if (img) img.src = _state.alertEnabled ? volOn : volOff;
-        } catch (e) {}
+        try { updateAttachedIcon(alertBtn, _state.alertEnabled ? volOn : volOff); } catch (e) {}
     });
     _backdrop.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeTimerModal(); });
     switchMode(_state.mode, modal);
@@ -265,8 +303,8 @@ function switchMode(mode, modal) {
     if (mode === 'stopwatch' && _state.editing) {
         _state.editing = false;
         try { const disp = modal.querySelector('#timer-display'); if (disp) { disp.contentEditable = 'false'; disp.classList.remove('editing'); } } catch (e) {}
-        try { const sp = modal.querySelector('#tm-start-pause'); if (sp) { sp.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`; sp.disabled = !(_state.timerRemaining > 0); } } catch (e) {}
-        try { if (editBtn) editBtn.innerHTML = `<img src="assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`; } catch (e) {}
+        try { const sp = modal.querySelector('#tm-start-pause'); if (sp) { updateAttachedIcon(sp, 'assets/svgs-fontawesome/regular/circle-play.svg'); sp.disabled = !(_state.timerRemaining > 0); } } catch (e) {}
+        try { if (editBtn) updateAttachedIcon(editBtn, 'assets/svgs-fontawesome/regular/pen-to-square.svg'); } catch (e) {}
     }
     updateDisplay();
 }
@@ -295,7 +333,7 @@ function startTimer() {
         if (_state.timerRemaining <= 0) {
             clearInterval(_state.timerInterval); _state.timerInterval = null; _state.timerRunning = false;
             try { if (_state.audio && _state.alertEnabled) _state.audio.play(); } catch (e) {}
-            try { const el = document.getElementById('tm-start-pause'); if (el) el.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`; } catch (e) {}
+            try { updateIconById('tm-start-pause', 'assets/svgs-fontawesome/regular/circle-play.svg'); } catch (e) {}
         }
     }, 200);
 }
@@ -304,7 +342,7 @@ function pauseTimer() {
     _state.timerRunning = false;
     clearInterval(_state.timerInterval);
     _state.timerInterval = null;
-    try { const el = document.getElementById('tm-start-pause'); if (el) el.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`; } catch (e) {}
+    try { updateIconById('tm-start-pause', 'assets/svgs-fontawesome/regular/circle-play.svg'); } catch (e) {}
 }
 function resetTimer() {
     _state.timerRunning = false;
@@ -313,13 +351,21 @@ function resetTimer() {
     _state.timerRemaining = 0;
     try { if (_state.audio) { _state.audio.pause(); _state.audio.currentTime = 0; } } catch (e) {}
     updateDisplay();
-    try { const el = document.getElementById('tm-start-pause'); if (el) { el.innerHTML = `<img src="assets/icons/Play-Circle--Streamline-Outlined-Material-Symbols.svg" alt="Start">`; el.disabled = true; } } catch (e) {}
+    try {
+        const el = document.getElementById('tm-start-pause');
+        if (el) {
+            updateAttachedIcon(el, 'assets/svgs-fontawesome/regular/circle-play.svg');
+            el.disabled = true;
+        }
+    } catch (e) {}
 }
-function toggleStopwatch() {
+function toggleStopwatch(ev) {
+    const btn = ev.currentTarget;
     if (_state.stopwatchRunning) {
         _state.stopwatchRunning = false;
         clearInterval(_state.stopwatchInterval);
         _state.stopwatchInterval = null;
+        try { if (btn) updateAttachedIcon(btn, 'assets/svgs-fontawesome/regular/circle-play.svg'); } catch (e) {}
     } else {
         _state.stopwatchRunning = true;
         const last = Date.now();
@@ -328,6 +374,7 @@ function toggleStopwatch() {
             _state.stopwatchTime = Date.now() - startTime;
             updateDisplay();
         }, 50);
+        try { if (btn) updateAttachedIcon(btn, 'assets/svgs-fontawesome/regular/circle-pause.svg'); } catch (e) {}
     }
 }
 function recordLap() {
@@ -347,6 +394,7 @@ function resetStopwatch() {
     try { localStorage.removeItem('timer_last_laps'); } catch (e) {}
     renderLaps();
     updateDisplay();
+    try { updateIconById('sw-start', 'assets/svgs-fontawesome/regular/circle-play.svg'); } catch (e) {}
 }
 function renderLaps() {
     const cont = document.getElementById('stopwatch-laps');

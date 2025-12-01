@@ -1,47 +1,43 @@
 #searchbar {
 	position: absolute;
-	transform: translate(-50%, -50%);
 	display: flex;
 	align-items: center;
-	gap: var(--ui-gap);
-	height: var(--ui-bar-height);
+	gap: var(--dis-xs);
+	height: var(--dis-6);
 	min-width: calc(40rem * var(--ui-scale));
-	padding: var(--ui-padding-block);
-	border-radius: var(--border-radius-full);
-	background: var(--color-surface);
+	padding: var(--dis-xs);
+	border-radius: var(--radius-full);
+	background: var(--color-base);
 	width: 30vw;
-	box-shadow: var(--ui-shadow-strong);
 }
 
 .engine-current {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--ui-chip-height);
-	width: var(--ui-chip-height);
+	height: var(--dis-4);
+	width: var(--dis-4);
 	aspect-ratio: 1/1;
 	padding: 0;
-	border-radius: var(--border-radius-full);
-	background: var(--color-primary-alpha);
-	color: var(--color-primary);
+	border-radius: var(--radius-full);
+	background: var(--color-off);
+	color: var(--text-accent);
 	cursor: pointer;
 }
 
 .engine-current .engine-current-icon {
-	width: var(--ui-pill-icon-size);
-	height: var(--ui-pill-icon-size);
-	object-fit: contain;
-	display: block;
+	width: var(--dis-2);
+	height: var(--dis-2);
 }
 
 .search-engine-chips {
 	position: absolute;
 	left: 50%;
-	top: calc(100% + 8px);
+	top: calc(100% + var(--dis-1));
 	transform: translateX(-50%);
 	display: none;
-	gap: var(--ui-gap);
-	padding: calc(0.375rem * var(--ui-scale));
+	gap: var(--dis-xs);
+	padding: var(--dis-xs);
 	align-items: center;
 	justify-content: center;
 }
@@ -54,36 +50,40 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--ui-chip-height);
-	width: var(--ui-chip-height);
+	height: var(--dis-4);
+	width: var(--dis-4);
 	aspect-ratio: 1/1;
 	padding: 0;
-	border-radius: var(--border-radius-full);
-	background: var(--color-surface);
+	border-radius: var(--radius-full);
+	background: var(--color-base);
 	cursor: pointer;
-	font-size: calc(0.8125rem * var(--ui-scale));
-	color: var(--color-primary);
+	color: var(--text-accent);
 }
 
 .search-engine-chip .engine-chip-icon {
-	width: var(--ui-chip-icon-size);
-	height: var(--ui-chip-icon-size);
-	object-fit: contain;
-	display: block;
+	width: var(--dis-2);
+	height: var(--dis-2);
 }
 
 .search-engine-chip.active {
-	background: rgba(255, 255, 255, 0.7);
+	background: var(--color-off);
 }
 
 .search-input {
 	flex: 1;
 	display: flex;
 	align-items: center;
-	height: var(--ui-chip-height);
-	padding: var(--ui-padding-block) var(--ui-padding-inline);
-	border-radius: var(--border-radius-full);
-	background: var(--color-primary-alpha);
+	height: var(--dis-4);
+	padding: var(--dis-xs) var(--dis-2);
+	border-radius: var(--radius-full);
+	background: var(--color-off);
+	color: var(--text-base);
+	font-size: calc(1rem * var(--ui-scale));
+	font-family: var(--font-family);
+}
+
+.search-input::placeholder {
+	color: var(--text-off);
 }
 
 #search-voice-btn,
@@ -91,35 +91,36 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--ui-chip-height);
-	border-radius: var(--border-radius-full);
+	height: var(--dis-4);
+	border-radius: var(--radius-full);
 	cursor: pointer;
 }
 
 #search-voice-btn {
-	background: var(--color-primary-alpha);
-	color: var(--color-surface-text-inverted);
-	width: var(--ui-chip-height);
+	background: var(--color-off);
+	color: var(--text-accent);
+	width: var(--dis-4);
 	aspect-ratio: 1/1;
 	padding: 0;
 }
 
-#search-voice-btn img {
+#search-voice-btn .search-voice-icon {
 	width: 60%;
 	height: 60%;
-	object-fit: contain;
 }
 
 #search-voice-btn.listening {
-	background: var(--color-primary);
-	color: var(--color-surface-text-inverted);
+	background: var(--color-accent);
+	color: var(--text-invert);
 }
 
 #search-btn {
-	background: var(--color-primary);
-	color: var(--color-surface-text-inverted);
-	padding: 0 var(--ui-padding-inline);
-	border-radius: var(--border-radius-full);
+	background: var(--color-accent);
+	color: var(--text-invert);
+	padding: 0 var(--dis-2);
+	border-radius: var(--radius-full);
+	font-weight: 500;
+	font-size: calc(0.95rem * var(--ui-scale));
 }
 
 .searchbar-hidden {

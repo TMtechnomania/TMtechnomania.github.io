@@ -1,4 +1,5 @@
 import { loadCSS, unloadCSS } from './cssLoader.js';
+import { renderInlineIcon } from './brandIconLoader.js';
 
 const ENGINE_MAP = {
     default: { name: 'Search', url: 'https://www.google.com/search?q=' },
@@ -16,18 +17,18 @@ const ENGINE_MAP = {
 };
 
 const ICON_MAP = {
-    default: 'Search--Streamline-Outlined-Material-Symbols.svg',
-    google: 'Google-Icon--Streamline-Svg-Logos.svg',
-    bing: 'Bing--Streamline-Svg-Logos.svg',
-    duckduckgo: 'Duckduckgo--Streamline-Svg-Logos.svg',
-    youtube: 'Youtube-Icon--Streamline-Svg-Logos.svg',
-    reddit: 'Reddit-Icon--Streamline-Svg-Logos.svg',
-    pinterest: 'Pinterest--Streamline-Svg-Logos.svg',
-    stackoverflow: 'Stackoverflow-Icon--Streamline-Svg-Logos.svg',
-    spotify: 'Spotify-Icon--Streamline-Svg-Logos.svg',
-    github: 'Github-Icon--Streamline-Svg-Logos.svg',
-    unsplash: 'unsplash-svgrepo-com.svg',
-    vimeo: 'Vimeo-Icon--Streamline-Svg-Logos.svg',
+    default: 'assets/svgs-fontawesome/solid/search.svg',
+    google: 'assets/svgs-fontawesome/brands/google.svg',
+    bing: 'assets/icons/Bing--Streamline-Svg-Logos.svg',
+    duckduckgo: 'assets/icons/Duckduckgo--Streamline-Svg-Logos.svg',
+    youtube: 'assets/svgs-fontawesome/brands/youtube.svg',
+    reddit: 'assets/svgs-fontawesome/brands/reddit.svg',
+    pinterest: 'assets/svgs-fontawesome/brands/pinterest.svg',
+    stackoverflow: 'assets/svgs-fontawesome/brands/stack-overflow.svg',
+    spotify: 'assets/svgs-fontawesome/brands/spotify.svg',
+    github: 'assets/svgs-fontawesome/brands/github.svg',
+    unsplash: 'assets/svgs-fontawesome/brands/unsplash.svg',
+    vimeo: 'assets/svgs-fontawesome/brands/vimeo.svg',
 };
 
 function computePositionStyles(vertical = 'center', horizontal = 'center') {
@@ -44,27 +45,36 @@ function computePositionStyles(vertical = 'center', horizontal = 'center') {
     };
 }
 
+function resolveEngineIcon(engineKey, defaultName, duplicateKey) {
+    const iconFile = (engineKey === 'default' && duplicateKey) ? ICON_MAP[duplicateKey] : (ICON_MAP[engineKey] || ICON_MAP.default);
+    const label = (engineKey === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[engineKey]?.name || engineKey);
+    return { iconFile, label };
+}
+
 function createIconTitle(engineKey, defaultName, duplicateKey) {
     const engineBtn = document.createElement('button');
     engineBtn.type = 'button';
     engineBtn.className = 'engine-current';
     engineBtn.setAttribute('data-engine', engineKey);
+    applyEngineButtonIcon(engineBtn, engineKey, defaultName, duplicateKey);
+    return engineBtn;
+}
 
-    const iconFile = (engineKey === 'default' && duplicateKey) ? ICON_MAP[duplicateKey] : (ICON_MAP[engineKey] || ICON_MAP.default);
+function applyEngineButtonIcon(engineBtn, engineKey, defaultName, duplicateKey) {
+    if (!engineBtn) return;
+    engineBtn.innerHTML = '';
+    const { iconFile, label } = resolveEngineIcon(engineKey, defaultName, duplicateKey);
     if (iconFile) {
-        const img = document.createElement('img');
-        img.className = 'engine-current-icon';
-        img.src = `assets/icons/${iconFile}`;
-        img.alt = ENGINE_MAP[engineKey]?.name || engineKey;
-        img.title = (engineKey === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[engineKey]?.name || engineKey);
-        engineBtn.appendChild(img);
-        engineBtn.setAttribute('aria-label', img.title);
+        const icon = document.createElement('span');
+        icon.className = 'engine-current-icon ui-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        renderInlineIcon(icon, iconFile, { fallbackSrc: ICON_MAP.default });
+        engineBtn.appendChild(icon);
+        engineBtn.setAttribute('aria-label', label);
     } else {
-        const label = (engineKey === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[engineKey]?.name || engineKey);
         engineBtn.textContent = label;
         engineBtn.setAttribute('aria-label', label);
     }
-    return engineBtn;
 }
 
 export async function renderSearchbar(searchCfg = {}) {
@@ -128,12 +138,11 @@ export async function renderSearchbar(searchCfg = {}) {
         if (!cfg.voice_search) {
             voiceBtn.classList.add('searchbar-hidden');
         } else {
-            const micImg = document.createElement('img');
-            micImg.src = 'assets/icons/Mic--Streamline-Outlined-Material-Symbols.svg';
-            micImg.alt = 'Mic';
-            micImg.style.width = '20px';
-            micImg.style.height = '20px';
-            voiceBtn.appendChild(micImg);
+            const micIcon = document.createElement('span');
+            micIcon.className = 'ui-icon search-voice-icon';
+            micIcon.setAttribute('aria-hidden', 'true');
+            renderInlineIcon(micIcon, 'assets/svgs-fontawesome/solid/microphone.svg');
+            voiceBtn.appendChild(micIcon);
         }
 
     const searchBtn = document.createElement('button');
@@ -165,17 +174,15 @@ export async function renderSearchbar(searchCfg = {}) {
                 chip.type = 'button';
                 chip.className = 'search-engine-chip';
                 chip.setAttribute('data-engine', k);
-                const iconFile = (k === 'default' && duplicateKey) ? ICON_MAP[duplicateKey] : (ICON_MAP[k] || ICON_MAP.default);
+                const { iconFile, label } = resolveEngineIcon(k, defaultName, duplicateKey);
                 if (iconFile) {
-                    const img = document.createElement('img');
-                    img.className = 'engine-chip-icon';
-                    img.src = `assets/icons/${iconFile}`;
-                    img.alt = ENGINE_MAP[k].name || k;
-                    img.title = (k === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[k].name || k);
-                    chip.appendChild(img);
-                    chip.setAttribute('aria-label', img.title);
+                    const icon = document.createElement('span');
+                    icon.className = 'engine-chip-icon ui-icon';
+                    icon.setAttribute('aria-hidden', 'true');
+                    renderInlineIcon(icon, iconFile, { fallbackSrc: ICON_MAP.default });
+                    chip.appendChild(icon);
+                    chip.setAttribute('aria-label', label);
                 } else {
-                    const label = (k === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[k].name || k);
                     chip.textContent = label;
                     chip.setAttribute('aria-label', label);
                 }
@@ -184,21 +191,7 @@ export async function renderSearchbar(searchCfg = {}) {
                     const engineBtn = wrapper.querySelector('.engine-current');
                     if (engineBtn) {
                         engineBtn.setAttribute('data-engine', k);
-                        engineBtn.innerHTML = '';
-                        const iconFile = (k === 'default' && duplicateKey) ? ICON_MAP[duplicateKey] : (ICON_MAP[k] || ICON_MAP.default);
-                        if (iconFile) {
-                            const img = document.createElement('img');
-                            img.className = 'engine-current-icon';
-                            img.src = `assets/icons/${iconFile}`;
-                            img.alt = ENGINE_MAP[k]?.name || k;
-                            img.title = (k === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[k]?.name || k);
-                            engineBtn.appendChild(img);
-                            engineBtn.setAttribute('aria-label', img.title);
-                        } else {
-                            const label = (k === 'default' && defaultName) ? `${defaultName} (Default)` : (ENGINE_MAP[k]?.name || k);
-                            engineBtn.textContent = label;
-                            engineBtn.setAttribute('aria-label', label);
-                        }
+                        applyEngineButtonIcon(engineBtn, k, defaultName, duplicateKey);
                         try {
                             input.placeholder = placeholderFor(k);
                         } catch (e) {

@@ -1,14 +1,22 @@
 import { STORAGE_KEY_SETTINGS, DEFAULT_CONFIG } from './config.js';
-import { safeSetIconWithFallback } from './iconLoader.min.js';
+import { renderInlineIcon } from './brandIconLoader.js';
 
 const DEFAULT_SHORTCUTS = [
-    { id: 's_chrome', title: 'Chrome Web Store', url: 'https://chrome.google.com/webstore', icon: 'assets/icons/Chrome-Web-Store--Streamline-Svg-Logos.svg', builtin: true },
-    { id: 's_youtube', title: 'YouTube', url: 'https://www.youtube.com', icon: 'assets/icons/Youtube-Icon--Streamline-Svg-Logos.svg', builtin: true },
-    { id: 's_dribbble', title: 'Dribbble', url: 'https://dribbble.com', icon: 'assets/icons/Dribbble-Icon--Streamline-Svg-Logos.svg', builtin: true },
-    { id: 's_mdn', title: 'MDN Web Docs', url: 'https://developer.mozilla.org', icon: 'assets/icons/Mdn--Streamline-Svg-Logos.svg', builtin: true }
+    { id: 's_chrome', title: 'Chrome Web Store', url: 'https://chrome.google.com/webstore', icon: 'assets/svgs-fontawesome/brands/chrome.svg', builtin: true },
+    { id: 's_youtube', title: 'YouTube', url: 'https://www.youtube.com', icon: 'assets/svgs-fontawesome/brands/youtube.svg', builtin: true },
+    { id: 's_dribbble', title: 'Dribbble', url: 'https://dribbble.com', icon: 'assets/svgs-fontawesome/brands/dribbble.svg', builtin: true },
+    { id: 's_mdn', title: 'MDN Web Docs', url: 'https://developer.mozilla.org', icon: 'assets/svgs-fontawesome/brands/firefox-browser.svg', builtin: true }
 ];
 
-const DEFAULT_SHORTCUT_ICON_FALLBACK = 'assets/icons/Travel-Explore--Streamline-Outlined-Material-Symbols.svg';
+const DEFAULT_SHORTCUT_ICON_FALLBACK = 'assets/svgs-fontawesome/regular/compass.svg';
+
+function createUiIcon(iconPath, className = '', fallback = null) {
+    const el = document.createElement('span');
+    el.className = ['ui-icon', className].filter(Boolean).join(' ');
+    el.setAttribute('aria-hidden', 'true');
+    renderInlineIcon(el, iconPath || fallback, { fallbackSrc: fallback });
+    return el;
+}
 
 export async function initActionBar(actionCfg = {}) {
     try {
@@ -45,27 +53,27 @@ export async function initActionBar(actionCfg = {}) {
         
         const actionKey = document.createElement('div');
         actionKey.className = 'action-item';
-        actionKey.innerHTML = `<img src="assets/icons/Action-Key--Streamline-Outlined-Material-Symbols.svg" alt="Action Key">`;
+        actionKey.appendChild(createUiIcon('assets/svgs-fontawesome/regular/keyboard.svg'));
         iconGroup.appendChild(actionKey);
 
-        
+
         const tabsIcon = document.createElement('div');
         tabsIcon.className = 'action-item';
-        tabsIcon.innerHTML = `<img src="assets/icons/Tabs--Streamline-Outlined-Material-Symbols.svg" alt="Tabs">`;
+        tabsIcon.appendChild(createUiIcon('assets/svgs-fontawesome/regular/clone.svg'));
         iconGroup.appendChild(tabsIcon);
 
-        
+
         const bookmarkIcon = document.createElement('div');
         bookmarkIcon.className = 'action-item';
         bookmarkIcon.id = 'bookmark-toggle';
-        bookmarkIcon.innerHTML = `<img src="assets/icons/Bookmark--Streamline-Outlined-Material-Symbols.svg" alt="Bookmark">`;
+        bookmarkIcon.appendChild(createUiIcon('assets/svgs-fontawesome/regular/bookmark.svg'));
         iconGroup.appendChild(bookmarkIcon);
 
         
         const fullscreenIcon = document.createElement('div');
         fullscreenIcon.className = 'action-item';
         fullscreenIcon.id = 'fullscreen-toggle';
-        fullscreenIcon.innerHTML = `<img src="assets/icons/Fullscreen--Streamline-Outlined-Material-Symbols.svg" alt="Fullscreen">`;
+        fullscreenIcon.appendChild(createUiIcon('assets/svgs-fontawesome/solid/expand.svg'));
         iconGroup.appendChild(fullscreenIcon);
 
         actionContent.appendChild(iconGroup);
@@ -100,26 +108,14 @@ export async function initActionBar(actionCfg = {}) {
             }
         }
 
-        function setImgWithFallback(imgEl, src, isBuiltin = false) {
-            
-            const fallback = DEFAULT_SHORTCUT_ICON_FALLBACK;
-            try {
-                
-                safeSetIconWithFallback(imgEl, src, fallback, 'actionbar').then((ok) => { if (!ok) imgEl.src = fallback; }).catch(() => { imgEl.src = fallback; });
-            } catch (e) { imgEl.src = src || fallback; }
-        }
-
-        
         function createShortcutTile(s, index) {
             const wrap = document.createElement('div');
             
             wrap.className = 'action-item shortcut-item';
             wrap.title = s.title || s.url;
 
-            const img = document.createElement('img');
-            img.className = 'shortcut-icon';
-            setImgWithFallback(img, s.icon, !!s.builtin);
-            wrap.appendChild(img);
+            const icon = createUiIcon(s.icon, 'shortcut-icon', DEFAULT_SHORTCUT_ICON_FALLBACK);
+            wrap.appendChild(icon);
 
             
             wrap.addEventListener('click', (ev) => {
@@ -134,7 +130,7 @@ export async function initActionBar(actionCfg = {}) {
             if (!s.builtin) {
                 const edit = document.createElement('button');
                 edit.className = 'shortcut-action-btn';
-                edit.innerHTML = `<img src="assets/icons/Edit--Streamline-Outlined-Material-Symbols.svg" alt="Edit">`;
+                edit.appendChild(createUiIcon('assets/svgs-fontawesome/regular/pen-to-square.svg', 'shortcut-action-icon'));
                 edit.title = 'Edit shortcut';
                 edit.addEventListener('click', (ev) => {
                     ev.stopPropagation();
@@ -150,7 +146,7 @@ export async function initActionBar(actionCfg = {}) {
 
                 const del = document.createElement('button');
                 del.className = 'shortcut-action-btn';
-                del.innerHTML = `<img src="assets/icons/Delete--Streamline-Outlined-Material-Symbols.svg" alt="Delete">`;
+                del.appendChild(createUiIcon('assets/svgs-fontawesome/regular/trash-can.svg', 'shortcut-action-icon'));
                 del.title = 'Delete shortcut';
                 del.addEventListener('click', (ev) => {
                     ev.stopPropagation();
@@ -174,7 +170,7 @@ export async function initActionBar(actionCfg = {}) {
             
             const add = document.createElement('div');
             add.className = 'action-item shortcut-add';
-            add.innerHTML = `<img src="assets/icons/Add--Streamline-Outlined-Material-Symbols.svg" alt="Add">`;
+            add.appendChild(createUiIcon('assets/svgs-fontawesome/solid/plus.svg'));
             add.title = 'Add shortcut';
             add.addEventListener('click', (ev) => {
                 ev.stopPropagation();
@@ -194,7 +190,7 @@ export async function initActionBar(actionCfg = {}) {
             if (hasUser) {
                     const manage = document.createElement('div');
                     manage.className = 'action-item shortcut-manage';
-                manage.innerHTML = `<img src="assets/icons/Settings--Streamline-Outlined-Material-Symbols.svg" alt="Manage">`;
+                manage.appendChild(createUiIcon('assets/svgs-fontawesome/solid/gear.svg'));
                 manage.title = 'Manage shortcuts';
                 manage.addEventListener('click', (ev) => {
                     ev.stopPropagation();
@@ -220,7 +216,7 @@ export async function initActionBar(actionCfg = {}) {
             el.title = title;
             el.setAttribute('role', 'button');
             el.setAttribute('tabindex', '0');
-            el.innerHTML = `<img src="${iconPath}" alt="${title}">`;
+            el.appendChild(createUiIcon(iconPath));
 
             const trigger = (ev) => {
                 ev && ev.stopPropagation && ev.stopPropagation();
@@ -235,10 +231,10 @@ export async function initActionBar(actionCfg = {}) {
             return el;
         };
 
-        thirdGroup.appendChild(makeAction('action-timer', 'Timer/Stopwatch', 'assets/icons/Timer--Streamline-Outlined-Material-Symbols.svg', 'action:timer'));
-        thirdGroup.appendChild(makeAction('action-alarm', 'Alarm', 'assets/icons/Alarm--Streamline-Outlined-Material-Symbols.svg', 'action:alarm'));
-        thirdGroup.appendChild(makeAction('action-notes', 'Notes', 'assets/icons/Edit-Note--Streamline-Outlined-Material-Symbols.svg', 'action:notes'));
-        thirdGroup.appendChild(makeAction('action-settings', 'Settings', 'assets/icons/Settings--Streamline-Outlined-Material-Symbols.svg', 'action:settings'));
+        thirdGroup.appendChild(makeAction('action-timer', 'Timer/Stopwatch', 'assets/svgs-fontawesome/regular/clock.svg', 'action:timer'));
+        thirdGroup.appendChild(makeAction('action-alarm', 'Alarm', 'assets/svgs-fontawesome/regular/bell.svg', 'action:alarm'));
+        thirdGroup.appendChild(makeAction('action-notes', 'Notes', 'assets/svgs-fontawesome/regular/note-sticky.svg', 'action:notes'));
+        thirdGroup.appendChild(makeAction('action-settings', 'Settings', 'assets/svgs-fontawesome/solid/gear.svg', 'action:settings'));
 
         actionContent.appendChild(thirdGroup);
 
