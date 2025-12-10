@@ -43,6 +43,17 @@ export async function toggleTabsRibbon() {
 }
 
 function createTabsRibbon(tabs) {
+	const MAX_TABS_PER_WINDOW = 4;
+	const BASE_MAX_TABS = 7; // Base max at full screen width (1920px reference)
+	
+	// Calculate dynamic max tabs based on viewport width vs screen width
+	// At full screen (ratio = 1.0) -> 8 tabs
+	// At half screen (ratio = 0.5) -> 4 tabs
+	const screenWidth = window.screen.width || 1920;
+	const viewportWidth = window.innerWidth || screenWidth;
+	const ratio = Math.min(viewportWidth / screenWidth, 1.0); // Cap at 1.0
+	const MAX_TOTAL_TABS = Math.max(2, Math.floor(BASE_MAX_TABS * ratio)); // Minimum 2 tabs
+	
 	const grouped = {};
 	tabs.forEach(t => {
 		if (!grouped[t.windowId]) grouped[t.windowId] = [];
@@ -56,6 +67,9 @@ function createTabsRibbon(tabs) {
 	content.className = 'tabs-ribbon-content';
 
 	const windowIds = Object.keys(grouped);
+	let totalTabsShown = 0;
+	let hiddenWindowsCount = 0;
+	let totalHiddenTabs = 0;
 
 	let mergeBtn = null;
 	if (windowIds.length > 1) {
@@ -77,14 +91,21 @@ function createTabsRibbon(tabs) {
 		});
 	}
 
-	Object.entries(grouped).forEach(([windowId, windowTabs]) => {
+	for (const [windowId, windowTabs] of Object.entries(grouped)) {
+		// Check if we've hit global limit
+		if (totalTabsShown >= MAX_TOTAL_TABS) {
+			hiddenWindowsCount++;
+			totalHiddenTabs += windowTabs.length;
+			continue;
+		}
+		
 		const group = document.createElement('div');
 		group.className = 'window-group';
 		group.dataset.windowId = windowId;
 
 		const windowPill = document.createElement('div');
 		windowPill.className = 'window-selector';
-		windowPill.title = `Select window ${windowId}`;
+		windowPill.title = `Window (${windowTabs.length} tabs)`;
 		const winIcon = document.createElement('span');
 		winIcon.className = 'ui-icon window-selector-icon';
 		winIcon.setAttribute('aria-hidden', 'true');
@@ -127,7 +148,13 @@ function createTabsRibbon(tabs) {
 		const list = document.createElement('div');
 		list.className = 'tabs-ribbon-list';
 
-		windowTabs.forEach(tab => {
+		// Calculate how many tabs to show from this window
+		const remainingSlots = MAX_TOTAL_TABS - totalTabsShown;
+		const tabsToShowCount = Math.min(windowTabs.length, MAX_TABS_PER_WINDOW, remainingSlots);
+		const hiddenInWindowCount = windowTabs.length - tabsToShowCount;
+
+		for (let i = 0; i < tabsToShowCount; i++) {
+			const tab = windowTabs[i];
 			const item = document.createElement('div');
 			item.className = 'tab-item';
 			if (tab.active) item.classList.add('active');
@@ -148,9 +175,9 @@ function createTabsRibbon(tabs) {
 
 			item.addEventListener('click', async () => {
 				const tabId = parseInt(item.dataset.tabId);
-				const windowId = parseInt(item.dataset.windowId);
+				const wId = parseInt(item.dataset.windowId);
 				try {
-					await chrome.windows.update(windowId, { focused: true });
+					await chrome.windows.update(wId, { focused: true });
 					await chrome.tabs.update(tabId, { active: true });
 					updateActiveTabVisual(tabId);
 					const r = document.getElementById('tabs-ribbon');
@@ -162,11 +189,39 @@ function createTabsRibbon(tabs) {
 			});
 
 			list.appendChild(item);
-		});
+			totalTabsShown++;
+		}
+
+		// Add counter for hidden tabs in this window
+		if (hiddenInWindowCount > 0) {
+			const counter = document.createElement('div');
+			counter.className = 'tab-counter';
+			counter.textContent = `+${hiddenInWindowCount}`;
+			counter.title = `${hiddenInWindowCount} more tabs in this window`;
+			counter.addEventListener('click', async () => {
+				// Focus this window when clicking counter
+				try {
+					if (chrome.windows && chrome.windows.update) {
+						await chrome.windows.update(parseInt(windowId), { focused: true });
+					}
+				} catch (e) {}
+			});
+			list.appendChild(counter);
+			totalHiddenTabs += hiddenInWindowCount;
+		}
 
 		group.appendChild(list);
 		content.appendChild(group);
-	});
+	}
+
+	// Add overflow indicator for hidden windows
+	if (hiddenWindowsCount > 0) {
+		const overflowIndicator = document.createElement('div');
+		overflowIndicator.className = 'overflow-indicator';
+		overflowIndicator.textContent = `+${hiddenWindowsCount}`;
+		overflowIndicator.title = `${hiddenWindowsCount} more window${hiddenWindowsCount > 1 ? 's are' : ' is'} open with ${totalHiddenTabs} tab${totalHiddenTabs > 1 ? 's' : ''} combined`;
+		content.appendChild(overflowIndicator);
+	}
 
 	if (mergeBtn) content.appendChild(mergeBtn);
 
@@ -250,11 +305,22 @@ function _clearTabsRibbonAutoCloseTimer() {
 
 
 let _tabChangeTimeout = null;
+let _resizeTimeout = null;
+
 function onTabChange() {
 	if (_tabChangeTimeout) clearTimeout(_tabChangeTimeout);
 	_tabChangeTimeout = setTimeout(() => {
 		refreshTabsRibbon();
 		_tabChangeTimeout = null;
+	}, 200);
+}
+
+function onWindowResize() {
+	// Debounce resize events
+	if (_resizeTimeout) clearTimeout(_resizeTimeout);
+	_resizeTimeout = setTimeout(() => {
+		refreshTabsRibbon();
+		_resizeTimeout = null;
 	}, 200);
 }
 
@@ -283,8 +349,11 @@ function attachTabsListeners() {
 	chrome.tabs.onMoved.addListener(onTabChange);
 	chrome.tabs.onDetached.addListener(onTabChange);
 	chrome.tabs.onAttached.addListener(onTabChange);
+	
+	// Window resize event for dynamic tab count
+	window.addEventListener('resize', onWindowResize);
 
-	_tabsRibbonListeners = { onKeyDown, onTabChange };
+	_tabsRibbonListeners = { onKeyDown, onTabChange, onWindowResize };
 }
 
 function detachTabsListeners() {
@@ -298,9 +367,16 @@ function detachTabsListeners() {
 	chrome.tabs.onDetached.removeListener(_tabsRibbonListeners.onTabChange);
 	chrome.tabs.onAttached.removeListener(_tabsRibbonListeners.onTabChange);
 	
+	// Remove resize listener
+	window.removeEventListener('resize', _tabsRibbonListeners.onWindowResize);
+	
 	if (_tabChangeTimeout) {
 		clearTimeout(_tabChangeTimeout);
 		_tabChangeTimeout = null;
+	}
+	if (_resizeTimeout) {
+		clearTimeout(_resizeTimeout);
+		_resizeTimeout = null;
 	}
 
 	_tabsRibbonListeners = null;

@@ -35,10 +35,27 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
         if (thumbUrl) {
             el.poster = thumbUrl;
         }
+		// Handle autoplay failures (browser policy)
+		el.addEventListener('canplay', () => {
+			el.play().catch(err => {
+				console.warn('[Wallpaper] Video autoplay blocked:', err.message);
+			});
+		}, { once: true });
+		// Handle video stall/error
+		el.addEventListener('stalled', () => {
+			console.warn('[Wallpaper] Video playback stalled');
+		});
+		el.addEventListener('error', (e) => {
+			const error = el.error;
+			console.error('[Wallpaper] Video load error:', error ? `${error.code}: ${error.message}` : 'Unknown error');
+			el.remove();
+		});
+	} else {
+		el.onerror = () => {
+			console.error('[Wallpaper] Image load error for:', url);
+			el.remove();
+		};
 	}
-	el.onerror = () => {
-		el.remove();
-	};
 	document.body.appendChild(el);
 	try {
 		const normalizedStyle = normalizeWallpaperConfig(styleCfg || {});
@@ -79,8 +96,13 @@ async function chooseEntry(manifest, config, excludeId = null) {
     // Get the wallpaper list based on collection
     if (config.collection === 'user') {
         const userWalls = await getAllUserWallpapers();
-        // Filter by type
-        list = userWalls.filter(w => w.type === (config.type === 'img' ? 'img' : 'video'));
+        // Filter by type - explicit check for both types
+        const targetType = config.type === 'img' ? 'img' : (config.type === 'video' ? 'video' : null);
+        if (targetType) {
+            list = userWalls.filter(w => w.type === targetType);
+        } else {
+            list = []; // Invalid type, no user wallpapers
+        }
         
         // If no user wallpapers of this type, fall back to predefined
         if (list.length === 0) {

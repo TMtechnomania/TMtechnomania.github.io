@@ -972,6 +972,21 @@ async function refreshWallpaper(settings, forceReload = false) {
     }
 }
 
+// Helper: Sync current wallpaper settings to the type-specific bucket
+// This ensures that when switching types, settings are preserved
+function syncTypeBucket(settings) {
+    const type = settings.wallpaper.type;
+    if (type === 'img' || type === 'video') {
+        const bucketName = type + 'Settings';
+        if (!settings.wallpaper[bucketName]) {
+            settings.wallpaper[bucketName] = {};
+        }
+        settings.wallpaper[bucketName].collection = settings.wallpaper.collection;
+        settings.wallpaper[bucketName].mode = settings.wallpaper.mode;
+        settings.wallpaper[bucketName].specific = settings.wallpaper.specific;
+    }
+}
+
 
 
 
@@ -1139,13 +1154,39 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 
     // --- User Wallpapers Section ---
     if (hasUserContent) {
-        // Section Header
+        // Section Header with Delete All Uploads button
+        const userHeaderContainer = document.createElement('div');
+        userHeaderContainer.style.gridColumn = '1 / -1';
+        userHeaderContainer.style.marginTop = '1rem';
+        userHeaderContainer.style.display = 'flex';
+        userHeaderContainer.style.justifyContent = 'space-between';
+        userHeaderContainer.style.alignItems = 'center';
+        
         const userHeader = document.createElement('div');
         userHeader.className = 'settings-group-title';
-        userHeader.style.gridColumn = '1 / -1';
-        userHeader.style.marginTop = '1rem';
         userHeader.textContent = 'User Wallpapers';
-        container.appendChild(userHeader);
+        userHeaderContainer.appendChild(userHeader);
+        
+        // Delete All Uploads Button (for current type only)
+        if (userWallpapers.length > 0) {
+            const delUploadsBtn = document.createElement('button');
+            delUploadsBtn.className = 'action-btn delete-all';
+            delUploadsBtn.innerHTML = `<span class="ui-icon"></span> Delete All Uploads`;
+            renderInlineIcon(delUploadsBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');
+            delUploadsBtn.onclick = () => {
+                const typeLabel = currentType === 'img' ? 'image' : 'video';
+                showConfirmation(`Delete all uploaded ${typeLabel} wallpapers?`, async () => {
+                    // Delete all user wallpapers of current type (no fallback needed)
+                    for (const wall of userWallpapers) {
+                        await deleteUserWallpaper(wall.id);
+                    }
+                    await renderWallpaperGrid(container, settings);
+                });
+            };
+            userHeaderContainer.appendChild(delUploadsBtn);
+        }
+        
+        container.appendChild(userHeaderContainer);
 
         // 1. Random User Tile
         const isUserRandom = settings.wallpaper.collection === 'user' && settings.wallpaper.mode === 'random';
@@ -1157,6 +1198,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
              settings.wallpaper.collection = 'user';
              settings.wallpaper.mode = 'random';
              settings.wallpaper.specific = null;
+             syncTypeBucket(settings);
              saveSettings(settings);
              refreshWallpaper(settings);
         });
@@ -1172,6 +1214,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
              settings.wallpaper.collection = 'user';
              settings.wallpaper.mode = 'sequence';
              settings.wallpaper.specific = null;
+             syncTypeBucket(settings);
              saveSettings(settings);
              refreshWallpaper(settings);
         });
@@ -1219,6 +1262,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
                  settings.wallpaper.collection = 'user';
                  settings.wallpaper.mode = 'specific';
                  settings.wallpaper.specific = wall.id;
+                 syncTypeBucket(settings); // Sync to type bucket
                  saveSettings(settings);
                  refreshWallpaper(settings);
                  renderWallpaperGrid(container, settings);
@@ -1272,6 +1316,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
         settings.wallpaper.collection = 'predefined';
         settings.wallpaper.mode = 'random';
         settings.wallpaper.specific = null;
+        syncTypeBucket(settings);
         saveSettings(settings);
         refreshWallpaper(settings);
     });
@@ -1287,6 +1332,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
         settings.wallpaper.collection = 'predefined';
         settings.wallpaper.mode = 'sequence';
         settings.wallpaper.specific = null;
+        syncTypeBucket(settings);
         saveSettings(settings);
         // refreshWallpaper might not be needed for sequence if it just continues?
         // But safer to call it to sync state if we were on specific.
@@ -1315,15 +1361,14 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
     const allKeys = await getAllMediaKeys();
     const downloadedSet = new Set(allKeys.filter(k => k.endsWith('::media')).map(k => k.split('::')[0]));
 
-    // Download All check... (Simplified for brevity, logic remains similar)
+    // Download All button - only downloads current type (images OR videos)
     const downloadableCount = list.filter(i => !downloadedSet.has(i.id)).length;
-    // We already added actionsContainer at top. We can append Download All button there too if needed.
-    // Logic from before placed Download All in `actionsContainer`. Use it again.
+    const typeLabel = currentType === 'img' ? 'Images' : 'Videos';
     
     if (downloadableCount > 0) {
         const dlBtn = document.createElement('button');
         dlBtn.className = 'action-btn download-all';
-        dlBtn.innerHTML = `<span class="ui-icon"></span> Download All`;
+        dlBtn.innerHTML = `<span class="ui-icon"></span> Download All ${typeLabel}`;
         renderInlineIcon(dlBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/download.svg');
         dlBtn.onclick = async () => {
              dlBtn.disabled = true;
@@ -1331,6 +1376,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
              renderInlineIcon(dlBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/spinner.svg');
              dlBtn.querySelector('.ui-icon').classList.add('fa-spin'); 
              
+             // Only download items from the current type's list
              const toDownload = list.filter(i => !downloadedSet.has(i.id));
              
              // Visual cue: add loading spinners to pending items
@@ -1340,14 +1386,18 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
              });
 
              for (const item of toDownload) {
+                 // URL encode the asset paths to handle special characters
+                 const encodedAssetUrl = resolveAssetUrl(item.asset);
+                 const encodedThumbUrl = resolveAssetUrl(item.thumb);
+                 
                  await downloadAndStoreResource({
-                     url: resolveAssetUrl(item.asset),
+                     url: encodedAssetUrl,
                      assetPath: item.id,
                      kind: 'media',
                      manifestEntry: item
                  });
                  await downloadAndStoreResource({
-                     url: resolveAssetUrl(item.thumb),
+                     url: encodedThumbUrl,
                      assetPath: item.id,
                      kind: 'thumb',
                      manifestEntry: item
@@ -1367,31 +1417,52 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
         actionsContainer.appendChild(dlBtn);
     }
 
+    // Delete All button - only deletes current type, preserves first one for fallback, does NOT touch user uploads
+    // Show button as soon as at least 1 wallpaper is downloaded
     const downloadedCount = list.filter(i => downloadedSet.has(i.id)).length;
-    if (downloadedCount > 1) {
-         // Delete All button
-         const delBtn = document.createElement('button');
+    if (downloadedCount >= 1) {
+        const delBtn = document.createElement('button');
         delBtn.className = 'action-btn delete-all';
-        delBtn.innerHTML = `<span class="ui-icon"></span> Delete All`;
+        delBtn.innerHTML = `<span class="ui-icon"></span> Delete All ${typeLabel}`;
         renderInlineIcon(delBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');
         delBtn.onclick = () => {
-            showConfirmation('Delete all downloads?', async () => {
-                // ... delete logic ...
+            const typeLabelLower = currentType === 'img' ? 'image' : 'video';
+            showConfirmation(`Delete all downloaded ${typeLabelLower} wallpapers? (First one kept as fallback)`, async () => {
                 try {
+                    // Get the IDs of all items in the current type's list
+                    const currentTypeIds = new Set(list.map(item => item.id));
+                    
+                    // Protect the first item of current type as fallback
+                    const protectedId = list.length > 0 ? list[0].id : null;
+                    
                     const allKeys = await getAllMediaKeys();
-                    const protectedIds = new Set();
-                    if (manifest.images && manifest.images.length > 0) protectedIds.add(manifest.images[0].id);
-                    if (manifest.videos && manifest.videos.length > 0) protectedIds.add(manifest.videos[0].id);
-
-                    const mediaKeys = allKeys.filter(k => {
+                    
+                    const mediaKeysToDelete = allKeys.filter(k => {
                         if (!k.endsWith('::media')) return false;
                         const id = k.split('::')[0];
-                        if (protectedIds.has(id)) return false;
+                        // Only delete if it's from the current type's list
+                        if (!currentTypeIds.has(id)) return false;
+                        // Don't delete the protected fallback
+                        if (id === protectedId) return false;
                         return true;
                     });
-                    await Promise.all(mediaKeys.map(k => deleteMediaEntry(k)));
+                    
+                    // Only delete media files, NOT thumbnails
+                    await Promise.all(mediaKeysToDelete.map(k => deleteMediaEntry(k)));
+                    
+                    // Set wallpaper to the fallback
+                    if (protectedId) {
+                        settings.wallpaper.collection = 'predefined';
+                        settings.wallpaper.mode = 'specific';
+                        settings.wallpaper.specific = protectedId;
+                        await saveSettings(settings);
+                        await refreshWallpaper(settings);
+                    }
+                    
                     renderWallpaperGrid(container, settings);
-                } catch(e) {}
+                } catch(e) {
+                    console.error('Delete All failed:', e);
+                }
             });
         };
         actionsContainer.appendChild(delBtn);
@@ -1416,6 +1487,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
              settings.wallpaper.collection = 'predefined';
              settings.wallpaper.mode = 'specific';
              settings.wallpaper.specific = id;
+             syncTypeBucket(settings);
              saveSettings(settings);
              refreshWallpaper(settings);
         },
@@ -1457,6 +1529,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
              settings.wallpaper.collection = 'predefined';
              settings.wallpaper.mode = 'specific';
              settings.wallpaper.specific = item.id;
+             syncTypeBucket(settings); // Sync to type bucket
              saveSettings(settings);
              refreshWallpaper(settings);
              

@@ -4,6 +4,7 @@ import { renderInlineIcon } from './brandIconLoader.js';
 const CSS_ID = 'notes-modal-css';
 const CSS_PATH = 'css/notesModal.css';
 const STORAGE_KEY = 'tm_notes_v1';
+const MAX_NOTES = 10; // Max combined notes and checklists
 
 let _backdrop = null;
 let _state = {
@@ -115,6 +116,15 @@ function renderListView(container) {
     addCheckBtn.className = 'tm-btn';
     addCheckBtn.innerHTML = `<span>+ Checklist</span>`;
     addCheckBtn.addEventListener('click', () => openEditor(container, 'checklist'));
+
+    // Enforce max limit
+    const atLimit = _state.notes.length >= MAX_NOTES;
+    if (atLimit) {
+        addNoteBtn.disabled = true;
+        addNoteBtn.title = `Maximum ${MAX_NOTES} notes/checklists reached`;
+        addCheckBtn.disabled = true;
+        addCheckBtn.title = `Maximum ${MAX_NOTES} notes/checklists reached`;
+    }
 
     actionRow.appendChild(addNoteBtn);
     actionRow.appendChild(addCheckBtn);

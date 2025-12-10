@@ -44,13 +44,30 @@ export async function fetchWithRetries(url, maxAttempts = 3, baseDelay = 300) {
 export function resolveAssetUrl(pathOrUrl) {
 	if (!pathOrUrl) return null;
 	try {
-		const u = new URL(pathOrUrl, "https://buildwithkt.dev");
+		// Check if it's already a full URL
+		if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+			// URL-encode the path portion while preserving URL structure
+			const url = new URL(pathOrUrl);
+			// Encode each path segment to handle special characters
+			const encodedPath = url.pathname.split('/').map(segment => 
+				encodeURIComponent(decodeURIComponent(segment))
+			).join('/');
+			url.pathname = encodedPath;
+			return url.href;
+		}
+		
+		// Relative path - encode each segment and resolve against base
+		const encodedPath = pathOrUrl.split('/').map(segment => 
+			encodeURIComponent(decodeURIComponent(segment))
+		).join('/');
+		const u = new URL(encodedPath, "https://buildwithkt.dev");
 		return u.href;
 	} catch (e) {
 		// console.warn(`Failed to resolve asset URL: ${pathOrUrl}`, e);
 		return null;
 	}
 }
+
 
 export async function getStorageLocal(key) {
 	if (!app || !app.storage || !app.storage.local) return null;
