@@ -6,7 +6,7 @@
 	justify-content: center;
 	background: none;
 	pointer-events: none;
-	z-index: 200000;
+	z-index: var(--z-panel);
 }
 
 .timer-modal {
@@ -24,6 +24,7 @@
 	position: relative;
 	margin-bottom: calc(var(--dis-6) + var(--dis-xs));
 	pointer-events: auto;
+	animation: slideUp var(--transition-normal) forwards;
 }
 
 .timer-tabs {
@@ -85,8 +86,8 @@
 }
 
 .edit-btn .ui-icon {
-	width: 60%;
-	height: 60%;
+	width: 80%;
+	height: 80%;
 }
 
 .custom-time-input-inline {
@@ -128,6 +129,7 @@
 	border: none;
 	font-size: calc(0.95rem * var(--ui-scale));
 	font-weight: 500;
+	color: var(--text-base);
 }
 
 .tm-btn.primary {
@@ -136,21 +138,8 @@
 }
 
 .tm-btn .ui-icon {
-	width: 50%;
-	height: 50%;
-}
-
-.tm-btn.alert-btn {
-	width: var(--dis-4);
-	height: var(--dis-4);
-	padding: 0;
-	display: inline-grid;
-	place-items: center;
-}
-
-.tm-btn.alert-btn .ui-icon {
-	width: 66%;
-	height: 66%;
+	width: 60%;
+	height: 60%;
 }
 
 .stopwatch-laps {

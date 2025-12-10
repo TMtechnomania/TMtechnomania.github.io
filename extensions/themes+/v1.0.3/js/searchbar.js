@@ -19,8 +19,8 @@ const ENGINE_MAP = {
 const ICON_MAP = {
     default: 'assets/svgs-fontawesome/solid/search.svg',
     google: 'assets/svgs-fontawesome/brands/google.svg',
-    bing: 'assets/icons/Bing--Streamline-Svg-Logos.svg',
-    duckduckgo: 'assets/icons/Duckduckgo--Streamline-Svg-Logos.svg',
+    bing: 'assets/svgs-fontawesome/brands/bing.svg',
+    duckduckgo: 'assets/svgs-fontawesome/brands/duckduckgo.svg',
     youtube: 'assets/svgs-fontawesome/brands/youtube.svg',
     reddit: 'assets/svgs-fontawesome/brands/reddit.svg',
     pinterest: 'assets/svgs-fontawesome/brands/pinterest.svg',
@@ -41,7 +41,7 @@ function computePositionStyles(vertical = 'center', horizontal = 'center') {
         top,
         left,
         transform: 'translate(-50%, -50%)',
-        zIndex: 9999,
+        zIndex: 99,
     };
 }
 
@@ -79,7 +79,7 @@ function applyEngineButtonIcon(engineBtn, engineKey, defaultName, duplicateKey) 
 
 export async function renderSearchbar(searchCfg = {}) {
 	try {
-		console.log('Rendering searchbar with config:', searchCfg);
+
         await loadCSS('css/searchbar.css', 'searchbar-css');
         removeSearchbar(true);
         if (!searchCfg || !searchCfg.enabled) return;
@@ -109,6 +109,10 @@ export async function renderSearchbar(searchCfg = {}) {
 
     Object.assign(wrapper.style, computePositionStyles(cfg.vertical_align, cfg.horizontal_align));
     wrapper.className = 'searchbar-wrapper';
+
+    // Inner Row for search inputs
+    const innerRow = document.createElement('div');
+    innerRow.className = 'search-row';
 
         const left = createIconTitle(cfg.engine, defaultName, duplicateKey);
 
@@ -152,16 +156,19 @@ export async function renderSearchbar(searchCfg = {}) {
     searchBtn.title = 'Search';
     searchBtn.textContent = 'Search';
 
-        wrapper.appendChild(left);
-        wrapper.appendChild(input);
-        wrapper.appendChild(voiceBtn);
-        wrapper.appendChild(searchBtn);
+        innerRow.appendChild(left);
+        innerRow.appendChild(input);
+        innerRow.appendChild(voiceBtn);
+        innerRow.appendChild(searchBtn);
+        
+        wrapper.appendChild(innerRow);
 
         const chips = document.createElement('div');
         chips.className = 'search-engine-chips';
 
         function populateChips(activeEngineKey) {
             chips.innerHTML = '';
+            let chipIndex = 0;
             Object.keys(ENGINE_MAP).forEach((k) => {
                 if (k === activeEngineKey) return;
 
@@ -174,6 +181,8 @@ export async function renderSearchbar(searchCfg = {}) {
                 chip.type = 'button';
                 chip.className = 'search-engine-chip';
                 chip.setAttribute('data-engine', k);
+                chip.style.animationDelay = `${chipIndex * 40}ms`;
+                chipIndex++;
                 const { iconFile, label } = resolveEngineIcon(k, defaultName, duplicateKey);
                 if (iconFile) {
                     const icon = document.createElement('span');
@@ -199,6 +208,7 @@ export async function renderSearchbar(searchCfg = {}) {
                     }
                     populateChips(k);
                     wrapper.classList.remove('chips-open');
+                    wrapper.classList.remove('chips-closing');
                     input.focus();
                 });
                 chips.appendChild(chip);
@@ -206,7 +216,7 @@ export async function renderSearchbar(searchCfg = {}) {
         }
 
         populateChips(cfg.engine);
-        wrapper.appendChild(chips);
+        innerRow.appendChild(chips);
 
         function doSearch() {
             const q = (input.value || '').trim();
@@ -253,22 +263,61 @@ export async function renderSearchbar(searchCfg = {}) {
             };
         });
 
+        function openChips() {
+            if (wrapper.classList.contains('chips-open') || wrapper.classList.contains('chips-closing')) return;
+            wrapper.classList.remove('chips-closing');
+            wrapper.classList.add('chips-open');
+            // Reset animation-delay for opening (sequential in)
+            const allChips = chips.querySelectorAll('.search-engine-chip');
+            allChips.forEach((c, i) => {
+                c.style.animationDelay = `${i * 40}ms`;
+                c.style.animation = 'none';
+                void c.offsetWidth; // Force reflow
+                c.style.animation = '';
+            });
+        }
+
+        function closeChips() {
+            if (!wrapper.classList.contains('chips-open') || wrapper.classList.contains('chips-closing')) return;
+            const allChips = chips.querySelectorAll('.search-engine-chip');
+            const total = allChips.length;
+            // Reverse animation-delay for closing (sequential out)
+            allChips.forEach((c, i) => {
+                c.style.animationDelay = `${(total - 1 - i) * 30}ms`;
+                c.style.animation = 'none';
+                void c.offsetWidth;
+                c.style.animation = 'chipOut 0.15s ease-in forwards';
+            });
+            wrapper.classList.add('chips-closing');
+            wrapper.classList.remove('chips-open');
+            // Wait for animation to complete before hiding
+            setTimeout(() => {
+                wrapper.classList.remove('chips-closing');
+            }, total * 30 + 150);
+        }
+
         const engineBtn = wrapper.querySelector('.engine-current');
         if (engineBtn) {
             engineBtn.addEventListener('click', (ev) => {
                 ev.stopPropagation();
-                wrapper.classList.toggle('chips-open');
+                if (wrapper.classList.contains('chips-open')) {
+                    closeChips();
+                } else {
+                    openChips();
+                }
             });
         }
 
         document.addEventListener('click', (ev) => {
-            if (!wrapper.contains(ev.target)) wrapper.classList.remove('chips-open');
+            if (!wrapper.contains(ev.target) && wrapper.classList.contains('chips-open')) {
+                closeChips();
+            }
         });
 
         document.body.appendChild(wrapper);
-        console.log('Searchbar element created and appended to body');
+
     } catch (e) {
-        console.error('Failed to render searchbar', e);
+        // console.error('Failed to render searchbar', e);
     }
 }
 

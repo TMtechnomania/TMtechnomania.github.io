@@ -116,7 +116,10 @@ function loadState() {
 }
 
 function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_state.alarms || [])); } catch (e) {}
+    try { 
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(_state.alarms || []));
+        document.dispatchEvent(new CustomEvent('alarms-updated')); 
+    } catch (e) {}
 }
 
 function uid(prefix='a') { return `${prefix}_${Date.now().toString(36)}_${Math.floor(Math.random()*1000)}`; }
@@ -252,10 +255,6 @@ async function openAlarmModal() {
     await loadCSS(CSS_PATH, CSS_ID);
     _backdrop = document.createElement('div'); _backdrop.className='alarm-modal-backdrop';
     const modal = document.createElement('div'); modal.id='alarm-modal'; modal.className='alarm-modal'; modal.tabIndex=-1; modal.setAttribute('role','dialog');
-    const close = document.createElement('div'); close.className='tm-close';
-    close.appendChild(createIconSpan('assets/svgs-fontawesome/regular/circle-xmark.svg'));
-    close.addEventListener('click', closeAlarmModal);
-    modal.appendChild(close);
     const header = document.createElement('div'); header.className='alarm-header'; header.innerHTML = `<h3>Alarms</h3>`;
     modal.appendChild(header);
     const permArea = document.createElement('div'); permArea.className='alarm-permission';

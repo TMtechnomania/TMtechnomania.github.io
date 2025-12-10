@@ -1,7 +1,8 @@
-import { getMediaEntry } from "./db.js";
-import { resolveAssetUrl } from "./api.js";
+import { getMediaEntry, getAllUserWallpapers } from "./db.js";
 
 let lastObjectUrl = null;
+let lastThumbUrl = null;
+
 function clearPreviousWallpaper() {
 	if (lastObjectUrl) {
 		try {
@@ -10,12 +11,18 @@ function clearPreviousWallpaper() {
 		}
 		lastObjectUrl = null;
 	}
+    if (lastThumbUrl) {
+        try {
+            URL.revokeObjectURL(lastThumbUrl);
+        } catch (e) {}
+        lastThumbUrl = null;
+    }
 	const prev = document.getElementById("wallpaper");
 	if (prev) {
 		prev.remove();
 	}
 }
-function setWallpaperElement(type, url, styleCfg = {}) {
+function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 	clearPreviousWallpaper();
 	const el = document.createElement(type === "img" ? "img" : "video");
 	el.id = "wallpaper";
@@ -25,6 +32,9 @@ function setWallpaperElement(type, url, styleCfg = {}) {
 		el.loop = true;
 		el.muted = true;
 		el.playsInline = true;
+        if (thumbUrl) {
+            el.poster = thumbUrl;
+        }
 	}
 	el.onerror = () => {
 		el.remove();
@@ -36,10 +46,17 @@ function setWallpaperElement(type, url, styleCfg = {}) {
 	} catch (e) {
 	}
 }
-function setWallpaperFromBlob(type, blob, styleCfg = {}) {
+function setWallpaperFromBlob(type, blob, styleCfg = {}, thumbBlob = null) {
 	const url = URL.createObjectURL(blob);
-	setWallpaperElement(type, url, styleCfg);
+    let thumbUrl = null;
+    if (thumbBlob) {
+        thumbUrl = URL.createObjectURL(thumbBlob);
+    }
+	setWallpaperElement(type, url, styleCfg, thumbUrl);
 	lastObjectUrl = url;
+    if (thumbUrl) {
+        lastThumbUrl = thumbUrl;
+    }
 }
 async function filterEntriesWithMedia(list) {
 	if (!Array.isArray(list) || list.length === 0) return [];
@@ -56,90 +73,129 @@ async function filterEntriesWithMedia(list) {
 	return checks.filter(Boolean);
 }
 async function chooseEntry(manifest, config, excludeId = null) {
-	const type = config.type === "img" ? "images" : "videos";
-	const list = manifest[type] || [];
+    let list = [];
+    let effectiveMode = config.mode;
+    
+    // Get the wallpaper list based on collection
+    if (config.collection === 'user') {
+        const userWalls = await getAllUserWallpapers();
+        // Filter by type
+        list = userWalls.filter(w => w.type === (config.type === 'img' ? 'img' : 'video'));
+        
+        // If no user wallpapers of this type, fall back to predefined
+        if (list.length === 0) {
+            const type = config.type === "img" ? "images" : "videos";
+            list = manifest[type] || [];
+            // Filter for downloaded predefined
+            list = await filterEntriesWithMedia(list);
+            // If was specific mode, switch to random
+            if (effectiveMode === 'specific') {
+                effectiveMode = 'random';
+            }
+        }
+    } else {
+        // Predefined collection - filter for downloaded
+    	const type = config.type === "img" ? "images" : "videos";
+    	const all = manifest[type] || [];
+    	list = await filterEntriesWithMedia(all);
+    }
+
 	if (!list.length) return null;
-	const mediaReady = await filterEntriesWithMedia(list);
-	let available = mediaReady.slice();
-	if (available.length === 0) return null;
+
+    let available = list.slice();
+
 	if (excludeId) {
 		available = available.filter((e) => e.id !== excludeId);
-		if (available.length === 0) available = mediaReady.slice();
+		if (available.length === 0) {
+			available = list.slice();
+		}
 	}
-	if (config.mode === "specific" && config.specific) {
+    
+	if (effectiveMode === "specific" && config.specific) {
 		const found = available.find((e) => e.id === config.specific);
 		if (found) return found;
-		return null;
+        // Specific not found, fall back to random
 	}
-	if (config.mode === "sequence" && config.last_id) {
+    
+	if (effectiveMode === "sequence" && config.last_id) {
 		const lastIdx = available.findIndex((e) => e.id === config.last_id);
 		const nextIdx = lastIdx < 0 ? 0 : (lastIdx + 1) % available.length;
 		return available[nextIdx];
 	}
+    
+	// Random mode or fallback
 	return available[Math.floor(Math.random() * available.length)];
 }
+
 async function tryLoadFromBlob(id, type, styleCfg = {}) {
+    // User Wallpaper
+    if (String(id).startsWith('user-wall-')) {
+        const userWalls = await getAllUserWallpapers();
+        const found = userWalls.find(w => w.id === id);
+        if (found && found.blob) {
+            setWallpaperFromBlob(type, found.blob, styleCfg, found.thumbBlob);
+            return true;
+        }
+        return false;
+    }
+
+    // Predefined wallpaper
 	const mediaKey = `${id}::media`;
 	const mediaEntry = await getMediaEntry(mediaKey).catch(() => null);
 	if (mediaEntry && mediaEntry.status === "ok" && mediaEntry.blob) {
-		setWallpaperFromBlob(type, mediaEntry.blob, styleCfg);
-		return true;
-	}
-	const thumbKey = `${id}::thumb`;
-	const thumbEntry = await getMediaEntry(thumbKey).catch(() => null);
-	if (thumbEntry && thumbEntry.status === "ok" && thumbEntry.blob) {
-		setWallpaperFromBlob(type, thumbEntry.blob, styleCfg);
+        let thumbBlob = null;
+        if (type === 'video') {
+             const thumbKey = `${id}::thumb`;
+             const thumbEntry = await getMediaEntry(thumbKey).catch(() => null);
+             if (thumbEntry && thumbEntry.status === 'ok' && thumbEntry.blob) {
+                 thumbBlob = thumbEntry.blob;
+             }
+        }
+		setWallpaperFromBlob(type, mediaEntry.blob, styleCfg, thumbBlob);
 		return true;
 	}
 	return false;
 }
+
 export async function renderWallpaper(config, manifest) {
 	const cfg = normalizeWallpaperConfig(config || {});
-	let entry = await chooseEntry(manifest, cfg, null);
-	if (!entry) {
-		const type = cfg.type === "img" ? "images" : "videos";
-		const list = manifest[type] || [];
-		if (!list.length) {
-			const sampleDataUrl = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==";
-			setWallpaperElement(
-				cfg.type,
-				sampleDataUrl,
-			);
-			return null;
-		}
-		if (cfg.mode === "specific" && cfg.specific) {
-			entry = list.find((e) => e.id === cfg.specific) || list[0];
-		} else if (cfg.mode === "sequence" && cfg.last_id) {
-			const lastIdx = list.findIndex((e) => e.id === cfg.last_id);
-			const nextIdx = lastIdx < 0 ? 0 : (lastIdx + 1) % list.length;
-			entry = list[nextIdx];
-		} else {
-			entry = list[Math.floor(Math.random() * list.length)];
-		}
-	}
-	const successStep1 = await tryLoadFromBlob(entry.id, cfg.type, cfg);
-	if (successStep1) {
-		return entry.id;
-	}
-	let retryEntry = await chooseEntry(manifest, cfg, entry.id);
-	if (!retryEntry) retryEntry = entry;
-	const successStep2 = await tryLoadFromBlob(retryEntry.id, cfg.type, cfg);
-	if (successStep2) {
-		return retryEntry.id;
-	}
-	const fallbackEntry = retryEntry;
-	const remoteUrl = resolveAssetUrl(fallbackEntry.asset);
-	if (remoteUrl) {
-		setWallpaperElement(cfg.type, remoteUrl, cfg);
-		return retryEntry.id;
+	
+	// Handle Mono Mode
+	if (cfg.type === 'mono') {
+		clearPreviousWallpaper();
+		document.body.style.backgroundColor = 'var(--color-off)';
+		return null;
 	} else {
-		const sampleDataUrl = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEEAPwA/AB//2Q==";
-		setWallpaperElement(
-			cfg.type,
-			sampleDataUrl,
-		);
+		document.body.style.backgroundColor = '';
+	}
+
+	// Get entry (chooseEntry handles all fallback logic)
+	let entry = await chooseEntry(manifest, cfg, null);
+	
+	if (!entry) {
+		// Should not happen if predefined wallpapers exist
+		// console.warn('No wallpaper entry found');
 		return null;
 	}
+	
+	// Load the wallpaper
+	const success = await tryLoadFromBlob(entry.id, cfg.type, cfg);
+	if (success) {
+		return entry.id;
+	}
+	
+	// First entry failed - try another
+	let retryEntry = await chooseEntry(manifest, cfg, entry.id);
+	if (retryEntry) {
+		const retrySuccess = await tryLoadFromBlob(retryEntry.id, cfg.type, cfg);
+		if (retrySuccess) {
+			return retryEntry.id;
+		}
+	}
+	
+	// Should not reach here if predefined wallpapers exist and are downloaded
+	// console.warn('Failed to load any wallpaper');
+	return null;
 }
 	function normalizeStyleValue(prop, v) {
 	    if (v == null) return null;
@@ -207,6 +263,7 @@ export async function renderWallpaper(config, manifest) {
 		const out = {
 			type: src.type ?? 'img',
 			mode: src.mode ?? 'random',
+            collection: src.collection ?? 'predefined',
 			specific: src.specific ?? null,
 			last_id: src.last_id ?? null,
 				blur: src.blur ?? 0,

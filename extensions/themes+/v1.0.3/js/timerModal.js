@@ -119,11 +119,6 @@ async function openTimerModal() {
     modal.setAttribute('role','dialog');
     modal.setAttribute('aria-modal','true');
     modal.tabIndex = -1;
-    const close = document.createElement('div');
-    close.className = 'tm-close';
-    attachIcon(close, 'assets/svgs-fontawesome/regular/circle-xmark.svg', 'tm-close-icon');
-    close.addEventListener('click', closeTimerModal);
-    modal.appendChild(close);
     const body = document.createElement('div'); body.className='timer-body';
         const displayWrap = document.createElement('div'); displayWrap.className = 'timer-display-wrap';
         const display = document.createElement('div'); display.className='timer-display'; display.id='timer-display'; display.textContent='00:00';

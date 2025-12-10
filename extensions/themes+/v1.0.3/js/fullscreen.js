@@ -3,7 +3,7 @@ import { renderInlineIcon } from './brandIconLoader.js';
 export function setupFullscreenToggle() {
 	const fullscreenToggle = document.getElementById('fullscreen-toggle');
 	if (!fullscreenToggle) {
-		console.warn('Fullscreen toggle element not found');
+		// console.warn('Fullscreen toggle element not found');
 		return;
 	}
 
@@ -15,7 +15,7 @@ export function setupFullscreenToggle() {
 				await document.documentElement.requestFullscreen();
 			}
 		} catch (e) {
-			console.error('Failed to toggle fullscreen', e);
+			// console.error('Failed to toggle fullscreen', e);
 		}
 	});
 

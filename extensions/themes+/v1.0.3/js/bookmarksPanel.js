@@ -13,14 +13,18 @@ export function setBookmarkToggleElement(el) {
 export async function toggleBookmarksPanel() {
 	const existing = document.getElementById('bookmarks-panel');
 	if (existing) {
-		try { document.body.removeChild(existing); } catch (e) {}
+		// Animate out before removal
+		existing.style.animation = 'slideDown var(--transition-normal) forwards';
+		existing.addEventListener('animationend', () => {
+			try { document.body.removeChild(existing); } catch (e) {}
+			unloadCSS('bookmarks-css');
+		}, { once: true });
 		detachBookmarksAutoClose();
 		if (_bookmarkToggleElement) {
 			_bookmarkToggleElement.classList.remove('active');
 			try { _bookmarkToggleElement.setAttribute('aria-expanded', 'false'); } catch (e) {}
 			try { _bookmarkToggleElement.focus(); } catch (e) {}
 		}
-		unloadCSS('bookmarks-css');
 		return;
 	}
 
@@ -34,7 +38,7 @@ export async function toggleBookmarksPanel() {
 		const searchbarCfg = stored.searchbar || { target: 'self' };
 		bookmarkTarget = (searchbarCfg.target === 'self' || searchbarCfg.target === '_self') ? '_self' : '_blank';
 	} catch (e) {
-		console.warn('Failed to load searchbar config for bookmarks, using default _self', e);
+		// console.warn('Failed to load searchbar config for bookmarks, using default _self', e);
 	}
 
 	const panel = document.createElement('div');
@@ -65,11 +69,6 @@ export async function toggleBookmarksPanel() {
 	expandBtn.appendChild(expandIcon);
 	header.appendChild(expandBtn);
 
-	const closeBtn = document.createElement('button');
-	closeBtn.className = 'bookmarks-close';
-	closeBtn.textContent = 'Close';
-	header.appendChild(closeBtn);
-
 	panel.appendChild(header);
 
 	expandBtn.addEventListener('click', () => {
@@ -99,7 +98,7 @@ export async function toggleBookmarksPanel() {
 	try {
 		tree = await new Promise((resolve) => chrome.bookmarks.getTree((res) => resolve(res || [])));
 	} catch (e) {
-		console.error('Failed to get bookmarks', e);
+		// console.error('Failed to get bookmarks', e);
 	}
 
 	const flat = [];
@@ -338,19 +337,14 @@ export async function toggleBookmarksPanel() {
 		}
 	});
 
-	closeBtn.addEventListener('click', () => {
-		try { document.body.removeChild(panel); } catch (e) {}
-		detachBookmarksAutoClose();
-		if (_bookmarkToggleElement) {
-			_bookmarkToggleElement.classList.remove('active');
-			try { _bookmarkToggleElement.setAttribute('aria-expanded', 'false'); } catch (e) {}
-			try { _bookmarkToggleElement.focus(); } catch (e) {}
-		}
-	});
-
 	panel.addEventListener('keydown', (ev) => {
 		if (ev.key === 'Escape') {
-			try { document.body.removeChild(panel); } catch (e) {}
+			panel.style.animation = 'slideDown var(--transition-normal) forwards';
+			panel.addEventListener('animationend', () => {
+				try { document.body.removeChild(panel); } catch (e) {}
+				unloadCSS('bookmarks-css');
+			}, { once: true });
+			detachBookmarksAutoClose();
 			if (_bookmarkToggleElement) {
 				_bookmarkToggleElement.classList.remove('active');
 				try { _bookmarkToggleElement.setAttribute('aria-expanded', 'false'); } catch (e) {}
@@ -429,14 +423,17 @@ export async function toggleBookmarksPanel() {
 					const now = Date.now();
 					const hovering = panel && panel.matches(':hover');
 					if (!hovering && (now - lastMouseMove) > BOOKMARKS_AUTO_CLOSE_MS && (now - lastInteraction) > BOOKMARKS_AUTO_CLOSE_MS) {
-						try { document.body.removeChild(panel); } catch (e) {}
+						panel.style.animation = 'slideDown var(--transition-normal) forwards';
+						panel.addEventListener('animationend', () => {
+							try { document.body.removeChild(panel); } catch (e) {}
+							unloadCSS('bookmarks-css');
+						}, { once: true });
 						if (_bookmarkToggleElement) {
 							_bookmarkToggleElement.classList.remove('active');
 							try { _bookmarkToggleElement.setAttribute('aria-expanded', 'false'); } catch (e) {}
 							try { _bookmarkToggleElement.focus(); } catch (e) {}
 						}
 						detachBookmarksAutoClose();
-						unloadCSS('bookmarks-css');
 					}
 				} catch (e) {
 				}

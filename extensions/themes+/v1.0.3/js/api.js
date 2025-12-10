@@ -47,7 +47,7 @@ export function resolveAssetUrl(pathOrUrl) {
 		const u = new URL(pathOrUrl, "https://buildwithkt.dev");
 		return u.href;
 	} catch (e) {
-		console.warn(`Failed to resolve asset URL: ${pathOrUrl}`, e);
+		// console.warn(`Failed to resolve asset URL: ${pathOrUrl}`, e);
 		return null;
 	}
 }
@@ -107,7 +107,7 @@ async function fetchAndStoreBlob(url, key, meta = {}, maxAttempts = 3) {
 		);
 		await putMediaEntry(entry);
 	} catch (dbErr) {
-		console.warn(`Failed to persist media entry ${logIdentifier}`, dbErr);
+		// console.warn(`Failed to persist media entry ${logIdentifier}`, dbErr);
 		return {
 			ok: false,
 			error: dbErr && dbErr.message ? dbErr.message : String(dbErr),
@@ -115,12 +115,12 @@ async function fetchAndStoreBlob(url, key, meta = {}, maxAttempts = 3) {
 	}
 
 	if (status === "ok") {
-		console.info(`Resource stored: ${logIdentifier}`);
+		// console.info(`Resource stored: ${logIdentifier}: ${Date.now()}`);
 		return { ok: true };
 	} else {
-		console.warn(
-			`Resource download failed for ${logIdentifier}: ${errorMessage}`,
-		);
+		// console.warn(
+// 	`Resource download failed for ${logIdentifier}: ${errorMessage}`,
+// );
 		return { ok: false, error: errorMessage };
 	}
 }

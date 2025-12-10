@@ -1,9 +1,12 @@
 import { loadCSS, unloadCSS } from './cssLoader.js';
-import { STORAGE_KEY_SETTINGS, DEFAULT_CONFIG, applyTheme } from './config.js';
-import { renderInlineIcon } from './brandIconLoader.js';
-import { renderWallpaper } from './wallpaper.js';
+import { STORAGE_KEY_SETTINGS, DEFAULT_CONFIG, applyTheme, DEFAULT_SHORTCUTS } from './config.js';
 import { renderSearchbar, removeSearchbar } from './searchbar.js';
+import { resolveAssetUrl, downloadAndStoreResource } from './api.js';
+import { getMediaEntry, getAllMediaKeys, deleteMediaEntry, saveUserWallpaper, deleteUserWallpaper, getAllUserWallpapers } from './db.js';
 import { initActionBar } from './actionbar.js';
+import { renderInlineIcon } from './brandIconLoader.js';
+import { openShortcutModal } from './shortcutsModal.js';
+import { renderWallpaper } from './wallpaper.js';
 
 let _settingsModalOpen = false;
 
@@ -22,13 +25,52 @@ export async function toggleSettingsModal() {
 export function closeSettingsModalIfOpen() {
     const el = document.getElementById('settings-modal');
     if (el) {
-        try { document.body.removeChild(el); } catch (e) {}
-        unloadCSS('settings-css');
-        _settingsModalOpen = false;
-        
-        // Dispatch event so other components know settings closed
-        document.dispatchEvent(new CustomEvent('settings:closed'));
+        // Add slideDown animation before removal
+        el.style.animation = 'slideDown var(--transition-normal) forwards';
+        el.addEventListener('animationend', () => {
+            try { document.body.removeChild(el); } catch (e) {}
+            unloadCSS('settings-css');
+            cleanupWallpaperGrid();
+            _settingsModalOpen = false;
+            document.dispatchEvent(new CustomEvent('settings:closed'));
+        }, { once: true });
     }
+}
+
+
+
+export async function openSettingsTab(tabId) {
+    if (!_settingsModalOpen) {
+        await openSettingsModal();
+    }
+    // Switch to the specified tab
+    setTimeout(() => {
+        // Find all tab buttons
+        const buttons = document.querySelectorAll('.settings-tab-btn');
+        let targetBtn = null;
+        
+        // Find the button for the specified tab
+        buttons.forEach((btn, index) => {
+            const tabs = ['general', 'wallpaper', 'search', 'actionbar', 'about'];
+            if (tabs[index] === tabId) {
+                targetBtn = btn;
+            }
+        });
+        
+        if (targetBtn) {
+            targetBtn.click();
+            
+            // If it's the actionbar tab, scroll to shortcuts section
+            if (tabId === 'actionbar') {
+                setTimeout(() => {
+                    const shortcutsSection = document.getElementById('shortcuts-management-section');
+                    if (shortcutsSection) {
+                        shortcutsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 200);
+            }
+        }
+    }, 100);
 }
 
 async function openSettingsModal() {
@@ -84,6 +126,7 @@ async function openSettingsModal() {
         { id: 'general', label: 'General', icon: 'assets/svgs-fontawesome/solid/sliders.svg' },
         { id: 'wallpaper', label: 'Wallpaper', icon: 'assets/svgs-fontawesome/regular/image.svg' },
         { id: 'search', label: 'Search', icon: 'assets/svgs-fontawesome/solid/search.svg' },
+        { id: 'actionbar', label: 'Action Bar', icon: 'assets/svgs-fontawesome/solid/bars.svg' },
         { id: 'about', label: 'About', icon: 'assets/svgs-fontawesome/regular/circle-question.svg' }
     ];
 
@@ -182,6 +225,19 @@ function renderSectionContent(container, tabId, settings) {
             initActionBar(settings.actionbar); // Re-init to apply
         });
 
+        // UI Scaling
+        const scales = [
+            { value: 0.8, label: 'Small (80%)' },
+            { value: 1, label: 'Normal (100%)' },
+            { value: 1.2, label: 'Large (120%)' }
+        ];
+        addSelect(container, 'UI Scaling', 'Adjust the interface size relative to your screen.', scales, settings.uiScale || 1, (val) => {
+            const numVal = parseFloat(val);
+            settings.uiScale = numVal;
+            saveSettings(settings);
+            document.dispatchEvent(new CustomEvent('settings:uiScale', { detail: numVal }));
+        });
+
         // Font Family
         const fonts = [
             { value: 'Outfit', label: 'Outfit (Default)' },
@@ -190,7 +246,7 @@ function renderSectionContent(container, tabId, settings) {
             { value: 'Open Sans', label: 'Open Sans' },
             { value: 'Lato', label: 'Lato' }
         ];
-        addSelect(container, 'Font Family', 'Choose the primary font for the interface.', fonts, settings.font.family, (val) => {
+        addSelect(container, 'UI Font Family', 'Choose the primary font for the interface.', fonts, settings.font.family, (val) => {
             settings.font.family = val;
             // Update import URL based on selection (simplified for now)
             if (val === 'Outfit') settings.font.importUrl = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap';
@@ -203,61 +259,124 @@ function renderSectionContent(container, tabId, settings) {
             // Apply font immediately
             applyFont(settings.font);
         });
+
+        // On-Screen Clock
+        if (!settings.onScreenClock) settings.onScreenClock = { enabled: false, font: 'default' };
+        
+        addToggle(container, 'On-Screen Clock', 'Show a large clock on the main screen.', settings.onScreenClock.enabled, (val) => {
+            settings.onScreenClock.enabled = val;
+            saveSettings(settings);
+            document.dispatchEvent(new CustomEvent('settings:clock', { detail: settings }));
+        });
+
+        const clockFonts = [
+            { value: 'default', label: 'Default (UI Font)' },
+            { value: 'Bitcount Grid Single', label: 'Bitcount Grid Single' },
+            { value: 'PT Serif', label: 'PT Serif' },
+            { value: 'Anton', label: 'Anton' },
+            { value: 'Pacifico', label: 'Pacifico' },
+            { value: 'Lobster', label: 'Lobster' },
+            { value: 'Abril Fatface', label: 'Abril Fatface' },
+            { value: 'Titan One', label: 'Titan One' },
+            { value: 'Monoton', label: 'Monoton' },
+            { value: 'Kenia', label: 'Kenia' },
+            { value: 'Fredericka the Great', label: 'Fredericka the Great' },
+            { value: 'Libertinus Keyboard', label: 'Libertinus Keyboard' },
+            { value: 'Stardos Stencil', label: 'Stardos Stencil' },
+            
+            // New additions
+            { value: 'Bebas Neue', label: 'Bebas Neue' },
+            { value: 'Rubik Dirt', label: 'Rubik Dirt' },
+            { value: 'Moirai One', label: 'Moirai One' },
+            { value: 'Rubik Glitch', label: 'Rubik Glitch' },
+            { value: 'Rampart One', label: 'Rampart One' },
+            { value: 'Rubik Wet Paint', label: 'Rubik Wet Paint' },
+            { value: 'Rubik Vinyl', label: 'Rubik Vinyl' },
+            { value: 'Notable', label: 'Notable' },
+            { value: 'Plaster', label: 'Plaster' },
+            { value: 'Tourney', label: 'Tourney' },
+            { value: 'Kumar One Outline', label: 'Kumar One Outline' },
+            { value: 'Foldit', label: 'Foldit' },
+            { value: 'Rubik 80s Fade', label: 'Rubik 80s Fade' }
+        ];
+
+        addSelect(container, 'Clock Font', 'Choose a font for the on-screen clock.', clockFonts, settings.onScreenClock.font || 'default', (val) => {
+            settings.onScreenClock.font = val;
+            saveSettings(settings);
+            document.dispatchEvent(new CustomEvent('settings:clock', { detail: settings }));
+        });
+
+        const clockColors = [
+            { value: 'default', label: 'Default (Theme Text)' },
+            { value: 'inverse', label: 'Inverse (Opposite Theme)' }
+        ];
+        addSelect(container, 'Clock Color', 'Choose the color style for the clock.', clockColors, settings.onScreenClock.color || 'default', (val) => {
+            if (!settings.onScreenClock) settings.onScreenClock = {};
+            settings.onScreenClock.color = val;
+            saveSettings(settings);
+            document.dispatchEvent(new CustomEvent('settings:clock', { detail: settings }));
+        });
     }
 
     if (tabId === 'wallpaper') {
         // Type
         const types = [
+            { value: 'mono', label: 'Mono' },
             { value: 'img', label: 'Image' },
             { value: 'video', label: 'Video' }
         ];
-        addSelect(container, 'Type', 'Choose between static images or video wallpapers.', types, settings.wallpaper.type, (val) => {
-            settings.wallpaper.type = val;
+        addSelect(container, 'Type', 'Choose static images, video wallpapers, or a solid color.', types, settings.wallpaper.type, (val) => {
+            const oldType = settings.wallpaper.type;
+            const newType = val;
+
+            if (oldType !== newType) {
+                // 1. Save state to old bucket
+                if (oldType === 'img' || oldType === 'video') {
+                    const bucketName = oldType + 'Settings';
+                    settings.wallpaper[bucketName] = {
+                        collection: settings.wallpaper.collection,
+                        mode: settings.wallpaper.mode,
+                        specific: settings.wallpaper.specific
+                    };
+                }
+
+                // 2. Update Type
+                settings.wallpaper.type = newType;
+
+                // 3. Load state from new bucket
+                if (newType === 'img' || newType === 'video') {
+                    const bucketName = newType + 'Settings';
+                    // Initialize if missing
+                    if (!settings.wallpaper[bucketName]) {
+                        settings.wallpaper[bucketName] = {
+                            collection: 'predefined',
+                            mode: 'random',
+                            specific: null
+                        };
+                    }
+                    const bucket = settings.wallpaper[bucketName];
+                    settings.wallpaper.collection = bucket.collection;
+                    settings.wallpaper.mode = bucket.mode;
+                    settings.wallpaper.specific = bucket.specific;
+                }
+            }
+
             saveSettings(settings);
+            
+            // Apply Mono or Refresh
             refreshWallpaper(settings);
+            
+            // Re-render Dynamic Content
+            updateWallpaperDynamicContent(dynamicContent, settings);
         });
 
-        // Mode
-        const modes = [
-            { value: 'random', label: 'Random' },
-            { value: 'sequence', label: 'Sequence' },
-            { value: 'specific', label: 'Specific (Fixed)' }
-        ];
-        addSelect(container, 'Mode', 'How wallpapers are cycled.', modes, settings.wallpaper.mode, (val) => {
-            settings.wallpaper.mode = val;
-            saveSettings(settings);
-            // Don't refresh immediately for mode change unless it's specific, to avoid jarring changes
-        });
+        // Container for Filters + Grid (Dynamic)
+        const dynamicContent = document.createElement('div');
+        dynamicContent.className = 'wallpaper-dynamic-content';
+        container.appendChild(dynamicContent);
 
-        // Filters Group
-        const filterGroup = document.createElement('div');
-        filterGroup.className = 'settings-group';
-        filterGroup.innerHTML = `<div class="settings-group-title">Visual Filters</div>`;
-        container.appendChild(filterGroup);
-
-        addRange(filterGroup, 'Blur', 'px', 0, 20, settings.wallpaper.blur, (val) => {
-            settings.wallpaper.blur = val;
-            saveSettings(settings);
-            updateWallpaperFilters(settings.wallpaper);
-        });
-
-        addRange(filterGroup, 'Brightness', '%', 50, 150, settings.wallpaper.brightness, (val) => {
-            settings.wallpaper.brightness = val;
-            saveSettings(settings);
-            updateWallpaperFilters(settings.wallpaper);
-        });
-
-        addRange(filterGroup, 'Contrast', '%', 50, 150, settings.wallpaper.contrast, (val) => {
-            settings.wallpaper.contrast = val;
-            saveSettings(settings);
-            updateWallpaperFilters(settings.wallpaper);
-        });
-
-        addRange(filterGroup, 'Grayscale', '%', 0, 100, settings.wallpaper.grayscale, (val) => {
-            settings.wallpaper.grayscale = val;
-            saveSettings(settings);
-            updateWallpaperFilters(settings.wallpaper);
-        });
+        // Initial Render
+        updateWallpaperDynamicContent(dynamicContent, settings);
     }
 
     if (tabId === 'search') {
@@ -275,7 +394,10 @@ function renderSectionContent(container, tabId, settings) {
             { value: 'duckduckgo', label: 'DuckDuckGo' },
             { value: 'youtube', label: 'YouTube' },
             { value: 'reddit', label: 'Reddit' },
-            { value: 'github', label: 'GitHub' }
+            { value: 'github', label: 'GitHub' },
+            { value: 'quora', label: 'Quora' },
+            { value: 'stackoverflow', label: 'Stack Overflow' },
+            { value: 'spotify', label: 'Spotify' }
         ];
         addSelect(container, 'Default Engine', 'Primary search engine.', engines, settings.searchbar.engine, (val) => {
             settings.searchbar.engine = val;
@@ -289,33 +411,219 @@ function renderSectionContent(container, tabId, settings) {
             if (settings.searchbar.enabled) renderSearchbar(settings.searchbar);
         });
 
+        // Vertical Align
+        const vAligns = [
+            { value: 'top', label: 'Top', icon: 'assets/svgs-fontawesome/solid/arrow-up.svg' },
+            { value: 'center', label: 'Center', icon: 'assets/svgs-fontawesome/solid/grip-lines.svg' },
+            { value: 'bottom', label: 'Bottom', icon: 'assets/svgs-fontawesome/solid/arrow-down.svg' }
+        ];
+        addIconSelect(container, 'Vertical Position', 'Align search bar vertically.', vAligns, settings.searchbar.vertical_align || 'center', (val) => {
+            settings.searchbar.vertical_align = val;
+            saveSettings(settings);
+            if (settings.searchbar.enabled) renderSearchbar(settings.searchbar);
+        });
+
+        // Horizontal Align
+        const hAligns = [
+            { value: 'left', label: 'Left', icon: 'assets/svgs-fontawesome/solid/align-left.svg' },
+            { value: 'center', label: 'Center', icon: 'assets/svgs-fontawesome/solid/align-center.svg' },
+            { value: 'right', label: 'Right', icon: 'assets/svgs-fontawesome/solid/align-right.svg' }
+        ];
+        addIconSelect(container, 'Horizontal Position', 'Align search bar horizontally.', hAligns, settings.searchbar.horizontal_align || 'center', (val) => {
+            settings.searchbar.horizontal_align = val;
+            saveSettings(settings);
+            if (settings.searchbar.enabled) renderSearchbar(settings.searchbar);
+        });
+
         const targets = [
             { value: 'self', label: 'Same Tab' },
             { value: 'blank', label: 'New Tab' }
         ];
-        addSelect(container, 'Open Results In', 'Where search results open.', targets, settings.searchbar.target, (val) => {
+        addSelect(container, 'Open Results In', 'Where search results open.', targets, settings.searchbar.target, async (val) => {
             settings.searchbar.target = val;
-            saveSettings(settings);
-            // No re-render needed, logic uses latest config
+            await saveSettings(settings);
+            // Re-init searchbar AND actionbar (for shortcuts)
+            if (settings.searchbar.enabled) renderSearchbar(settings.searchbar);
+            initActionBar(settings.actionbar);
         });
+    }
+
+    if (tabId === 'actionbar') {
+        // Display Style
+        const styles = [
+            { value: 'centralised', label: 'Centralised (Default)' },
+            { value: 'spread', label: 'Spread (Media | Tools | Meta)' }
+        ];
+        addSelect(container, 'Display Style', 'Choose the layout of the action bar.', styles, settings.actionbar?.display_style || 'centralised', async (val) => {
+            if (!settings.actionbar) settings.actionbar = {};
+            settings.actionbar.display_style = val;
+            await saveSettings(settings);
+            initActionBar(settings.actionbar);
+        });
+
+        // Clock Settings
+        addToggle(container, 'Show Clock', 'Display a clock in the action bar.', settings.actionbar?.clock?.enabled ?? true, async (val) => {
+            if (!settings.actionbar) settings.actionbar = {};
+            if (!settings.actionbar.clock) settings.actionbar.clock = {};
+            settings.actionbar.clock.enabled = val;
+            await saveSettings(settings);
+            initActionBar(settings.actionbar);
+            document.dispatchEvent(new CustomEvent('settings:clock', { detail: settings }));
+        });
+
+        const timeFormats = [
+            { value: '12', label: '12-hour (3:45 PM)' },
+            { value: '24', label: '24-hour (15:45)' }
+        ];
+        addSelect(container, 'Time Format', 'Choose between 12-hour and 24-hour time display.', timeFormats, settings.actionbar?.clock?.format || '12', async (val) => {
+            if (!settings.actionbar) settings.actionbar = {};
+            if (!settings.actionbar.clock) settings.actionbar.clock = {};
+            settings.actionbar.clock.format = val;
+            await saveSettings(settings);
+            initActionBar(settings.actionbar);
+            document.dispatchEvent(new CustomEvent('settings:clock', { detail: settings }));
+        });
+
+        addToggle(container, 'Show Date', 'Display the current date in the action bar.', settings.actionbar?.date?.enabled ?? false, async (val) => {
+            if (!settings.actionbar) settings.actionbar = {};
+            if (!settings.actionbar.date) settings.actionbar.date = {};
+            settings.actionbar.date.enabled = val;
+            await saveSettings(settings);
+            initActionBar(settings.actionbar);
+            document.dispatchEvent(new CustomEvent('settings:clock', { detail: settings }));
+        });
+
+        addToggle(container, 'Show Upcoming Alarm', 'Display your next scheduled alarm in the action bar.', settings.actionbar?.alarm?.enabled ?? false, async (val) => {
+            if (!settings.actionbar) settings.actionbar = {};
+            if (!settings.actionbar.alarm) settings.actionbar.alarm = {};
+            settings.actionbar.alarm.enabled = val;
+            await saveSettings(settings);
+            initActionBar(settings.actionbar);
+        });
+
+        // Weather Settings
+        const weatherGroup = document.createElement('div');
+        weatherGroup.className = 'settings-group';
+        const weatherHeader = document.createElement('div');
+        weatherHeader.className = 'settings-group-header';
+        weatherHeader.style.display = 'flex';
+        weatherHeader.style.justifyContent = 'space-between';
+        weatherHeader.style.alignItems = 'center';
+        
+        const wTitle = document.createElement('div');
+        wTitle.className = 'settings-group-title';
+        wTitle.textContent = 'Weather';
+        weatherHeader.appendChild(wTitle);
+        weatherGroup.appendChild(weatherHeader);
+        container.appendChild(weatherGroup);
+
+        addToggle(weatherGroup, 'Enable Weather', 'Show weather information in the action bar. Requires OpenWeather API Key.', settings.actionbar?.weather?.enabled ?? false, async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.enabled = val;
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+        });
+
+        addInput(weatherGroup, 'API Key', 'Your OpenWeatherMap API Key.', settings.actionbar?.weather?.apiKey || '', async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.apiKey = val;
+             await saveSettings(settings);
+             // Re-init happens on blur/change, maybe wait for full input? Helper handles change event.
+             initActionBar(settings.actionbar);
+        }, 'Enter API Key');
+
+        addInput(weatherGroup, 'City (Optional)', 'Leave blank to use auto-geolocation.', settings.actionbar?.weather?.city || '', async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.city = val;
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+        }, 'e.g. London,UK');
+
+        const unitOpts = [
+            { value: 'metric', label: 'Metric (°C, m/s)' },
+            { value: 'imperial', label: 'Imperial (°F, mph)' }
+        ];
+        addSelect(weatherGroup, 'Units', 'Measurement units.', unitOpts, settings.actionbar?.weather?.units || 'metric', async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.units = val;
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+        });
+
+        addToggle(weatherGroup, 'Show Humidity', 'Display humidity percentage.', settings.actionbar?.weather?.showHumidity ?? false, async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.showHumidity = val;
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+        });
+
+        addToggle(weatherGroup, 'Show Wind', 'Display wind speed.', settings.actionbar?.weather?.showWind ?? false, async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.showWind = val;
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+        });
+
+        addToggle(weatherGroup, 'Show Feels Like', 'Display "feels like" temperature.', settings.actionbar?.weather?.showFeelsLike ?? false, async (val) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.weather) settings.actionbar.weather = {};
+             settings.actionbar.weather.showFeelsLike = val;
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+        });
+
+        // Shortcuts Settings
+        const shortcutsGroup = document.createElement('div');
+        shortcutsGroup.className = 'settings-group';
+        const shortcutsHeader = document.createElement('div');
+        shortcutsHeader.className = 'settings-group-header';
+        shortcutsHeader.style.display = 'flex';
+        shortcutsHeader.style.justifyContent = 'space-between';
+        shortcutsHeader.style.alignItems = 'center';
+        
+        const sTitle = document.createElement('div');
+        sTitle.className = 'settings-group-title';
+        sTitle.textContent = 'Shortcuts';
+        shortcutsHeader.appendChild(sTitle);
+        shortcutsGroup.appendChild(shortcutsHeader);
+        container.appendChild(shortcutsGroup);
+
+        addToggle(shortcutsGroup, 'Show Shortcuts', 'Show the quick access shortcuts bar.', settings.actionbar?.shortcuts?.enabled ?? true, async (val) => {
+            if (!settings.actionbar) settings.actionbar = {};
+            if (!settings.actionbar.shortcuts) settings.actionbar.shortcuts = {};
+            settings.actionbar.shortcuts.enabled = val;
+            await saveSettings(settings);
+            await saveSettings(settings);
+            initActionBar(settings.actionbar);
+        });
+
+        // Shortcuts List Management
+        renderShortcutsList(shortcutsGroup, settings);
     }
 
     if (tabId === 'about') {
         const about = document.createElement('div');
-        about.style.textAlign = 'center';
-        about.style.padding = '40px 20px';
+        about.className = 'settings-about';
         about.innerHTML = `
-            <img src="icons/icon128.png" style="width: 64px; height: 64px; margin-bottom: 16px;">
-            <h2 style="margin: 0 0 8px 0;">Themes+ New Tab</h2>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 24px;">Version 1.0.3</p>
-            <p style="max-width: 400px; margin: 0 auto; line-height: 1.6; color: rgba(255,255,255,0.8);">
+            <img src="icons/icon128.png" class="about-logo" alt="Themes+ Logo">
+            <h2 class="about-title">Themes+ New Tab</h2>
+            <p class="about-version">Version 1.0.3</p>
+            <p class="about-desc">
                 A beautiful, customizable dashboard for your new tab. 
                 Built with performance and privacy in mind.
             </p>
-            <div style="margin-top: 32px;">
-                <a href="https://buildwithkt.dev" target="_blank" style="color: #fff; text-decoration: underline; opacity: 0.8;">Website</a>
-                &bull;
-                <a href="https://github.com/TMtechnomania" target="_blank" style="color: #fff; text-decoration: underline; opacity: 0.8;">GitHub</a>
+            <div class="about-links">
+                <a href="https://buildwithkt.dev" target="_blank">Website</a>
+                <span class="about-separator">&bull;</span>
+                <a href="https://github.com/TMtechnomania" target="_blank">GitHub</a>
+                <span class="about-separator">&bull;</span>
+                <a href="userguide.html" target="_blank">User Guide</a>
             </div>
         `;
         container.appendChild(about);
@@ -355,6 +663,53 @@ function addToggle(container, label, desc, checked, onChange) {
     container.appendChild(row);
 }
 
+function addInput(container, label, desc, value, onChange, placeholder = '') {
+    const row = document.createElement('div');
+    row.className = 'setting-row';
+    
+    const info = document.createElement('div');
+    info.className = 'setting-info';
+    info.innerHTML = `<div class="setting-label">${label}</div><div class="setting-desc">${desc}</div>`;
+    
+    const control = document.createElement('div');
+    control.className = 'setting-control';
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'setting-input';
+    input.value = value;
+    input.placeholder = placeholder;
+    // Basic inline styles to match theme roughly until CSS added
+    Object.assign(input.style, {
+        background: 'var(--color-off)',
+        border: '1px solid transparent',
+        color: 'var(--text-base)',
+        padding: 'var(--dis-1) var(--dis-2)',
+        borderRadius: 'var(--radius-2)',
+        fontSize: 'calc(0.9rem * var(--ui-scale))',
+        outline: 'none',
+        minWidth: '200px',
+        fontFamily: 'var(--font-family)'
+    });
+    
+    input.addEventListener('focus', () => {
+        input.style.borderColor = 'var(--color-accent)';
+        input.style.backgroundColor = 'var(--color-base)';
+    });
+    
+    input.addEventListener('blur', () => {
+        input.style.borderColor = 'transparent';
+        input.style.backgroundColor = 'var(--color-off)';
+    });
+
+    input.addEventListener('change', (e) => onChange(e.target.value));
+    
+    control.appendChild(input);
+    row.appendChild(info);
+    row.appendChild(control);
+    container.appendChild(row);
+}
+
 function addSelect(container, label, desc, options, value, onChange) {
     const row = document.createElement('div');
     row.className = 'setting-row';
@@ -384,13 +739,25 @@ function addSelect(container, label, desc, options, value, onChange) {
     container.appendChild(row);
 }
 
-function addRange(container, label, unit, min, max, value, onChange) {
+function addRange(container, label, unit, min, max, value, defaultValue, onChange) {
     const row = document.createElement('div');
     row.className = 'setting-row';
     
     const info = document.createElement('div');
     info.className = 'setting-info';
     info.innerHTML = `<div class="setting-label">${label}</div>`;
+    
+    // Reset Button (individual)
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'range-reset-btn';
+    resetBtn.title = 'Reset to default';
+    resetBtn.innerHTML = '<span class="ui-icon"></span>';
+    renderInlineIcon(resetBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/rotate-left.svg'); // or similar icon
+    resetBtn.style.display = 'inline-flex'; // Always visible
+    resetBtn.style.opacity = value !== defaultValue ? '1' : '0.3';
+    resetBtn.style.pointerEvents = value !== defaultValue ? 'auto' : 'none';
+    
+    info.appendChild(resetBtn);
     
     const control = document.createElement('div');
     control.className = 'setting-control';
@@ -409,18 +776,172 @@ function addRange(container, label, unit, min, max, value, onChange) {
     valDisplay.className = 'range-value';
     valDisplay.textContent = value + unit;
     
+    const updateResetVisibility = (v) => {
+        // resetBtn.style.display = v !== defaultValue ? 'inline-flex' : 'none';
+        // User requested always visible
+        resetBtn.style.display = 'inline-flex';
+        resetBtn.style.opacity = v !== defaultValue ? '1' : '0.3'; // Visual cue
+        resetBtn.style.pointerEvents = v !== defaultValue ? 'auto' : 'none';
+    };
+
     input.addEventListener('input', (e) => {
-        valDisplay.textContent = e.target.value + unit;
-        onChange(Number(e.target.value));
+        const val = Number(e.target.value);
+        valDisplay.textContent = val + unit;
+        updateResetVisibility(val);
+        onChange(val);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        input.value = defaultValue;
+        valDisplay.textContent = defaultValue + unit;
+        updateResetVisibility(defaultValue);
+        onChange(defaultValue);
     });
     
     wrapper.appendChild(input);
     wrapper.appendChild(valDisplay);
+    wrapper.appendChild(resetBtn); // Append reset button at the end
     control.appendChild(wrapper);
     
     row.appendChild(info);
     row.appendChild(control);
     container.appendChild(row);
+}
+
+function addIconSelect(container, label, desc, options, value, onChange) {
+    const row = document.createElement('div');
+    row.className = 'setting-row';
+    
+    const info = document.createElement('div');
+    info.className = 'setting-info';
+    info.innerHTML = `<div class="setting-label">${label}</div><div class="setting-desc">${desc}</div>`;
+    
+    const control = document.createElement('div');
+    control.className = 'setting-control';
+    
+    const group = document.createElement('div');
+    group.className = 'icon-select-group';
+    
+    // We need to keep track of buttons to manage active state
+    const buttons = [];
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'icon-select-btn';
+        if (opt.value === value) btn.classList.add('active');
+        btn.title = opt.label; // Tooltip
+        
+        const icon = document.createElement('span');
+        icon.className = 'ui-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        renderInlineIcon(icon, opt.icon);
+        btn.appendChild(icon);
+        
+        btn.onclick = () => {
+            // Update active state
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            onChange(opt.value);
+        };
+        
+        buttons.push(btn);
+        group.appendChild(btn);
+    });
+    
+    control.appendChild(group);
+    row.appendChild(info);
+    row.appendChild(control);
+    container.appendChild(row);
+}
+
+// --- Helper for Dynamic Wallpaper Content ---
+function updateWallpaperDynamicContent(container, settings) {
+    container.innerHTML = '';
+    
+    // If Mono, show message and stop
+    if (settings.wallpaper.type === 'mono') {
+        const msg = document.createElement('div');
+        msg.className = 'setting-desc';
+        msg.style.padding = '2rem';
+        msg.style.textAlign = 'center';
+        msg.textContent = 'Mono mode selected. Background set to solid color.';
+        container.appendChild(msg);
+        return;
+    }
+
+    // 1. Filters Group
+    const filterGroup = document.createElement('div');
+    filterGroup.className = 'settings-group';
+    
+    const groupHeader = document.createElement('div');
+    groupHeader.className = 'settings-group-header'; // New class for flex layout
+    groupHeader.style.display = 'flex';
+    groupHeader.style.justifyContent = 'space-between';
+    groupHeader.style.alignItems = 'center';
+    
+    const title = document.createElement('div');
+    title.className = 'settings-group-title';
+    title.textContent = 'Visual Filters';
+    groupHeader.appendChild(title);
+
+    // Always show Reset All
+    const resetAll = document.createElement('button');
+    resetAll.className = 'action-btn';
+    resetAll.title = 'Reset all filters to default';
+    
+    const resetIcon = document.createElement('span');
+    resetIcon.className = 'ui-icon';
+    renderInlineIcon(resetIcon, 'assets/svgs-fontawesome/solid/rotate-left.svg');
+    resetAll.appendChild(resetIcon);
+    
+    resetAll.appendChild(document.createTextNode('Reset All'));
+
+    resetAll.onclick = () => {
+             settings.wallpaper.blur = 0;
+             settings.wallpaper.brightness = 100;
+             settings.wallpaper.contrast = 100;
+             settings.wallpaper.grayscale = 0;
+             saveSettings(settings);
+             updateWallpaperFilters(settings.wallpaper);
+             // Re-render this section to update sliders
+             updateWallpaperDynamicContent(container, settings);
+    };
+    groupHeader.appendChild(resetAll);
+
+    filterGroup.appendChild(groupHeader);
+    container.appendChild(filterGroup);
+
+    addRange(filterGroup, 'Blur', 'px', 0, 20, settings.wallpaper.blur, 0, (val) => {
+        settings.wallpaper.blur = val;
+        saveSettings(settings);
+        updateWallpaperFilters(settings.wallpaper);
+        // updateWallpaperDynamicContent(container, settings); // REMOVED to fix drag glitch
+    });
+
+    addRange(filterGroup, 'Brightness', '%', 50, 150, settings.wallpaper.brightness, 100, (val) => {
+        settings.wallpaper.brightness = val;
+        saveSettings(settings);
+        updateWallpaperFilters(settings.wallpaper);
+    });
+
+    addRange(filterGroup, 'Contrast', '%', 50, 150, settings.wallpaper.contrast, 100, (val) => {
+        settings.wallpaper.contrast = val;
+        saveSettings(settings);
+        updateWallpaperFilters(settings.wallpaper);
+    });
+
+    addRange(filterGroup, 'Grayscale', '%', 0, 100, settings.wallpaper.grayscale, 0, (val) => {
+        settings.wallpaper.grayscale = val;
+        saveSettings(settings);
+        updateWallpaperFilters(settings.wallpaper);
+    });
+
+    // 2. Wallpaper Grid
+    const grid = document.createElement('div');
+    grid.className = 'wallpaper-grid';
+    container.appendChild(grid);
+
+    renderWallpaperGrid(grid, settings);
 }
 
 // --- Logic Helpers ---
@@ -438,15 +959,21 @@ function updateWallpaperFilters(cfg) {
     el.style.filter = parts.join(' ');
 }
 
-async function refreshWallpaper(settings) {
+async function refreshWallpaper(settings, forceReload = false) {
     // Re-fetch manifest and render
     const manifest = await new Promise(resolve => {
         chrome.storage.local.get('wallpaperDB', res => resolve(res?.wallpaperDB || null));
     });
     if (manifest) {
+        // If forceReload, we might want to pass it to renderWallpaper if it supported it,
+        // or just rely on the fact that we fetched a fresh manifest.
+        // For the active background, standard render is usually enough unless URL changed.
         renderWallpaper(settings.wallpaper, manifest);
     }
 }
+
+
+
 
 function applyFont(fontCfg) {
     if (!fontCfg) return;
@@ -466,6 +993,918 @@ function applyFont(fontCfg) {
         const fallback = "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
         document.documentElement.style.setProperty('--font-family', `${family}, ${fallback}`);
     } catch (e) {
-        console.error('applyFont error', e);
+        // console.error('applyFont error', e);
     }
+}
+
+// --- Wallpaper Grid Helpers ---
+
+let gridObjectUrls = [];
+
+function cleanupWallpaperGrid() {
+    if (gridObjectUrls.length > 0) {
+        // console.debug(`[Settings] Cleaning up ${gridObjectUrls.length} blob URLs.`);
+        gridObjectUrls.forEach(url => URL.revokeObjectURL(url));
+        gridObjectUrls = [];
+    }
+}
+
+async function renderWallpaperGrid(container, settings, forceReload = false) {
+    // Preserve Scroll Position
+    const scrollParent = container.closest('.settings-content');
+    let savedScroll = 0;
+    if (scrollParent) {
+        savedScroll = scrollParent.scrollTop;
+    }
+    
+    // Prevent layout collapse
+    container.style.minHeight = `${container.offsetHeight}px`;
+
+    cleanupWallpaperGrid();
+    container.innerHTML = '';
+
+    // ... Rendering logic ...
+    
+    // Restoration is done at the end of the function (see next chunk)
+
+    // Filter type (User wants to see Request Type only)
+    const currentType = settings.wallpaper.type; // 'img' or 'video'
+
+    // Fetch User Wallpapers
+    const allUserWalls = await getAllUserWallpapers();
+    // Filter user wallpapers by type
+    const userWallpapers = allUserWalls.filter(w => w.type === currentType);
+    const hasUserContent = userWallpapers.length > 0;
+
+    // --- Actions Container (Top) ---
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'grid-actions';
+    container.appendChild(actionsContainer);
+
+    // Upload Button
+    const uploadBtn = document.createElement('button');
+    uploadBtn.className = 'action-btn upload-btn';
+    uploadBtn.innerHTML = `<span class="ui-icon"></span> Upload`;
+    renderInlineIcon(uploadBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/upload.svg');
+    
+    // Hidden File Input
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*,video/*';
+    fileInput.style.display = 'none';
+    fileInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = `<span class="ui-icon"></span> Processing...`;
+        renderInlineIcon(uploadBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/spinner.svg');
+        uploadBtn.querySelector('.ui-icon').classList.add('fa-spin');
+
+        try {
+            const isVideo = file.type.startsWith('video');
+            const type = isVideo ? 'video' : 'img';
+            let thumbBlob = null;
+            
+            if (isVideo) {
+                 // thumbBlob handled below for both
+            }
+            
+            // Generate thumbnail for both images and videos
+            thumbBlob = await generateThumbnail(file);
+
+            await saveUserWallpaper(file, type, thumbBlob);
+            
+            // If type mismatch, we do NOT switch automatically as per user request.
+            // if (settings.wallpaper.type !== type) { ... }
+
+            // Refresh grid
+            await renderWallpaperGrid(container, settings);
+        } catch (err) {
+            // console.error('Upload failed', err);
+            alert('Failed to upload wallpaper.');
+        } finally {
+             // Reset logic handled by re-render
+        }
+    };
+    container.appendChild(fileInput); // Append to container so it's in DOM
+    uploadBtn.onclick = () => fileInput.click();
+    actionsContainer.appendChild(uploadBtn);
+
+    // Refresh Button (Existing)
+    const refreshBtn = document.createElement('button');
+    refreshBtn.className = 'action-btn refresh-all';
+    refreshBtn.innerHTML = `<span class="ui-icon"></span> Refresh`;
+    renderInlineIcon(refreshBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/rotate.svg');
+    refreshBtn.onclick = async () => {
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = `<span class="ui-icon"></span> Syncing...`;
+        renderInlineIcon(refreshBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/spinner.svg');
+        refreshBtn.querySelector('.ui-icon').classList.add('fa-spin');
+        try {
+             // 1. Regenerate User Thumbnails
+             refreshBtn.innerHTML = `<span class="ui-icon"></span> Regenerating Inputs...`;
+             renderInlineIcon(refreshBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/spinner.svg');
+             refreshBtn.querySelector('.ui-icon').classList.add('fa-spin');
+
+             // Check if getAllUserWallpapers is imported/available in scope? Yes.
+             // We need to fetch fresh list
+             const userWalls = await getAllUserWallpapers();
+             for (const w of userWalls) {
+                 if (w.blob) {
+                     const newThumb = await generateThumbnail(w.blob);
+                     // Update existing entry (using the newly added 4th param for ID)
+                     await saveUserWallpaper(w.blob, w.type, newThumb, w.id);
+                 }
+             }
+
+             // 2. Original Sync
+            refreshBtn.innerHTML = `<span class="ui-icon"></span> Syncing...`;
+            renderInlineIcon(refreshBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/spinner.svg');
+            refreshBtn.querySelector('.ui-icon').classList.add('fa-spin');
+
+             await new Promise((resolve) => {
+                 chrome.runtime.sendMessage({ action: 'refreshManifest' }, async () => {
+                    await refreshWallpaper(settings, true);
+                    await renderWallpaperGrid(container, settings, true);
+                    resolve();
+                 });
+            });
+        } catch(e) { 
+            // console.error(e);
+            await renderWallpaperGrid(container, settings);
+        }
+    };
+    actionsContainer.appendChild(refreshBtn);
+
+    // --- User Wallpapers Section ---
+    if (hasUserContent) {
+        // Section Header
+        const userHeader = document.createElement('div');
+        userHeader.className = 'settings-group-title';
+        userHeader.style.gridColumn = '1 / -1';
+        userHeader.style.marginTop = '1rem';
+        userHeader.textContent = 'User Wallpapers';
+        container.appendChild(userHeader);
+
+        // 1. Random User Tile
+        const isUserRandom = settings.wallpaper.collection === 'user' && settings.wallpaper.mode === 'random';
+        const rndUserTile = createOptionTile('Random User', 'assets/svgs-fontawesome/solid/shuffle.svg', isUserRandom);
+        rndUserTile.addEventListener('click', () => {
+             container.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+             rndUserTile.classList.add('active');
+
+             settings.wallpaper.collection = 'user';
+             settings.wallpaper.mode = 'random';
+             settings.wallpaper.specific = null;
+             saveSettings(settings);
+             refreshWallpaper(settings);
+        });
+        container.appendChild(rndUserTile);
+
+        // 2. Sequence User Tile
+        const isUserSeq = settings.wallpaper.collection === 'user' && settings.wallpaper.mode === 'sequence';
+        const seqUserTile = createOptionTile('Sequence User', 'assets/svgs-fontawesome/solid/list-ol.svg', isUserSeq);
+        seqUserTile.addEventListener('click', () => {
+             container.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+             seqUserTile.classList.add('active');
+
+             settings.wallpaper.collection = 'user';
+             settings.wallpaper.mode = 'sequence';
+             settings.wallpaper.specific = null;
+             saveSettings(settings);
+             refreshWallpaper(settings);
+        });
+        container.appendChild(seqUserTile);
+
+        // 3. User Tiles
+        // We'll sort by timestamp desc (newest first)?
+        userWallpapers.sort((a, b) => b.timestamp - a.timestamp);
+
+        for (const wall of userWallpapers) {
+            const tile = document.createElement('div');
+            const isActive = settings.wallpaper.collection === 'user' && settings.wallpaper.mode === 'specific' && settings.wallpaper.specific === wall.id;
+            tile.className = `wallpaper-tile ${isActive ? 'active' : ''}`;
+            
+            // Determine source for grid
+            let displayUrl;
+            let isThumb = false;
+            
+            if (wall.thumbBlob) {
+                displayUrl = URL.createObjectURL(wall.thumbBlob);
+                isThumb = true;
+            } else {
+                displayUrl = URL.createObjectURL(wall.blob);
+            }
+            gridObjectUrls.push(displayUrl);
+
+            // Render as IMG always to "avoid page overload"
+            // If video has NO thumb (legacy?), fallback to video tag.
+            if (wall.type === 'video' && !wall.thumbBlob) {
+                const vid = document.createElement('video');
+                vid.src = displayUrl;
+                vid.muted = true;
+                vid.style.objectFit = 'cover';
+                tile.appendChild(vid);
+            } else {
+                const img = document.createElement('img');
+                img.src = displayUrl;
+                img.loading = 'lazy';
+                tile.appendChild(img);
+            }
+
+            // Click -> Select
+            tile.addEventListener('click', (e) => {
+                 if (e.target.closest('.delete-overlay')) return;
+                 settings.wallpaper.collection = 'user';
+                 settings.wallpaper.mode = 'specific';
+                 settings.wallpaper.specific = wall.id;
+                 saveSettings(settings);
+                 refreshWallpaper(settings);
+                 renderWallpaperGrid(container, settings);
+            });
+
+            // Delete Overlay
+            const delOverlay = document.createElement('div');
+            delOverlay.className = 'delete-overlay';
+            delOverlay.title = 'Delete Wallpaper';
+            const icon = document.createElement('span');
+            icon.className = 'ui-icon';
+            renderInlineIcon(icon, 'assets/svgs-fontawesome/solid/trash.svg');
+            delOverlay.appendChild(icon);
+            delOverlay.onclick = (e) => {
+                e.stopPropagation();
+                showConfirmation('Delete this uploaded wallpaper?', async () => {
+                     await deleteUserWallpaper(wall.id);
+                     await renderWallpaperGrid(container, settings);
+                });
+            };
+            tile.appendChild(delOverlay);
+            
+            container.appendChild(tile);
+        }
+
+        // Separator
+        const sep = document.createElement('div');
+        sep.style.gridColumn = '1 / -1';
+        sep.style.height = '1px';
+        sep.style.background = 'var(--text-secondary)';
+        sep.style.opacity = '0.1';
+        sep.style.margin = '1rem 0';
+        container.appendChild(sep);
+    } // End User Content
+
+    // --- Predefined Section ---
+    const predefinedHeader = document.createElement('div');
+    predefinedHeader.className = 'settings-group-title';
+    predefinedHeader.style.gridColumn = '1 / -1';
+    predefinedHeader.textContent = 'Predefined Wallpapers';
+    container.appendChild(predefinedHeader);
+
+    // 1. Random (Predefined)
+    // Default collection is often undefined or 'predefined'
+    const isPredefRandom = (settings.wallpaper.collection !== 'user') && settings.wallpaper.mode === 'random';
+    const randomTile = createOptionTile('Random', 'assets/svgs-fontawesome/solid/shuffle.svg', isPredefRandom);
+    randomTile.addEventListener('click', () => {
+        container.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+        randomTile.classList.add('active');
+
+        settings.wallpaper.collection = 'predefined';
+        settings.wallpaper.mode = 'random';
+        settings.wallpaper.specific = null;
+        saveSettings(settings);
+        refreshWallpaper(settings);
+    });
+    container.appendChild(randomTile);
+
+    // 2. Sequence (Predefined)
+    const isPredefSeq = (settings.wallpaper.collection !== 'user') && settings.wallpaper.mode === 'sequence';
+    const sequenceTile = createOptionTile('Sequence', 'assets/svgs-fontawesome/solid/list-ol.svg', isPredefSeq);
+    sequenceTile.addEventListener('click', () => {
+        container.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+        sequenceTile.classList.add('active');
+
+        settings.wallpaper.collection = 'predefined';
+        settings.wallpaper.mode = 'sequence';
+        settings.wallpaper.specific = null;
+        saveSettings(settings);
+        // refreshWallpaper might not be needed for sequence if it just continues?
+        // But safer to call it to sync state if we were on specific.
+        refreshWallpaper(settings); 
+    });
+    container.appendChild(sequenceTile);
+
+    // 3. Thumbnails (Don't render if Mono)
+    if (settings.wallpaper.type === 'mono') {
+        container.innerHTML += '<div class="setting-desc" style="grid-column: 1/-1; text-align: center; padding: 2rem;">Mono mode selected. Background set to solid color.</div>';
+        return;
+    }
+
+    const type = settings.wallpaper.type === 'img' ? 'images' : 'videos';
+    
+    // Fetch manifest
+    let manifest = await new Promise(resolve => {
+        chrome.storage.local.get('wallpaperDB', res => resolve(res?.wallpaperDB || null));
+    });
+
+    if (!manifest || !manifest[type]) return;
+
+    let list = manifest[type];
+    
+    // Get existing media keys
+    const allKeys = await getAllMediaKeys();
+    const downloadedSet = new Set(allKeys.filter(k => k.endsWith('::media')).map(k => k.split('::')[0]));
+
+    // Download All check... (Simplified for brevity, logic remains similar)
+    const downloadableCount = list.filter(i => !downloadedSet.has(i.id)).length;
+    // We already added actionsContainer at top. We can append Download All button there too if needed.
+    // Logic from before placed Download All in `actionsContainer`. Use it again.
+    
+    if (downloadableCount > 0) {
+        const dlBtn = document.createElement('button');
+        dlBtn.className = 'action-btn download-all';
+        dlBtn.innerHTML = `<span class="ui-icon"></span> Download All`;
+        renderInlineIcon(dlBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/download.svg');
+        dlBtn.onclick = async () => {
+             dlBtn.disabled = true;
+             dlBtn.innerHTML = `<span class="ui-icon"></span> Downloading...`;
+             renderInlineIcon(dlBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/spinner.svg');
+             dlBtn.querySelector('.ui-icon').classList.add('fa-spin'); 
+             
+             const toDownload = list.filter(i => !downloadedSet.has(i.id));
+             
+             // Visual cue: add loading spinners to pending items
+             toDownload.forEach(item => {
+                 const t = container.querySelector(`.wallpaper-tile[data-id="${item.id}"] .download-overlay`);
+                 if (t) t.classList.add('loading');
+             });
+
+             for (const item of toDownload) {
+                 await downloadAndStoreResource({
+                     url: resolveAssetUrl(item.asset),
+                     assetPath: item.id,
+                     kind: 'media',
+                     manifestEntry: item
+                 });
+                 await downloadAndStoreResource({
+                     url: resolveAssetUrl(item.thumb),
+                     assetPath: item.id,
+                     kind: 'thumb',
+                     manifestEntry: item
+                 });
+
+                 // Incremental UI Update
+                 const oldTile = container.querySelector(`.wallpaper-tile[data-id="${item.id}"]`);
+                 if (oldTile) oldTile.remove();
+                 
+                 const newTile = await createWallpaperTile(item, true, false, smartHandlers);
+                 insertSorted(container, newTile, item.id, list, true);
+             }
+             
+             // Final refresh to update Action Buttons (Delete All / Hide Download All)
+             renderWallpaperGrid(container, settings);
+        };
+        actionsContainer.appendChild(dlBtn);
+    }
+
+    const downloadedCount = list.filter(i => downloadedSet.has(i.id)).length;
+    if (downloadedCount > 1) {
+         // Delete All button
+         const delBtn = document.createElement('button');
+        delBtn.className = 'action-btn delete-all';
+        delBtn.innerHTML = `<span class="ui-icon"></span> Delete All`;
+        renderInlineIcon(delBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');
+        delBtn.onclick = () => {
+            showConfirmation('Delete all downloads?', async () => {
+                // ... delete logic ...
+                try {
+                    const allKeys = await getAllMediaKeys();
+                    const protectedIds = new Set();
+                    if (manifest.images && manifest.images.length > 0) protectedIds.add(manifest.images[0].id);
+                    if (manifest.videos && manifest.videos.length > 0) protectedIds.add(manifest.videos[0].id);
+
+                    const mediaKeys = allKeys.filter(k => {
+                        if (!k.endsWith('::media')) return false;
+                        const id = k.split('::')[0];
+                        if (protectedIds.has(id)) return false;
+                        return true;
+                    });
+                    await Promise.all(mediaKeys.map(k => deleteMediaEntry(k)));
+                    renderWallpaperGrid(container, settings);
+                } catch(e) {}
+            });
+        };
+        actionsContainer.appendChild(delBtn);
+    }
+    
+    // Sort for initial render: Downloaded first, then Original Order
+    const renderList = [...list];
+    renderList.sort((a, b) => {
+        const aDown = downloadedSet.has(a.id);
+        const bDown = downloadedSet.has(b.id);
+        if (aDown && !bDown) return -1;
+        if (!aDown && bDown) return 1;
+        return list.indexOf(a) - list.indexOf(b);
+    });
+
+    // Smart Handlers for Optimistic UI Updates
+    const smartHandlers = {
+        onSelect: (id) => {
+             // Toggle active class only
+             container.querySelectorAll('.option-tile').forEach(t => t.classList.remove('active'));
+             container.querySelectorAll('.wallpaper-tile').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+             settings.wallpaper.collection = 'predefined';
+             settings.wallpaper.mode = 'specific';
+             settings.wallpaper.specific = id;
+             saveSettings(settings);
+             refreshWallpaper(settings);
+        },
+        onDelete: (tile, item) => {
+             showConfirmation('Delete this wallpaper?', async () => {
+                 await deleteMediaEntry(`${item.id}::media`);
+                 // DOM Update
+                 tile.remove();
+                 // Re-insert as Available (Not Downloaded)
+                 const newTile = await createWallpaperTile(item, false, false, smartHandlers);
+                 insertSorted(container, newTile, item.id, list, false);
+             });
+        },
+        onDownload: async (tile, item) => {
+            const overlay = tile.querySelector('.download-overlay');
+            if (overlay) overlay.classList.add('loading');
+            
+             await downloadAndStoreResource({
+                    url: resolveAssetUrl(item.asset),
+                    assetPath: item.id,
+                    kind: 'media',
+                    manifestEntry: item
+             });
+             // Thumb too
+             await downloadAndStoreResource({
+                    url: resolveAssetUrl(item.thumb),
+                    assetPath: item.id,
+                    kind: 'thumb',
+                    manifestEntry: item
+             });
+             
+             // DOM Update
+             tile.remove();
+             // Re-insert as Downloaded (Active)
+             const newTile = await createWallpaperTile(item, true, true, smartHandlers);
+             insertSorted(container, newTile, item.id, list, true);
+             
+             // Auto-select downloaded item
+             settings.wallpaper.collection = 'predefined';
+             settings.wallpaper.mode = 'specific';
+             settings.wallpaper.specific = item.id;
+             saveSettings(settings);
+             refreshWallpaper(settings);
+             
+             // Update active state in UI
+             container.querySelectorAll('.option-tile').forEach(t => t.classList.remove('active'));
+             container.querySelectorAll('.wallpaper-tile').forEach(t => t.classList.remove('active'));
+             newTile.classList.add('active');
+        }
+    };
+
+    for (const item of renderList) {
+        const isDownloaded = downloadedSet.has(item.id);
+        const isActive = (settings.wallpaper.collection !== 'user') && settings.wallpaper.mode === 'specific' && settings.wallpaper.specific === item.id;
+        
+        const tile = await createWallpaperTile(item, isDownloaded, isActive, smartHandlers, forceReload);
+        container.appendChild(tile);
+    }
+
+    // Restore Scroll & remove min-height
+    container.style.minHeight = '';
+    if (scrollParent) {
+        scrollParent.scrollTop = savedScroll;
+    }
+}
+
+// Helper: Unified Thumbnail Generation
+async function generateThumbnail(file) {
+    if (!file) return null;
+    const isVideo = file.type.startsWith('video');
+    const isImage = file.type.startsWith('image');
+    if (!isVideo && !isImage) return null;
+
+    return new Promise((resolve) => {
+        const fileUrl = URL.createObjectURL(file);
+        const MAX_DIM = 320;
+
+        const processCanvas = (source, w, h) => {
+            let width = w;
+            let height = h;
+            
+            // Scaling logic: Fit within MAX_DIM x MAX_DIM aspect ratio preserved
+            if (width > MAX_DIM || height > MAX_DIM) {
+                const ratio = width / height;
+                if (width > height) {
+                    width = MAX_DIM;
+                    height = width / ratio;
+                } else {
+                    height = MAX_DIM;
+                    width = height * ratio;
+                }
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(source, 0, 0, width, height);
+            
+            // Aggressive Cleanup: If video, clear src to release buffer immediately
+            if (source.tagName === 'VIDEO') {
+                source.removeAttribute('src');
+                source.load();
+            }
+
+            canvas.toBlob((blob) => {
+                URL.revokeObjectURL(fileUrl);
+                resolve(blob);
+            }, 'image/jpeg', 0.8);
+        };
+
+        if (isVideo) {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.muted = true;
+            video.playsInline = true;
+            video.src = fileUrl;
+            video.onloadedmetadata = () => { 
+                let time = 1.0;
+                if (video.duration && isFinite(video.duration)) {
+                    time = video.duration / 2;
+                }
+                video.currentTime = time;
+            };
+            // Robust seek handling: if 1.0 is > duration, it might fail or clamp. 
+            // Usually 1.0 is safe for wallpapers. If fail, seek 0.
+            video.onseeked = () => processCanvas(video, video.videoWidth, video.videoHeight);
+            video.onerror = () => { URL.revokeObjectURL(fileUrl); resolve(null); };
+        } else {
+            const img = new Image();
+            img.onload = () => processCanvas(img, img.naturalWidth, img.naturalHeight);
+            img.onerror = () => { URL.revokeObjectURL(fileUrl); resolve(null); };
+            img.src = fileUrl;
+        }
+    });
+}
+
+// Helper: Create Wallpaper Tile (Isolated for reuse)
+async function createWallpaperTile(item, isDownloaded, isActive, handlers, forceReload = false) {
+    const tile = document.createElement('div');
+    tile.className = `wallpaper-tile ${isActive ? 'active' : ''}`;
+    tile.dataset.id = item.id;
+    if (isDownloaded) tile.dataset.downloaded = 'true';
+
+    // Thumbnail logic
+    let thumbUrl = null;
+    try {
+        const thumbKey = `${item.id}::thumb`;
+        const entry = await getMediaEntry(thumbKey);
+        if (entry && entry.blob) {
+            thumbUrl = URL.createObjectURL(entry.blob);
+            gridObjectUrls.push(thumbUrl);
+        }
+    } catch (e) {}
+
+    if (!thumbUrl && item.thumb) {
+        thumbUrl = resolveAssetUrl(item.thumb);
+        if (forceReload && thumbUrl.startsWith('http')) {
+            const sep = thumbUrl.includes('?') ? '&' : '?';
+            thumbUrl += `${sep}t=${Date.now()}`;
+        }
+    }
+
+    if (thumbUrl) {
+        const img = document.createElement('img');
+        img.src = thumbUrl;
+        img.loading = 'lazy';
+        tile.appendChild(img);
+    } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'tile-placeholder';
+        placeholder.textContent = item.id;
+        tile.appendChild(placeholder);
+    }
+
+    // Delete Overlay
+    if (isDownloaded) {
+        const delOverlay = document.createElement('div');
+        delOverlay.className = 'delete-overlay';
+        delOverlay.title = 'Delete Download';
+        const icon = document.createElement('span');
+        icon.className = 'ui-icon';
+        renderInlineIcon(icon, 'assets/svgs-fontawesome/solid/trash.svg');
+        delOverlay.appendChild(icon);
+        delOverlay.onclick = (e) => {
+            e.stopPropagation();
+            if (handlers.onDelete) handlers.onDelete(tile, item);
+        };
+        tile.appendChild(delOverlay);
+    }
+
+    // Download Overlay
+    if (!isDownloaded) {
+        const dlOverlay = document.createElement('div');
+        dlOverlay.className = 'download-overlay';
+        const icon = document.createElement('span');
+        icon.className = 'ui-icon';
+        renderInlineIcon(icon, 'assets/svgs-fontawesome/solid/download.svg');
+        dlOverlay.appendChild(icon);
+        tile.appendChild(dlOverlay); // Fixed structure
+    }
+
+    // Click Handler used for both Select and Download trigger
+    tile.addEventListener('click', (e) => {
+        if (e.target.closest('.delete-overlay')) return;
+        
+        if (isDownloaded) {
+            if (handlers.onSelect) handlers.onSelect(item.id);
+        } else {
+            if (handlers.onDownload) handlers.onDownload(tile, item);
+        }
+    });
+
+    return tile;
+}
+
+// Helper: Insert Tile Sorted (Smart Insert)
+function insertSorted(container, tile, itemId, fullList, isDownloaded) {
+    const tiles = [...container.querySelectorAll('.wallpaper-tile')];
+    const orderMap = new Map(fullList.map((item, index) => [item.id, index]));
+    
+    // Sort Value: Downloaded (0) vs Available (100000) + Index
+    const getSortVal = (id, down) => {
+        const base = down ? 0 : 100000;
+        return base + (orderMap.get(id) || 0);
+    };
+    
+    const targetVal = getSortVal(itemId, isDownloaded);
+    
+    let nextTile = null;
+    for (const t of tiles) {
+        const tId = t.dataset.id;
+        const tDown = t.dataset.downloaded === 'true';
+        const tVal = getSortVal(tId, tDown);
+        if (tVal > targetVal) {
+            nextTile = t;
+            break;
+        }
+    }
+    
+    if (nextTile) {
+        container.insertBefore(tile, nextTile);
+    } else {
+        container.appendChild(tile);
+    }
+}
+
+
+function createOptionTile(label, iconPath, isActive) {
+    const tile = document.createElement('div');
+    tile.className = `option-tile ${isActive ? 'active' : ''}`;
+    tile.dataset.mode = label.toLowerCase();
+    
+    const icon = document.createElement('span');
+    icon.className = 'ui-icon';
+    renderInlineIcon(icon, iconPath);
+    
+    const text = document.createElement('span');
+    text.textContent = label;
+    
+    tile.appendChild(icon);
+    tile.appendChild(text);
+    return tile;
+}
+
+function updateGridActiveState(container, mode, specificId = null) {
+    // Clear all active
+    container.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+
+    if (mode === 'random') {
+        const el = container.querySelector('.option-tile[data-mode="random"]');
+        if (el) el.classList.add('active');
+    } else if (mode === 'sequence') {
+        const el = container.querySelector('.option-tile[data-mode="sequence"]');
+        if (el) el.classList.add('active');
+    } else if (mode === 'specific' && specificId) {
+        const el = container.querySelector(`.wallpaper-tile[data-id="${specificId}"]`);
+        if (el) el.classList.add('active');
+    }
+}
+
+// Custom Confirmation Modal
+function showConfirmation(message, onConfirm) {
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    
+    const modal = document.createElement('div');
+    modal.className = 'confirm-modal';
+    
+    const msg = document.createElement('p');
+    msg.className = 'confirm-message';
+    msg.textContent = message;
+    
+    const buttons = document.createElement('div');
+    buttons.className = 'confirm-buttons';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'confirm-btn cancel';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = () => {
+        document.body.removeChild(overlay);
+    };
+    
+    const okBtn = document.createElement('button');
+    okBtn.className = 'confirm-btn confirm';
+    okBtn.textContent = 'Confirm';
+    okBtn.onclick = () => {
+        document.body.removeChild(overlay);
+        onConfirm();
+    };
+    
+    buttons.appendChild(cancelBtn);
+    buttons.appendChild(okBtn);
+    
+    modal.appendChild(msg);
+    modal.appendChild(buttons);
+    overlay.appendChild(modal);
+    
+    document.body.appendChild(overlay);
+}
+
+
+// --- Shortcuts List Helper ---
+
+function renderShortcutsList(container, settings) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'shortcuts-management-wrapper';
+    wrapper.id = 'shortcuts-management-section';
+    
+    // Header with Add Button
+    const header = document.createElement('div');
+    header.className = 'shortcuts-list-header';
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
+    header.style.alignItems = 'center';
+    
+    const title = document.createElement('div');
+    title.className = 'setting-label';
+    title.textContent = 'Manage Shortcuts';
+    header.appendChild(title);
+    
+    const addBtn = document.createElement('button');
+    addBtn.className = 'action-btn add-shortcut-btn';
+    addBtn.innerHTML = `<span class="ui-icon"></span> Add New`;
+    renderInlineIcon(addBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/plus.svg');
+    addBtn.onclick = () => {
+        openShortcutModal(null, async (newShortcut) => {
+             if (!settings.actionbar) settings.actionbar = {};
+             if (!settings.actionbar.shortcuts) settings.actionbar.shortcuts = {};
+             if (!settings.actionbar.shortcuts.items) settings.actionbar.shortcuts.items = [];
+             
+             settings.actionbar.shortcuts.items.push(newShortcut);
+             await saveSettings(settings);
+             initActionBar(settings.actionbar);
+             // Re-render list
+             renderShortcutsList(container, settings);
+        });
+    };
+    header.appendChild(addBtn);
+    wrapper.appendChild(header);
+
+    // List Container
+    const listContainer = document.createElement('div');
+    listContainer.className = 'shortcuts-list';
+    
+    const refreshList = () => {
+        listContainer.innerHTML = '';
+        
+        // Combine defaults (if enabled?) - Actually, requirements say "list displaying all shortcuts (including default...)".
+        // Usually defaults are immutable.
+        // Let's assume defaults are always shown? Or configurable? 
+        // Previously we had 'configured' array in actionbar.js which merged default + user.
+        // Let's replicate that logic.
+        const userItems = settings.actionbar?.shortcuts?.items || [];
+        const allItems = [...DEFAULT_SHORTCUTS, ...userItems];
+        
+        if (allItems.length === 0) {
+            listContainer.innerHTML = '<div class="setting-desc">No shortcuts added.</div>';
+            return;
+        }
+
+        allItems.forEach((item, index) => {
+            const isUser = !item.builtin; // or check if it's in userItems
+            
+            const itemRow = document.createElement('div');
+            itemRow.className = 'shortcut-list-item'; // Add CSS for this
+
+            
+            // Icon
+            const icon = document.createElement('div');
+            icon.className = 'shortcut-list-icon';
+            icon.style.width = '24px';
+            icon.style.height = '24px';
+            icon.style.marginRight = '1rem';
+            icon.style.display = 'flex';
+            icon.style.alignItems = 'center';
+            icon.style.justifyContent = 'center';
+            // Use same fallback as actionbar
+            // Import DEFAULT_SHORTCUT_ICON_FALLBACK not needed if we hardcode or pass it? 
+            // It's not imported. Let's use generic globe or item.icon.
+            // Wait, we need fallback. 
+            // I'll just use a generic icon search if missing.
+            const iconSrc = item.icon || 'assets/svgs-fontawesome/solid/globe.svg';
+            const iconEl = document.createElement('span');
+            iconEl.className = 'ui-icon';
+            renderInlineIcon(iconEl, iconSrc);
+            icon.appendChild(iconEl);
+            
+            // Text
+            const text = document.createElement('div');
+            text.style.flex = '1';
+            text.innerHTML = `<div style="font-weight:500">${item.title}</div><div style="font-size:0.85em;opacity:0.7">${item.url}</div>`;
+            
+            itemRow.appendChild(icon);
+            itemRow.appendChild(text);
+            
+            // Actions
+            if (isUser) {
+                const actions = document.createElement('div');
+                actions.style.display = 'flex';
+                actions.style.gap = '0.5rem';
+                
+                // Edit
+                const editBtn = document.createElement('button');
+                editBtn.className = 'action-btn small';
+                editBtn.title = 'Edit';
+                editBtn.innerHTML = '<span class="ui-icon"></span>';
+                renderInlineIcon(editBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/pen.svg');
+                editBtn.onclick = () => {
+                    openShortcutModal(item, async (updatedItem) => {
+                         // Find index in userItems
+                         // Since 'item' is referentially same? No, from settings.
+                         // We need robust find.
+                         const userIndex = settings.actionbar.shortcuts.items.indexOf(item);
+                         if (userIndex !== -1) {
+                             settings.actionbar.shortcuts.items[userIndex] = updatedItem;
+                             await saveSettings(settings);
+                             initActionBar(settings.actionbar);
+                             refreshList(); // Update UI
+                         }
+                    });
+                };
+                
+                // Delete
+                const delBtn = document.createElement('button');
+                delBtn.className = 'action-btn small danger';
+                delBtn.title = 'Delete';
+                delBtn.innerHTML = '<span class="ui-icon"></span>';
+                renderInlineIcon(delBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');
+                delBtn.onclick = () => {
+                     showConfirmation(`Delete shortcut "${item.title}"?`, async () => {
+                         const userIndex = settings.actionbar.shortcuts.items.indexOf(item);
+                         if (userIndex !== -1) {
+                             settings.actionbar.shortcuts.items.splice(userIndex, 1);
+                             await saveSettings(settings);
+                             initActionBar(settings.actionbar);
+                             refreshList();
+                         }
+                     });
+                };
+                
+                actions.appendChild(editBtn);
+                actions.appendChild(delBtn);
+                itemRow.appendChild(actions);
+            } else {
+                // Built-in Badge
+                const badge = document.createElement('div');
+                badge.className = 'setting-badge'; // Reuse or new
+                badge.textContent = 'Default';
+                badge.style.fontSize = '0.75em';
+                badge.style.padding = '0.2rem 0.5rem';
+                badge.style.background = 'var(--bg-tertiary)';
+                badge.style.borderRadius = 'var(--radius-sm)';
+                badge.style.opacity = '0.7';
+                itemRow.appendChild(badge);
+            }
+            
+            listContainer.appendChild(itemRow);
+        });
+    };
+    
+    // Initial Render
+    refreshList();
+    
+    wrapper.appendChild(listContainer);
+    
+    // Check if container already has this wrapper
+    const existing = container.querySelector('.shortcuts-management-wrapper');
+    if (existing) existing.remove();
+    
+    container.appendChild(wrapper);
 }

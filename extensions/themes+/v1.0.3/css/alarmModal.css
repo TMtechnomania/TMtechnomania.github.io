@@ -6,7 +6,7 @@
 	justify-content: center;
 	background: none;
 	pointer-events: none;
-	z-index: 200000;
+	z-index: var(--z-panel);
 }
 
 .alarm-modal {
@@ -24,6 +24,7 @@
 	font-family: var(--font-family);
 	pointer-events: auto;
 	margin-bottom: calc(var(--dis-6) + var(--dis-xs));
+	animation: slideUp var(--transition-normal) forwards;
 }
 
 .alarm-item {
@@ -193,21 +194,28 @@
 	position: absolute;
 	right: var(--dis-xs);
 	top: var(--dis-xs);
-	width: var(--dis-4);
-	height: var(--dis-4);
+	width: var(--dis-5);
+	height: var(--dis-5);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 50%;
-	background: var(--color-off);
-	color: var(--text-base);
+	border-radius: var(--radius-full);
+	background: transparent;
+	color: var(--text-off);
 	cursor: pointer;
 	padding: 0;
+	border: none;
+	transition: all var(--transition-fast);
+}
+
+.tm-close:hover {
+	background: var(--color-off);
+	color: var(--text-base);
 }
 
 .tm-close .ui-icon {
-	width: 55%;
-	height: 55%;
+	width: 80%;
+	height: 80%;
 }
 
 .alarm-display.editing {
@@ -218,6 +226,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	gap: var(--dis-xs);
 	padding: var(--dis-xs) var(--dis-2);
 	border-radius: var(--radius-full);
 	background: var(--color-off);

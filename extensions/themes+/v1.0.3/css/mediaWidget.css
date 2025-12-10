@@ -1,0 +1,91 @@
+/* Media Widget */
+#media-widget {
+    position: fixed;
+    top: var(--dis-4);
+    left: var(--dis-4);
+    width: calc(280px * var(--ui-scale));
+    background: var(--color-base);
+    border-radius: var(--radius-3);
+    border: 1px solid var(--color-off);
+    padding: var(--dis-2);
+    display: flex;
+    align-items: center;
+    gap: var(--dis-3);
+    z-index: var(--z-panel);
+    transition: all var(--transition-normal);
+    opacity: 0;
+    transform: translateY(calc(var(--dis-1) * -1));
+    pointer-events: none;
+    cursor: pointer;
+}
+
+#media-widget.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+#media-widget:hover {
+    background: var(--color-off);
+    transform: translateY(0) scale(1.02);
+}
+
+.media-thumb {
+    width: var(--dis-7);
+    height: var(--dis-7);
+    border-radius: var(--radius-2);
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-off);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.media-info {
+    flex: 1;
+    min-width: 0; /* For truncation */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.media-title {
+    font-size: calc(0.9rem * var(--ui-scale));
+    font-weight: 600;
+    color: var(--text-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.media-status {
+    font-size: calc(0.75rem * var(--ui-scale));
+    color: var(--text-off);
+    display: flex;
+    align-items: center;
+    gap: var(--dis-xs);
+    margin-top: var(--dis-xs);
+}
+
+/* Play/Pause Overlay on Thumb */
+.media-control-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-inverse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+#media-widget:hover .media-control-overlay {
+    opacity: 1;
+}
+
+.media-control-icon {
+    width: var(--dis-3);
+    height: var(--dis-3);
+    color: var(--text-invert);
+}

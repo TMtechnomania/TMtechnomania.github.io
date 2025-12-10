@@ -12,11 +12,34 @@
 	"chrome_url_overrides": {
 		"newtab": "newtab.html"
 	},
-	"permissions": ["search", "storage", "tabs"],
+	"permissions": ["search", "storage", "tabs", "system.cpu", "system.memory", "system.storage"],
 	"optional_permissions": ["bookmarks", "alarms", "notifications"],
 	"background": {
 		"service_worker": "js/service.js",
 		"type": "module"
 	},
-	"host_permissions": ["https://buildwithkt.dev/*"]
+	"host_permissions": ["https://buildwithkt.dev/*", "*://*/*"],
+	"content_scripts": [
+		{
+			"matches": ["https://open.spotify.com/*"],
+			"js": ["js/content/spotify.js"],
+			"run_at": "document_idle"
+		},
+		{
+			"matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+			"js": ["js/content/youtube.js"],
+			"run_at": "document_idle"
+		},
+		{
+			"matches": ["https://soundcloud.com/*"],
+			"js": ["js/content/soundcloud.js"],
+			"run_at": "document_idle"
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"resources": ["assets/*", "css/*", "icons/*"],
+			"matches": ["<all_urls>"]
+		}
+	]
 }

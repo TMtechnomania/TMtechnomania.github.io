@@ -20,6 +20,9 @@
 	--dis-14: calc(7.5rem * var(--ui-scale));
 	--dis-15: calc(8rem * var(--ui-scale));
 
+	/* Component Width Variables */
+	--width-widget: calc(17.5rem * var(--ui-scale));
+
 	/* Border Radius Variables - 0.5rem increments from 0.5rem to 4rem */
 	--radius-xs: calc(0.5rem * var(--ui-scale));
 	--radius-1: calc(1rem * var(--ui-scale));
@@ -31,19 +34,36 @@
 	--radius-7: calc(4rem * var(--ui-scale));
 	--radius-full: 999px;
 
+	/* Z-Index Layers (simple, only 1 modal at a time) */
+	--z-wallpaper: -1;
+	--z-searchbar: 99;
+	--z-panel: 999;
+
+	/* Transition Variables */
+	--transition-fast: 0.15s ease;
+	--transition-normal: 0.25s ease;
+	--transition-slow: 0.4s ease;
+
 	/* Color Variables - Light Theme (Default) */
 	--color-base: #FFFFFF;
 	--color-off: #EEF6FF;
 	--color-inverse: #000000;
 	--color-accent: #0072ff;
-	--color-modal-bg: rgba(255, 255, 255, 0.85);
-	--color-modal-border: rgba(255, 255, 255, 0.5);
+	--color-error: #E53935;
+	--color-warning: #FB8C00;
+	--color-success: #43A047;
 
 	/* Text Color Variables - Light Theme */
 	--text-base: #111111;
 	--text-off: #333333;
 	--text-invert: #FFFFFF;
 	--text-accent: #0072ff;
+
+	/* Icon Size Variables */
+	--icon-xs: calc(0.75rem * var(--ui-scale));
+	--icon-sm: calc(0.875rem * var(--ui-scale));
+	--icon-md: calc(1rem * var(--ui-scale));
+	--icon-lg: calc(1.25rem * var(--ui-scale));
 
 	/* Legacy/Utility Variables */
 	--font-family: "Outfit", Arial, Helvetica, sans-serif;
@@ -55,8 +75,6 @@
 	--color-off: #111111;
 	--color-inverse: #FFFFFF;
 	--color-accent: #0072ff;
-	--color-modal-bg: rgba(0, 0, 0, 0.85);
-	--color-modal-border: rgba(255, 255, 255, 0.1);
 
 	--text-base: #FFFFFF;
 	--text-off: #CCCCCC;
@@ -71,8 +89,6 @@
 		--color-off: #111111;
 		--color-inverse: #FFFFFF;
 		--color-accent: #0072ff;
-		--color-modal-bg: rgba(0, 0, 0, 0.85);
-		--color-modal-border: rgba(255, 255, 255, 0.1);
 
 		--text-base: #FFFFFF;
 		--text-off: #CCCCCC;
@@ -129,7 +145,12 @@ body {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	z-index: -1;
+	z-index: var(--z-wallpaper);
+	transition: opacity var(--transition-slow);
+}
+
+#wallpaper.loading {
+	opacity: 0;
 }
 
 .ui-icon {
@@ -147,3 +168,213 @@ body {
 	fill: currentColor;
 }
 
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--color-off);
+	border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--text-off);
+	border-radius: var(--radius-full);
+	opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--text-base);
+}
+
+/* Firefox Scrollbar */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-off) var(--color-off);
+}
+
+/* ============================================
+   BUTTON & ICON UTILITY CLASSES
+   ============================================ */
+
+/* Icon Button - Round, equal width/height, no text */
+.btn-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--dis-4);
+	height: var(--dis-4);
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--text-base);
+	cursor: pointer;
+	transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-icon:hover {
+	background: var(--color-off);
+	color: var(--text-accent);
+}
+
+.btn-icon.active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-icon .ui-icon {
+	width: 50%;
+	height: 50%;
+}
+
+/* Pill Button - With text, rounded ends */
+.btn-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--dis-4);
+	padding: 0 var(--dis-2);
+	gap: var(--dis-xs);
+	border: none;
+	border-radius: var(--radius-full);
+	background: var(--color-off);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.9rem * var(--ui-scale));
+	font-weight: 500;
+	cursor: pointer;
+	transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-pill:hover {
+	background: var(--color-base);
+}
+
+.btn-pill.primary {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-pill .ui-icon {
+	width: var(--icon-md);
+	height: var(--icon-md);
+}
+
+/* Icon Link - No background, just icon */
+.icon-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-off);
+	cursor: pointer;
+	transition: color var(--transition-fast);
+}
+
+.icon-link:hover {
+	color: var(--text-accent);
+}
+
+.icon-link .ui-icon {
+	width: var(--icon-md);
+	height: var(--icon-md);
+}
+
+/* ============================================
+   STATE CLASSES
+   ============================================ */
+
+.is-hidden {
+	display: none !important;
+}
+
+.is-disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.is-error {
+	color: var(--color-error);
+}
+
+.is-success {
+	color: var(--color-success);
+}
+
+.is-warning {
+	color: var(--color-warning);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(var(--dis-2));
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(var(--dis-2));
+	}
+}
+
+/* Modal animation for centered modals */
+@keyframes modalIn {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@keyframes spin {
+	100% { transform: rotate(360deg); }
+}
+
+.animate-slide-up {
+	animation: slideUp var(--transition-normal) forwards;
+}
+
+.animate-slide-down {
+	animation: slideDown var(--transition-normal) forwards;
+}
+
+.animate-fade-in {
+	animation: fadeIn var(--transition-normal) forwards;
+}
+
+.animate-fade-out {
+	animation: fadeOut var(--transition-normal) forwards;
+}
+
+.animate-spin {
+	animation: spin 1s linear infinite;
+}

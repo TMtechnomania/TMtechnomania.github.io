@@ -4,17 +4,57 @@ import {
 	DEFAULT_CONFIG,
 	applyTheme
 } from "./config.js";
+import { renderInlineIcon } from './brandIconLoader.js';
 import { renderWallpaper } from "./wallpaper.js";
 import { renderSearchbar, removeSearchbar } from "./searchbar.js";
-import { initActionBar } from "./actionbar.js";
+import { initActionBar, updateMediaState } from "./actionbar.js";
 import { toggleTimerModal, closeTimerModalIfOpen } from './timerModal.js';
 import { toggleAlarmModal, closeAlarmModalIfOpen } from './alarmModal.js';
-import { toggleSettingsModal, closeSettingsModalIfOpen } from './settingsModal.js';
-import { setupFullscreenToggle } from './fullscreen.js';
+import { toggleSettingsModal, closeSettingsModalIfOpen, openSettingsTab } from './settingsModal.js';
+import { closeToolsModal } from './toolsModal.js';
+import { initClock, updateClockSettings } from './clockWidget.js';
+
+// import { setupFullscreenToggle } from './fullscreen.js'; // Deprecated in favor of delegation
 import { toggleTabsRibbon, setTabsToggleElement } from './tabsRibbon.js';
 import { toggleBookmarksPanel, setBookmarkToggleElement, hasBookmarksPermission, requestBookmarksPermission } from './bookmarksPanel.js';
+import { toggleNotesModal, openNotesModal, closeNotesModal } from './notesModal.js';
+import { initNotesWidget } from './notesWidget.js';
 
 const app = chrome || browser;
+
+// Automatic UI Scaling
+let uiScaleMultiplier = 1;
+
+function updateUIScale() {
+	const width = screen.width;
+	const baseWidth = 1920;
+	// Base scale * user preference multiplier
+	const scale = (width / baseWidth) * uiScaleMultiplier;
+	document.documentElement.style.setProperty('--ui-scale', scale);
+}
+
+// Initialize and listen
+updateUIScale();
+window.addEventListener('resize', updateUIScale);
+
+// Listen for settings changes
+document.addEventListener('settings:uiScale', (e) => {
+    uiScaleMultiplier = parseFloat(e.detail) || 1;
+    updateUIScale();
+});
+
+document.addEventListener('settings:clock', (e) => {
+    // e.detail contains the full settings object or just the relevant parts.
+    // Let's pass the full settings if available, or fetch them?
+    // The settingsModal usually saves then dispatches. 
+    // Ideally we pass the new config.
+    // For now assuming detail is the full config or we refetch.
+    // Let's assume detail IS the config or we rely on the widget to have reference?
+    // The widget exports updateClockSettings.
+    if (e.detail) {
+        updateClockSettings(e.detail);
+    }
+});
 
 async function getStoredConfig() {
 	return new Promise((resolve) => {
@@ -36,22 +76,36 @@ async function getStoredConfig() {
 							...(stored.wallpaper || {}),
 						},
 					};
-					console.log("Loaded stored config:", stored, "merged:", mergedConfig);
+
 					resolve(mergedConfig);
 				} catch (e) {
-					console.error("Failed to parse stored config:", e);
+					// console.error("Failed to parse stored config:", e);
 					resolve(DEFAULT_CONFIG);
 				}
 			});
 		} catch (e) {
-			console.error("Failed to call app.storage.local.get:", e);
+			// console.error("Failed to call app.storage.local.get:", e);
 			resolve(DEFAULT_CONFIG);
 		}
 	});
 }
 
 async function setLastWallpaperId(id) {
-	console.log(`Wallpaper rendered: ${id} (not saving last_id until settings panel)`);
+	try {
+		app.storage.local.get(STORAGE_KEY_SETTINGS, (res) => {
+			const current = res?.[STORAGE_KEY_SETTINGS] || DEFAULT_CONFIG;
+			if (!current.wallpaper) current.wallpaper = {};
+			
+			// Only update if changed prevents unnecessary writes, but for sequence we need to know the *current* one to find *next* one.
+			// Actually sequence logic relies on last_id being the one *just displayed*.
+			if (current.wallpaper.last_id !== id) {
+				current.wallpaper.last_id = id;
+				app.storage.local.set({ [STORAGE_KEY_SETTINGS]: current });
+			}
+		});
+	} catch (e) {
+		// console.warn('Failed to save last_id', e);
+	}
 }
 
 async function getManifest() {
@@ -59,7 +113,7 @@ async function getManifest() {
 		try {
 			app.storage.local.get(STORAGE_KEY_DB, (res) => {
 				if (app.runtime.lastError) {
-					console.error(app.runtime.lastError.message);
+					// console.error(app.runtime.lastError.message);
 					resolve(null);
 					return;
 				}
@@ -68,7 +122,7 @@ async function getManifest() {
 				);
 			});
 		} catch (e) {
-			console.error("Failed to call app.storage.local.get for manifest:", e);
+			// console.error("Failed to call app.storage.local.get for manifest:", e);
 			resolve(null);
 		}
 	});
@@ -95,6 +149,8 @@ function closeAllOverlays() {
 	closeTimerModalIfOpen();
 	closeAlarmModalIfOpen();
 	closeSettingsModalIfOpen();
+	closeToolsModal();
+    closeNotesModal(); // Close notes if open
 	if (document.getElementById('bookmarks-panel')) toggleBookmarksPanel();
 	if (document.getElementById('tabs-ribbon')) toggleTabsRibbon();
 }
@@ -103,16 +159,25 @@ function closeAllOverlays() {
 	const config = await getStoredConfig();
 
 	try {
+		// Apply UI Scale
+		if (config.uiScale) {
+			uiScaleMultiplier = config.uiScale;
+			updateUIScale();
+		}
+
 		applyFontConfig(config && config.font ? config.font : DEFAULT_CONFIG.font);
 		applyTheme(config.theme);
 	} catch (e) {
-		console.error('Failed to apply config', e);
+		// console.error('Failed to apply config', e);
 	}
 	const manifest = await getManifest();
+
+    initNotesWidget();
+    document.addEventListener('notes-open', () => openNotesModal());
 	let renderedId = null;
 
 	if (!manifest || !(manifest.images || manifest.videos)) {
-		console.warn("Manifest not found or is empty, using defaults.");
+		// console.warn("Manifest not found or is empty, using defaults.");
 		renderedId = await renderWallpaper(
 			config.wallpaper || DEFAULT_CONFIG.wallpaper,
 			{},
@@ -135,14 +200,20 @@ function closeAllOverlays() {
 			removeSearchbar();
 		}
 	} catch (e) {
-		console.error('Failed to render/remove searchbar', e);
+		// console.error('Failed to render/remove searchbar', e);
 	}
 
 	try {
 		await initActionBar(config.actionbar || DEFAULT_CONFIG.actionbar);
 	} catch (e) {
-		console.error('Failed to initialize action bar', e);
+		// console.error('Failed to initialize action bar', e);
 	}
+
+    try {
+        initClock(config);
+    } catch (e) {
+        // console.error('Failed to initialize on-screen clock', e);
+    }
 
 	// Action Listeners
 	try {
@@ -171,10 +242,10 @@ function closeAllOverlays() {
 						try { toggleEl.setAttribute('aria-expanded', 'true'); } catch (e) {}
 					}
 				}
-			} catch (inner) { console.error('Timer toggle handler error', inner); }
+			} catch (inner) { /* console.error('Timer toggle handler error', inner); */ }
 		});
 	} catch (e) {
-		console.error('Failed to attach timer action listener', e);
+		// console.error('Failed to attach timer action listener', e);
 	}
 
 	try {
@@ -196,25 +267,82 @@ function closeAllOverlays() {
 						try { toggleEl.setAttribute('aria-expanded', 'true'); } catch (e) {}
 					}
 				}
-			} catch (inner) { console.error('Alarm toggle handler error', inner); }
+			} catch (inner) { /* console.error('Alarm toggle handler error', inner); */ }
 		});
 	} catch (e) {
-		console.error('Failed to attach alarm action listener', e);
+		// console.error('Failed to attach alarm action listener', e);
 	}
 
 	try {
-		document.addEventListener('action:settings', () => {
-			try {
-				const isOpen = !!document.getElementById('settings-modal');
-				closeAllOverlays();
-				if (!isOpen) {
-					toggleSettingsModal();
-				}
-			} catch (inner) { console.error('Settings toggle handler error', inner); }
-		});
+        document.addEventListener('action:settings', (e) => {
+            try {
+                const targetTab = e.detail?.tab;
+                const isOpen = !!document.getElementById('settings-modal');
+                const toggleEl = document.getElementById('action-settings');
+                
+                // If isOpen and we just want to switch tab:
+                if (isOpen && targetTab) {
+                    // Don't close, just switch
+                    openSettingsTab(targetTab);
+                    if (toggleEl) toggleEl.classList.add('active');
+                    return;
+                }
+
+                closeAllOverlays(); // Closes settings if open (via closeSettingsModalIfOpen)
+                
+                // If we want to open (toggle on, or force open with tab)
+                if (targetTab) {
+                    openSettingsTab(targetTab);
+                    if (toggleEl) toggleEl.classList.add('active');
+                } else {
+                    if (!isOpen) { 
+                        toggleSettingsModal();
+                        if (toggleEl) toggleEl.classList.add('active');
+                    } else {
+                         // Logic for toggle off handled by closeAllOverlays usually, 
+                         // but toggleSettingsModal toggles based on internal state? 
+                         // Step 1105: toggleSettingsModal calls close if open, open if closed.
+                         // But if we called closeAllOverlays above, it IS closed.
+                         // So isOpen is false.
+                         // So we open it.
+                         // Wait, if !isOpen, we open.
+                         // If isOpen, we called closeAllOverlays, so it closed.
+                         // So isOpen becomes false effectively? No, isOpen was captured before.
+                         // If it WAS open, we closed it. Do we want to re-open?
+                         // "toggleSettingsModal" implies toggle.
+                         // If user clicked settings button (action:settings w/o tab), and it was open:
+                         // isOpen = true. closeAllOverlays() -> closes it.
+                         // Listener logic: else (no tab) -> if (!isOpen) ...
+                         // If isOpen is true, we do NOTHING?
+                         // Yes, because closeAllOverlays already closed it.
+                         // So we just need to ensure button is inactive.
+                         if (toggleEl) toggleEl.classList.remove('active');
+                    }
+                }
+            } catch (inner) { /* console.error('Settings toggle handler error', inner); */ }
+        });
 	} catch (e) {
-		console.error('Failed to attach settings action listener', e);
+		// console.error('Failed to attach settings action listener', e);
 	}
+
+    // Media Listener for Action Bar
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+
+        if ((message.type === 'MEDIA_UPDATE' || message.type === 'MEDIA_PRESENCE') && message.fromService) {
+
+            // Pass tab ID if available
+            const tabId = message.tabId || null;
+            updateMediaState(message.data, tabId);
+        }
+        return false; // Not async
+    });
+    
+    // Request initial state after a short delay to ensure listener is ready
+    setTimeout(() => {
+        chrome.runtime.sendMessage({ type: 'MEDIA_QUERY' }, (response) => {
+
+        });
+    }, 100);
 
 	// Modal Close Listeners (to update toggle buttons)
 	try {
@@ -243,59 +371,47 @@ function closeAllOverlays() {
 		});
 	} catch (e) {}
 
+    try {
+        document.addEventListener('settings:closed', () => {
+             const toggleEl = document.getElementById('action-settings');
+             if (toggleEl) toggleEl.classList.remove('active');
+        });
+    } catch (e) {}
+
+    try {
+        document.addEventListener('notes:closed', () => {
+            const toggleEl = document.getElementById('action-notes');
+            if (toggleEl) toggleEl.classList.remove('active');
+        });
+    } catch (e) {}
+
 	// Setup Components
-	setupFullscreenToggle();
+	// setupFullscreenToggle(); // Moved to delegation below
 
-	// Setup Tabs Viewer
-	const tabsToggle = document.querySelector('.action-group .action-item:nth-child(2)');
-	if (tabsToggle) {
-		setTabsToggleElement(tabsToggle);
-		try { tabsToggle.setAttribute('aria-controls', 'tabs-ribbon'); } catch (e) {}
-		try { tabsToggle.setAttribute('aria-expanded', 'false'); } catch (e) {}
-
-		tabsToggle.addEventListener('click', () => {
-			closeAllOverlays();
-			// If it was already open, closeAllOverlays closed it.
-			// But toggleTabsRibbon toggles.
-			// If it was open, closeAllOverlays closed it. So toggleTabsRibbon will open it again?
-			// Wait. closeAllOverlays calls toggleTabsRibbon if it exists.
-			// So if it was open, closeAllOverlays closed it.
-			// Then we call toggleTabsRibbon again, which opens it?
-			// This logic is tricky.
-			
-			// Let's adjust closeAllOverlays to NOT close the one we are about to toggle?
-			// Or just handle it explicitly here.
-			
-			// Actually, closeAllOverlays checks `if (document.getElementById('tabs-ribbon')) toggleTabsRibbon();`
-			// So it closes it.
-			// If we call toggleTabsRibbon() immediately after, it will open it.
-			// So clicking the button when open -> closes then opens -> no change (flicker).
-			
-			// Fix: Check if it was open BEFORE closing others.
+	// Setup Action Bar Actions Delegation (Handles dynamic recreation of action bar)
+	document.addEventListener('click', async (e) => {
+		// Tabs Toggle
+		const tabsToggle = e.target.closest('#tabs-toggle');
+		if (tabsToggle) {
+			setTabsToggleElement(tabsToggle);
 			const wasOpen = !!document.getElementById('tabs-ribbon');
 			closeAllOverlays();
 			if (!wasOpen) {
 				toggleTabsRibbon();
 			}
-		});
-	} else {
-		console.warn('Tabs toggle element not found');
-	}
+			return;
+		}
 
-	// Setup Bookmarks Viewer
-	const bookmarkToggle = document.getElementById('bookmark-toggle') || document.querySelector('.action-group .action-item:nth-child(3)');
-	if (bookmarkToggle) {
-		setBookmarkToggleElement(bookmarkToggle);
-		try { bookmarkToggle.setAttribute('aria-controls', 'bookmarks-panel'); } catch (e) {}
-		try { bookmarkToggle.setAttribute('aria-expanded', 'false'); } catch (e) {}
-
-		bookmarkToggle.addEventListener('click', async () => {
+		// Bookmarks Toggle
+		const bookmarkToggle = e.target.closest('#bookmark-toggle') || e.target.closest('#bookmarks-toggle');
+		if (bookmarkToggle) {
+			setBookmarkToggleElement(bookmarkToggle);
 			try {
 				const has = await hasBookmarksPermission();
 				if (!has) {
 					const granted = await requestBookmarksPermission();
 					if (!granted) {
-						console.warn('Bookmarks permission not granted');
+						// console.warn('Bookmarks permission not granted');
 						return;
 					}
 				}
@@ -305,12 +421,92 @@ function closeAllOverlays() {
 				if (!wasOpen) {
 					await toggleBookmarksPanel();
 				}
-			} catch (e) {
-				console.error('Bookmark toggle failed', e);
+			} catch (err) {
+				// console.error('Bookmark toggle failed', err);
 			}
-		});
-	} else {
-		console.warn('Bookmark toggle element not found');
-	}
+			return;
+		}
+
+		// Fullscreen Toggle
+		const fullscreenToggle = e.target.closest('#fullscreen-toggle');
+		if (fullscreenToggle) {
+			try {
+				// Check if in F11 fullscreen mode (viewport matches screen height but no fullscreenElement)
+				const isF11Fullscreen = window.innerHeight >= screen.height - 1 && !document.fullscreenElement;
+				
+				if (isF11Fullscreen) {
+					// In F11 mode, we can't exit programmatically
+					alert('Please press F11 or ESC to exit fullscreen mode.');
+					return;
+				}
+				
+				if (document.fullscreenElement) {
+					await document.exitFullscreen();
+				} else {
+					await document.documentElement.requestFullscreen();
+				}
+			} catch (err) {
+				// console.error('Failed to toggle fullscreen', err);
+			}
+			return;
+		}
+	});
+
+	// Robust Fullscreen Change Listener
+	document.addEventListener('fullscreenchange', () => {
+		const isFullscreen = !!document.fullscreenElement;
+		const toggleEl = document.getElementById('fullscreen-toggle');
+		if (toggleEl) {
+			const icon = toggleEl.querySelector('.ui-icon');
+			if (icon) {
+				const path = isFullscreen
+					? 'assets/svgs-fontawesome/solid/compress.svg'
+					: 'assets/svgs-fontawesome/solid/expand.svg';
+				renderInlineIcon(icon, path);
+			}
+		}
+	});
+
+	// Additional resize listener for fullscreen detection via viewport height
+	window.addEventListener('resize', () => {
+		// Detect fullscreen by comparing viewport height to screen height
+		const isFullscreenByHeight = window.innerHeight >= screen.height - 1; // -1 for tolerance
+		const isFullscreenAPI = !!document.fullscreenElement;
+		
+		// Update icon if height-based detection differs from API
+		if (isFullscreenByHeight !== isFullscreenAPI) {
+			const toggleEl = document.getElementById('fullscreen-toggle');
+			if (toggleEl) {
+				const icon = toggleEl.querySelector('.ui-icon');
+				if (icon) {
+					const path = isFullscreenByHeight
+						? 'assets/svgs-fontawesome/solid/compress.svg'
+						: 'assets/svgs-fontawesome/solid/expand.svg';
+					renderInlineIcon(icon, path);
+				}
+			}
+		}
+	});
+
+	// Components that might need initial setup can still be targeted if they exist, 
+	// but mostly they rely on click.
+    // Ensure aria-controls is set if possible? 
+    // Since initActionBar might run later or parallel, and it creates the elements, 
+    // we don't need to force set attributes here if actionbar.js could do it, 
+    // but actionbar.js is generic.
+    // For now, delegation solves the functional click issue.
+
+    document.addEventListener('action:notes', () => {
+        const toggleEl = document.getElementById('action-notes');
+        const isOpen = !!document.querySelector('.notes-modal-backdrop');
+        closeAllOverlays();
+        
+        if (!isOpen) {
+             toggleNotesModal();
+             if (toggleEl) toggleEl.classList.add('active');
+        } else {
+             if (toggleEl) toggleEl.classList.remove('active');
+        }
+    });
 
 })();

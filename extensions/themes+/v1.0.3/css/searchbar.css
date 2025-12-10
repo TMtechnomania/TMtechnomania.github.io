@@ -1,14 +1,31 @@
 #searchbar {
 	position: absolute;
 	display: flex;
+    flex-direction: column;
 	align-items: center;
-	gap: var(--dis-xs);
-	height: var(--dis-6);
+	gap: var(--dis-4); /* Gap between clock and search row */
+	/* height: var(--dis-6); Removed fixed height */
+    height: auto;
 	min-width: calc(40rem * var(--ui-scale));
-	padding: var(--dis-xs);
-	border-radius: var(--radius-full);
-	background: var(--color-base);
+    
+    /* Move visual styles to .search-row */
+	/* padding: var(--dis-xs); */
+	/* border-radius: var(--radius-full); */
+	/* background: var(--color-base); */
 	width: 30vw;
+	z-index: var(--z-searchbar);
+}
+
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--dis-xs);
+    height: var(--dis-6);
+    width: 100%;
+    background: var(--color-base);
+    border-radius: var(--radius-full);
+    padding: var(--dis-xs);
+    position: relative; /* For chips anchoring if needed */
 }
 
 .engine-current {
@@ -26,8 +43,8 @@
 }
 
 .engine-current .engine-current-icon {
-	width: var(--dis-2);
-	height: var(--dis-2);
+	width: var(--icon-md);
+	height: var(--icon-md);
 }
 
 .search-engine-chips {
@@ -40,10 +57,39 @@
 	padding: var(--dis-xs);
 	align-items: center;
 	justify-content: center;
+	opacity: 0;
 }
 
 .searchbar-wrapper.chips-open .search-engine-chips {
 	display: flex;
+	animation: chipsContainerIn 0.2s ease-out forwards;
+}
+
+.searchbar-wrapper.chips-closing .search-engine-chips {
+	display: flex;
+	animation: chipsContainerOut 0.15s ease-in forwards;
+}
+
+@keyframes chipsContainerIn {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(-4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+@keyframes chipsContainerOut {
+	from {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateX(-50%) translateY(-4px);
+	}
 }
 
 .search-engine-chip {
@@ -58,11 +104,36 @@
 	background: var(--color-base);
 	cursor: pointer;
 	color: var(--text-accent);
+	opacity: 0;
+	transform: scale(0.5);
+	animation: chipIn 0.2s ease-out forwards;
+}
+
+@keyframes chipIn {
+	from {
+		opacity: 0;
+		transform: scale(0.5);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes chipOut {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.5);
+	}
 }
 
 .search-engine-chip .engine-chip-icon {
-	width: var(--dis-2);
-	height: var(--dis-2);
+	width: var(--icon-md);
+	height: var(--icon-md);
 }
 
 .search-engine-chip.active {
@@ -105,8 +176,8 @@
 }
 
 #search-voice-btn .search-voice-icon {
-	width: 60%;
-	height: 60%;
+	width: var(--icon-md);
+	height: var(--icon-md);
 }
 
 #search-voice-btn.listening {
@@ -121,6 +192,7 @@
 	border-radius: var(--radius-full);
 	font-weight: 500;
 	font-size: calc(0.95rem * var(--ui-scale));
+	font-family: var(--font-family);
 }
 
 .searchbar-hidden {

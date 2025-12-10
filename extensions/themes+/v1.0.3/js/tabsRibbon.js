@@ -38,7 +38,7 @@ export async function toggleTabsRibbon() {
 
 		_scheduleTabsRibbonAutoClose();
 	} catch (e) {
-		console.error('Failed to show tabs ribbon', e);
+		// console.error('Failed to show tabs ribbon', e);
 	}
 }
 
@@ -64,7 +64,7 @@ function createTabsRibbon(tabs) {
 		const mergeIcon = document.createElement('span');
 		mergeIcon.className = 'ui-icon merge-windows-icon';
 		mergeIcon.setAttribute('aria-hidden', 'true');
-		renderInlineIcon(mergeIcon, 'assets/svgs-fontawesome/regular/window-minimize.svg');
+		renderInlineIcon(mergeIcon, 'assets/svgs-fontawesome/regular/object-group.svg');
 		mergeBtn.appendChild(mergeIcon);
 		mergeBtn.title = 'Merge all windows into first window';
 		mergeBtn.addEventListener('click', async () => {
@@ -72,7 +72,7 @@ function createTabsRibbon(tabs) {
 				await mergeAllToFirstWindow(windowIds);
 				await refreshTabsRibbon();
 			} catch (e) {
-				console.error('Failed to merge windows', e);
+				// console.error('Failed to merge windows', e);
 			}
 		});
 	}
@@ -118,7 +118,7 @@ function createTabsRibbon(tabs) {
 					}
 				}
 			} catch (e) {
-				console.error('Select window pill failed', e);
+				// console.error('Select window pill failed', e);
 			}
 		});
 
@@ -157,7 +157,7 @@ function createTabsRibbon(tabs) {
 					if (r) document.body.removeChild(r);
 					detachTabsListeners();
 				} catch (e) {
-					console.error('Failed to switch to tab', e);
+					// console.error('Failed to switch to tab', e);
 				}
 			});
 
@@ -190,7 +190,7 @@ async function refreshTabsRibbon() {
 		const newRibbon = createTabsRibbon(tabs);
 		ribbon.replaceWith(newRibbon);
 	} catch (e) {
-		console.error('Failed to refresh tabs ribbon', e);
+		// console.error('Failed to refresh tabs ribbon', e);
 	}
 }
 
@@ -205,7 +205,7 @@ async function mergeAllToFirstWindow(windowIds) {
 		try {
 			await chrome.tabs.move(tabId, { windowId: targetWindowId, index: -1 });
 		} catch (e) {
-			console.warn('Could not move tab', tabId, e);
+			// console.warn('Could not move tab', tabId, e);
 			try {
 				const tab = allTabs.find(t => t.id === tabId);
 				if (tab && tab.url) {
@@ -213,7 +213,7 @@ async function mergeAllToFirstWindow(windowIds) {
 					await chrome.tabs.remove(tabId);
 				}
 			} catch (inner) {
-				console.error('Fallback move failed for tab', tabId, inner);
+				// console.error('Fallback move failed for tab', tabId, inner);
 			}
 		}
 	}
@@ -248,6 +248,16 @@ function _clearTabsRibbonAutoCloseTimer() {
 	}
 }
 
+
+let _tabChangeTimeout = null;
+function onTabChange() {
+	if (_tabChangeTimeout) clearTimeout(_tabChangeTimeout);
+	_tabChangeTimeout = setTimeout(() => {
+		refreshTabsRibbon();
+		_tabChangeTimeout = null;
+	}, 200);
+}
+
 function attachTabsListeners() {
 	if (_tabsRibbonListeners) return;
 	function onKeyDown(ev) {
@@ -265,11 +275,33 @@ function attachTabsListeners() {
 		}
 	}
 	document.addEventListener('keydown', onKeyDown);
-	_tabsRibbonListeners = { onKeyDown };
+	
+	// Tab Events
+	chrome.tabs.onCreated.addListener(onTabChange);
+	chrome.tabs.onUpdated.addListener(onTabChange);
+	chrome.tabs.onRemoved.addListener(onTabChange);
+	chrome.tabs.onMoved.addListener(onTabChange);
+	chrome.tabs.onDetached.addListener(onTabChange);
+	chrome.tabs.onAttached.addListener(onTabChange);
+
+	_tabsRibbonListeners = { onKeyDown, onTabChange };
 }
 
 function detachTabsListeners() {
 	if (!_tabsRibbonListeners) return;
 	document.removeEventListener('keydown', _tabsRibbonListeners.onKeyDown);
+	
+	chrome.tabs.onCreated.removeListener(_tabsRibbonListeners.onTabChange);
+	chrome.tabs.onUpdated.removeListener(_tabsRibbonListeners.onTabChange);
+	chrome.tabs.onRemoved.removeListener(_tabsRibbonListeners.onTabChange);
+	chrome.tabs.onMoved.removeListener(_tabsRibbonListeners.onTabChange);
+	chrome.tabs.onDetached.removeListener(_tabsRibbonListeners.onTabChange);
+	chrome.tabs.onAttached.removeListener(_tabsRibbonListeners.onTabChange);
+	
+	if (_tabChangeTimeout) {
+		clearTimeout(_tabChangeTimeout);
+		_tabChangeTimeout = null;
+	}
+
 	_tabsRibbonListeners = null;
 }
