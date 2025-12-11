@@ -2,8 +2,7 @@ import { STORAGE_KEY_SETTINGS, DEFAULT_CONFIG, DEFAULT_SHORTCUTS, DEFAULT_SHORTC
 
 
 import { renderInlineIcon, getIconForUrl } from './brandIconLoader.js';
-import { toggleSettingsModal, openSettingsTab } from './settingsModal.js';
-import { toggleToolsModal, closeToolsModal } from './toolsModal.js';
+// Imports removed as they are now handled via event delegation in newtab.js
 
 let updateMediaUI = null;
 let activeIntervals = [];
@@ -76,7 +75,10 @@ export async function initActionBar(actionCfg = {}) {
         actionKey.id = 'action-tools';
         actionKey.title = 'Tools';
         actionKey.appendChild(createUiIcon('assets/svgs-fontawesome/regular/keyboard.svg'));
-        actionKey.addEventListener('click', toggleToolsModal);
+        actionKey.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.dispatchEvent(new CustomEvent('action:tools'));
+        });
         iconGroup.appendChild(actionKey);
 
 
@@ -191,13 +193,13 @@ export async function initActionBar(actionCfg = {}) {
                 <span class="media-duration"></span>
             </div>
             <div class="media-buttons">
-                <button class="media-btn" id="media-prev" title="Previous">
+                <button class="btn-icon media-btn" id="media-prev" title="Previous">
                     <span class="ui-icon"></span>
                 </button>
-                <button class="media-btn" id="media-play" title="Play/Pause">
+                <button class="btn-icon media-btn" id="media-play" title="Play/Pause">
                     <span class="ui-icon"></span>
                 </button>
-                <button class="media-btn" id="media-next" title="Next">
+                <button class="btn-icon media-btn" id="media-next" title="Next">
                     <span class="ui-icon"></span>
                 </button>
             </div>

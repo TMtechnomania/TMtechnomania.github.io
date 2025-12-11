@@ -11,7 +11,7 @@ import { initActionBar, updateMediaState } from "./actionbar.js";
 import { toggleTimerModal, closeTimerModalIfOpen } from './timerModal.js';
 import { toggleAlarmModal, closeAlarmModalIfOpen } from './alarmModal.js';
 import { toggleSettingsModal, closeSettingsModalIfOpen, openSettingsTab } from './settingsModal.js';
-import { closeToolsModal } from './toolsModal.js';
+import { toggleToolsModal, closeToolsModal } from './toolsModal.js';
 import { initClock, updateClockSettings } from './clockWidget.js';
 
 // import { setupFullscreenToggle } from './fullscreen.js'; // Deprecated in favor of delegation
@@ -325,6 +325,21 @@ function closeAllOverlays() {
 		// console.error('Failed to attach settings action listener', e);
 	}
 
+	try {
+		document.addEventListener('action:tools', () => {
+			const toggleEl = document.getElementById('action-tools');
+			const isOpen = !!document.getElementById('tools-modal');
+			closeAllOverlays();
+			
+			if (!isOpen) {
+				toggleToolsModal();
+				if (toggleEl) toggleEl.classList.add('active');
+			} else {
+				if (toggleEl) toggleEl.classList.remove('active');
+			}
+		});
+	} catch (e) { }
+
     // Media Listener for Action Bar
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
@@ -495,6 +510,47 @@ function closeAllOverlays() {
     // we don't need to force set attributes here if actionbar.js could do it, 
     // but actionbar.js is generic.
     // For now, delegation solves the functional click issue.
+
+    // Global Click Outside Listener (Tools, Alarm, Notes, Settings, Tabs, Bookmarks)
+    document.addEventListener('click', (e) => {
+        // 1. Ignore clicks within the Action Bar (toggles)
+        if (e.target.closest('#action-bar')) return;
+
+        // 2. Ignore clicks inside modal CONTENT
+        // Tools: #tools-modal is the content (popover style)
+        if (e.target.closest('#tools-modal')) return;
+
+        // Alarm: #alarm-modal is the content (inside backdrop)
+        if (e.target.closest('#alarm-modal')) return;
+
+        // Notes: .notes-modal is the content (inside backdrop)
+        if (e.target.closest('.notes-modal')) return;
+
+        // Settings: .settings-body is the content (inside container)
+        // Note: #settings-modal is the container/backdrop, so clicking it SHOULD close.
+        if (e.target.closest('.settings-body')) return;
+        
+        // Settings Confirmation Dialog (Delete alerts)
+        if (e.target.closest('.confirm-overlay')) return;
+
+        // Tabs Ribbon
+        if (e.target.closest('#tabs-ribbon')) return;
+
+        // Bookmarks Panel
+        if (e.target.closest('#bookmarks-panel')) return;
+
+        // 3. Close if any supported modal is open
+        const toolsOpen = document.getElementById('tools-modal');
+        const alarmOpen = document.getElementById('alarm-modal');
+        const notesOpen = document.querySelector('.notes-modal-backdrop');
+        const settingsOpen = document.getElementById('settings-modal');
+        const tabsOpen = document.getElementById('tabs-ribbon');
+        const bookmarksOpen = document.getElementById('bookmarks-panel');
+
+        if (toolsOpen || alarmOpen || notesOpen || settingsOpen || tabsOpen || bookmarksOpen) {
+            closeAllOverlays();
+        }
+    });
 
     document.addEventListener('action:notes', () => {
         const toggleEl = document.getElementById('action-notes');

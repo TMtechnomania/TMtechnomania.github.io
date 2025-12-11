@@ -32,6 +32,7 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: var(--dis-xs);
+	padding-inline: var(--dis-xs);  /* Adjust for large border radius */
 }
 
 .notes-header h3 {
@@ -100,50 +101,8 @@
 	align-items: center;
 }
 
-.tm-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--dis-xs) var(--dis-1);
-	border-radius: var(--radius-full);
-	background: var(--color-off);
-	border: none;
-	cursor: pointer;
-	font-family: var(--font-family);
-	font-size: calc(0.9rem * var(--ui-scale));
-	color: var(--text-base);
-}
+/* Button styling now uses unified classes from base.css */
 
-.tm-btn:hover {
-	filter: brightness(0.95);
-}
-
-.tm-btn.round {
-	width: var(--dis-4);
-	height: var(--dis-4);
-	padding: 0;
-	border-radius: 50%;
-}
-
-.tm-btn .ui-icon {
-	width: var(--dis-2);
-	height: var(--dis-2);
-}
-
-.tm-close {
-	position: absolute;
-	right: var(--dis-xs);
-	top: var(--dis-xs);
-	width: var(--dis-4);
-	height: var(--dis-4);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-	background: var(--color-off);
-	color: var(--text-base);
-	cursor: pointer;
-}
 
 /* Edit Form */
 .note-edit-form {
@@ -225,4 +184,13 @@
 
 .pinned-active {
 	color: var(--color-accent) !important;
+}
+
+.notes-empty {
+	text-align: center;
+	color: var(--text-off);
+	padding: var(--dis-2);
+	width: 100%;
+	margin-top: var(--dis-2);
+	font-size: calc(1rem * var(--ui-scale));
 }

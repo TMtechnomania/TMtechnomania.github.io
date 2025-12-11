@@ -108,13 +108,15 @@ function renderListView(container) {
     actionRow.style.marginBottom = '10px';
 
     const addNoteBtn = document.createElement('button');
-    addNoteBtn.className = 'tm-btn';
-    addNoteBtn.innerHTML = `<span>+ Note</span>`;
+    addNoteBtn.className = 'btn-pill';
+    addNoteBtn.appendChild(createIcon('assets/svgs-fontawesome/solid/plus.svg'));
+    addNoteBtn.appendChild(document.createTextNode(' Note'));
     addNoteBtn.addEventListener('click', () => openEditor(container, 'note'));
     
     const addCheckBtn = document.createElement('button');
-    addCheckBtn.className = 'tm-btn';
-    addCheckBtn.innerHTML = `<span>+ Checklist</span>`;
+    addCheckBtn.className = 'btn-pill';
+    addCheckBtn.appendChild(createIcon('assets/svgs-fontawesome/solid/plus.svg'));
+    addCheckBtn.appendChild(document.createTextNode(' Checklist'));
     addCheckBtn.addEventListener('click', () => openEditor(container, 'checklist'));
 
     // Enforce max limit
@@ -134,7 +136,7 @@ function renderListView(container) {
     list.className = 'notes-list';
 
     if (_state.notes.length === 0) {
-        list.innerHTML = `<div style="text-align:center; color: var(--text-off); padding: 20px;">No notes yet</div>`;
+        list.innerHTML = `<div class="notes-empty">No notes yet</div>`;
     } else {
         _state.notes.forEach(note => {
             const item = document.createElement('div');
@@ -167,7 +169,7 @@ function renderListView(container) {
             actions.className = 'note-actions';
 
             const pinBtn = document.createElement('button');
-            pinBtn.className = `tm-btn round ${note.pinned ? 'pinned-active' : ''}`;
+            pinBtn.className = `btn-icon ${note.pinned ? 'pinned-active' : ''}`;
             pinBtn.title = note.pinned ? 'Unpin' : 'Pin';
             pinBtn.appendChild(createIcon('assets/svgs-fontawesome/solid/thumbtack.svg'));
             pinBtn.addEventListener('click', (e) => {
@@ -182,7 +184,7 @@ function renderListView(container) {
             });
 
             const editBtn = document.createElement('button');
-            editBtn.className = 'tm-btn round';
+            editBtn.className = 'btn-icon';
             editBtn.title = 'Edit';
             editBtn.appendChild(createIcon('assets/svgs-fontawesome/regular/pen-to-square.svg'));
             editBtn.addEventListener('click', (e) => {
@@ -191,7 +193,7 @@ function renderListView(container) {
             });
 
             const delBtn = document.createElement('button');
-            delBtn.className = 'tm-btn round';
+            delBtn.className = 'btn-icon';
             delBtn.title = 'Delete';
             delBtn.appendChild(createIcon('assets/svgs-fontawesome/regular/trash-can.svg'));
             delBtn.addEventListener('click', (e) => {
@@ -242,12 +244,12 @@ function openEditor(container, type, existingNote = null) {
     topBar.style.alignItems = 'center';
 
     const backBtn = document.createElement('button');
-    backBtn.className = 'tm-btn';
+    backBtn.className = 'btn-pill';
     backBtn.innerHTML = `<span style="margin-right:5px">←</span> Back`;
     backBtn.addEventListener('click', () => renderListView(container));
     
     const pinBtn = document.createElement('button');
-    pinBtn.className = `tm-btn round ${note.pinned ? 'pinned-active' : ''}`;
+    pinBtn.className = `btn-icon ${note.pinned ? 'pinned-active' : ''}`;
     pinBtn.title = 'Pin to Desktop';
     pinBtn.appendChild(createIcon('assets/svgs-fontawesome/solid/thumbtack.svg'));
     pinBtn.addEventListener('click', () => {
@@ -326,7 +328,7 @@ function openEditor(container, type, existingNote = null) {
                 });
 
                 const del = document.createElement('div');
-                del.className = 'tm-btn round';
+                del.className = 'btn-icon';
                 del.style.width = '24px'; del.style.height = '24px';
                 del.appendChild(createIcon('assets/svgs-fontawesome/solid/xmark.svg'));
                 del.addEventListener('click', () => {
@@ -342,7 +344,7 @@ function openEditor(container, type, existingNote = null) {
 
             // Add new item button at bottom
              const addRow = document.createElement('button');
-             addRow.className = 'tm-btn';
+             addRow.className = 'btn-pill';
              addRow.style.alignSelf = 'flex-start';
              addRow.style.marginTop = '8px';
              addRow.innerHTML = `<span>+ Add Item</span>`;
@@ -367,7 +369,7 @@ function openEditor(container, type, existingNote = null) {
     footer.className = 'notes-controls';
     
     const saveBtn = document.createElement('button');
-    saveBtn.className = 'tm-btn primary';
+    saveBtn.className = 'btn-pill primary';
     saveBtn.innerHTML = `<span>Save</span>`;
     saveBtn.addEventListener('click', () => {
         // Update state

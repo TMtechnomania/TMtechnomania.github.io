@@ -159,7 +159,7 @@ body {
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 1.5rem;
 }
 
@@ -169,6 +169,8 @@ body {
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .feature-card:hover {
@@ -196,16 +198,16 @@ body {
 }
 
 .feature-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
     color: var(--text-base);
 }
 
 .feature-desc {
-    font-size: 0.9rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
 }
 
@@ -219,20 +221,46 @@ body {
     display: flex;
     align-items: start;
     gap: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: var(--text-muted);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
 }
 
 .feature-list li::before {
     content: "•";
     color: var(--text-accent);
     font-weight: bold;
+    flex-shrink: 0; /* Prevent bullet shrinking */
+}
+
+/* Tabular/Dual-column list items */
+.feature-list li.dual-col {
+    display: grid;
+    grid-template-columns: max-content 1.5fr 1fr; /* Bullet (auto), Main, Meta */
+    gap: 0.5rem;
+    align-items: baseline;
+}
+
+.feature-list li.dual-col::before {
+    grid-column: 1;
+}
+
+.col-main {
+    grid-column: 2;
+}
+
+.col-meta {
+    grid-column: 3;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    border-left: 1px solid var(--border-color);
+    padding-left: 0.75rem;
 }
 
 /* Modals specific */
 .modal-grid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
 }
 
 .tag {

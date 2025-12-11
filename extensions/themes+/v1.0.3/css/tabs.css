@@ -22,7 +22,7 @@
 }
 
 .tabs-ribbon-content::-webkit-scrollbar {
-	height: 4px;
+	height: calc(4px * var(--ui-scale));
 }
 
 .tabs-ribbon-content::-webkit-scrollbar-thumb {
@@ -38,6 +38,7 @@
 	display: flex;
 	align-items: center;
 	gap: var(--dis-xs);
+	height: var(--dis-6);
 	border-radius: var(--radius-full);
 	background: var(--color-base);
 	padding: var(--dis-xs);
@@ -54,8 +55,8 @@
 }
 
 .window-selector-icon {
-	width: 60%;
-	height: 60%;
+	width: var(--dis-2);
+	height: var(--dis-2);
 	object-fit: contain;
 }
 
@@ -117,23 +118,24 @@
 	hyphens: auto;
 }
 
+/* merge-windows-btn - uses --dis-6 height for consistency with window-group */
 .merge-windows-btn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: calc(var(--dis-4) + var(--dis-xs));
-	width: calc(var(--dis-4) + var(--dis-xs));
-	border-radius: 50%;
-	cursor: pointer;
+	height: var(--dis-6);
+	width: var(--dis-6);
+	border-radius: var(--radius-full);
 	background: var(--color-base);
-	padding: var(--dis-xs);
+	cursor: pointer;
 }
 
 .merge-windows-btn .ui-icon {
-	width: 100%;
-	height: 100%;
+	width: var(--dis-2);
+	height: var(--dis-2);
 }
 
+/* tab-counter */
 .tab-counter {
 	display: flex;
 	align-items: center;
@@ -155,21 +157,20 @@
 	background: var(--text-secondary);
 }
 
+/* overflow-indicator - uses --dis-6 height for consistency with window-group */
 .overflow-indicator {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: calc(var(--dis-4) + var(--dis-xs));
-	width: calc(var(--dis-4) + var(--dis-xs));
-	min-width: calc(var(--dis-4) + var(--dis-xs));
-	aspect-ratio: 1 / 1;
-	border-radius: 50%;
+	height: var(--dis-6);
+	min-width: var(--dis-6);
+	border-radius: var(--radius-full);
 	background: var(--color-base);
+	padding: 0 var(--dis-xs);
 	color: var(--text-secondary);
 	font-size: calc(0.75rem * var(--ui-scale));
 	font-weight: 600;
 	cursor: default;
 	white-space: nowrap;
-	padding: var(--dis-xs);
 }
 

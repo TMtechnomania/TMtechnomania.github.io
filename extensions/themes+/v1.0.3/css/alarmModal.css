@@ -52,6 +52,7 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: var(--dis-xs);
+	padding-inline: var(--dis-xs);  /* Adjust for large border radius */
 }
 
 .alarm-header h3 {
@@ -190,105 +191,19 @@
 	justify-content: flex-end;
 }
 
-.tm-close {
-	position: absolute;
-	right: var(--dis-xs);
-	top: var(--dis-xs);
-	width: var(--dis-5);
-	height: var(--dis-5);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: var(--radius-full);
-	background: transparent;
-	color: var(--text-off);
-	cursor: pointer;
-	padding: 0;
-	border: none;
-	transition: all var(--transition-fast);
-}
-
-.tm-close:hover {
-	background: var(--color-off);
-	color: var(--text-base);
-}
-
-.tm-close .ui-icon {
-	width: 80%;
-	height: 80%;
-}
-
 .alarm-display.editing {
 	outline: 2px solid var(--color-accent);
 }
 
-.alarm-modal .tm-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--dis-xs);
-	padding: var(--dis-xs) var(--dis-2);
-	border-radius: var(--radius-full);
-	background: var(--color-off);
-	border: none;
-	cursor: pointer;
-	font-family: var(--font-family);
-	font-size: calc(0.95rem * var(--ui-scale));
-	color: var(--text-base);
-	font-weight: 500;
-}
-
-.alarm-modal .tm-btn.primary {
-	background: var(--color-accent);
-	color: var(--text-invert);
-	font-weight: 500;
-}
-
-.alarm-modal .tm-btn .ui-icon {
-	width: var(--dis-2);
-	height: var(--dis-2);
-}
-
-.alarm-modal .tm-btn .tm-btn-label {
-	margin-left: var(--dis-xs);
-	display: inline-block;
-}
-
-.alarm-modal .tm-btn.round {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-	width: var(--dis-4);
-	height: var(--dis-4);
-	border-radius: var(--radius-full);
-	background: var(--color-off);
-	color: var(--text-accent);
-	border: none;
-}
-
-.alarm-modal .tm-btn.round .ui-icon {
-	width: var(--dis-2);
-	height: var(--dis-2);
-}
-
-.alarm-controls .tm-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+/* Alarm Controls - Uses unified btn-combo from base.css */
+.alarm-controls .btn-combo {
 	flex: 1 1 0px;
 	width: 0;
-	padding: var(--dis-xs);
-	border-radius: var(--radius-full);
 	background: transparent;
-	border: none;
-	box-sizing: border-box;
-	box-shadow: none;
-	font-weight: 500;
 }
 
-.alarm-controls .tm-btn:hover,
-.alarm-controls .tm-btn:active {
+.alarm-controls .btn-combo:hover,
+.alarm-controls .btn-combo:active {
 	background: var(--color-base);
 }
 
@@ -300,6 +215,7 @@
 	opacity: 0.5;
 	pointer-events: none;
 }
+
 
 @media (max-width: 520px) {
 	.alarm-form {

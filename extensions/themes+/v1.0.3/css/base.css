@@ -199,7 +199,9 @@ body {
    BUTTON & ICON UTILITY CLASSES
    ============================================ */
 
-/* Icon Button - Round, equal width/height, no text */
+/* === ICON BUTTONS (Round, icon only) === */
+
+/* Base Icon Button - Mid tier (M) */
 .btn-icon {
 	display: inline-flex;
 	align-items: center;
@@ -212,7 +214,7 @@ body {
 	background: transparent;
 	color: var(--text-base);
 	cursor: pointer;
-	transition: background var(--transition-fast), color var(--transition-fast);
+	transition: all var(--transition-fast);
 }
 
 .btn-icon:hover {
@@ -220,17 +222,105 @@ body {
 	color: var(--text-accent);
 }
 
-.btn-icon.active {
+.btn-icon.active,
+.btn-icon:active {
 	background: var(--color-accent);
 	color: var(--text-invert);
 }
 
-.btn-icon .ui-icon {
-	width: 50%;
-	height: 50%;
+.btn-icon:focus-visible {
+	background: var(--color-off);
 }
 
-/* Pill Button - With text, rounded ends */
+.btn-icon:disabled,
+.btn-icon.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+.btn-icon .ui-icon {
+	width: 45%;
+	height: 45%;
+}
+
+/* Large Icon Button - Top tier (L) */
+.btn-icon-lg {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--dis-5);
+	height: var(--dis-5);
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--text-off);
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.btn-icon-lg:hover {
+	background: var(--color-off);
+	color: var(--text-base);
+}
+
+.btn-icon-lg.active,
+.btn-icon-lg:active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-icon-lg:focus-visible {
+	background: var(--color-off);
+}
+
+.btn-icon-lg:disabled,
+.btn-icon-lg.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.btn-icon-lg .ui-icon {
+	width: 40%;
+	height: 40%;
+}
+
+/* Small Icon Button - Base tier (S) */
+.btn-icon-sm {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--dis-2);
+	height: var(--dis-2);
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--text-base);
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.btn-icon-sm:hover {
+	background: var(--color-off);
+	color: var(--text-accent);
+}
+
+.btn-icon-sm.active,
+.btn-icon-sm:active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-icon-sm .ui-icon {
+	width: 60%;
+	height: 60%;
+}
+
+/* === PILL BUTTONS (Text only, rounded ends) === */
+
+/* Base Pill Button - Mid tier (M) */
 .btn-pill {
 	display: inline-flex;
 	align-items: center;
@@ -246,11 +336,28 @@ body {
 	font-size: calc(0.9rem * var(--ui-scale));
 	font-weight: 500;
 	cursor: pointer;
-	transition: background var(--transition-fast), color var(--transition-fast);
+	transition: all var(--transition-fast);
 }
 
 .btn-pill:hover {
 	background: var(--color-base);
+}
+
+.btn-pill.active,
+.btn-pill:active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-pill:focus-visible {
+	background: var(--color-base);
+}
+
+.btn-pill:disabled,
+.btn-pill.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
 }
 
 .btn-pill.primary {
@@ -258,12 +365,196 @@ body {
 	color: var(--text-invert);
 }
 
+.btn-pill.primary:hover {
+	filter: brightness(1.1);
+}
+
 .btn-pill .ui-icon {
 	width: var(--icon-md);
 	height: var(--icon-md);
 }
 
-/* Icon Link - No background, just icon */
+/* Small Pill Button - Base tier (S) */
+.btn-pill-sm {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--dis-2);
+	padding: 0 var(--dis-1);
+	gap: var(--dis-xs);
+	border: none;
+	border-radius: var(--radius-full);
+	background: var(--color-off);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.75rem * var(--ui-scale));
+	font-weight: 500;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.btn-pill-sm:hover {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-pill-sm .ui-icon {
+	width: var(--icon-sm);
+	height: var(--icon-sm);
+}
+
+/* === COMBO BUTTONS (Icon + Text) === */
+
+/* Base Combo Button - Mid tier (M) */
+.btn-combo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--dis-4);
+	padding: 0 var(--dis-2);
+	gap: var(--dis-xs);
+	border: none;
+	border-radius: var(--radius-full);
+	background: var(--color-off);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.9rem * var(--ui-scale));
+	font-weight: 500;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.btn-combo:hover {
+	background: var(--color-base);
+}
+
+.btn-combo.active,
+.btn-combo:active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-combo:disabled,
+.btn-combo.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.btn-combo.primary {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn-combo .ui-icon {
+	width: var(--dis-1);
+	height: var(--dis-1);
+}
+
+/* === CHIPS (Selectable pills in groups) === */
+
+.chip {
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--dis-1);
+	border: none;
+	border-radius: var(--radius-full);
+	background: var(--color-base);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.75rem * var(--ui-scale));
+	font-weight: 500;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.chip:hover {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.chip.active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.chip:disabled,
+.chip.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.chip-group {
+	display: flex;
+	gap: var(--dis-xs);
+}
+
+/* === INPUTS === */
+
+.input,
+.select,
+.textarea {
+	width: 100%;
+	padding: var(--dis-1);
+	border: none;
+	border-radius: var(--radius-1);
+	background: var(--color-off);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: calc(0.9rem * var(--ui-scale));
+	transition: all var(--transition-fast);
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+	background: var(--color-base);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+	background: var(--color-base);
+	outline: none;
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Error state uses color change instead of border */
+.input.error,
+.select.error,
+.textarea.error {
+	background: rgba(229, 57, 53, 0.1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+	color: var(--text-off);
+}
+
+.textarea {
+	min-height: var(--dis-8);
+	resize: vertical;
+}
+
+.select {
+	cursor: pointer;
+	appearance: none;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--dis-1) center;
+	background-size: var(--dis-xs) auto;
+	padding-right: var(--dis-4);
+}
+
+/* === ICON LINK (No background) === */
+
 .icon-link {
 	display: inline-flex;
 	align-items: center;
@@ -281,6 +572,7 @@ body {
 	width: var(--icon-md);
 	height: var(--icon-md);
 }
+
 
 /* ============================================
    STATE CLASSES

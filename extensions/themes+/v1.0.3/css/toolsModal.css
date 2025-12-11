@@ -20,9 +20,8 @@
 }
 
 .tools-icon-btn .ui-icon {
-	/* Matched to widget title icon size as requested */
-	width: calc(1.2rem * var(--ui-scale));
-	height: calc(1.2rem * var(--ui-scale));
+	width: 45%;
+	height: 45%;
 }
 
 .tools-icon-btn:hover {
@@ -37,12 +36,10 @@
 	border-radius: var(--radius-full);
 	background: var(--color-base);
 	color: var(--text-base);
-	/* Reduced to 0.75rem to match user preference for "perfect" height */
 	font-size: calc(0.75rem * var(--ui-scale));
 	font-weight: 500;
 	cursor: pointer;
 	font-family: var(--font-family);
-	transition: opacity 0.2s;
 }
 
 .tools-btn:hover {
@@ -73,7 +70,6 @@
 	border-radius: var(--radius-full);
 	background: var(--color-base);
 	color: var(--text-base);
-	/* Reduced to 0.75rem to match user preference for "perfect" height */
 	font-size: calc(0.75rem * var(--ui-scale));
 	font-weight: 500;
 	cursor: pointer;
@@ -250,8 +246,8 @@
 }
 
 .widget-header .ui-icon {
-	width: 1.2rem;
-	height: 1.2rem;
+	width: calc(1.2rem * var(--ui-scale));
+	height: calc(1.2rem * var(--ui-scale));
 	color: var(--text-accent);
 }
 
@@ -808,7 +804,7 @@
 .password-length .length-value {
 	color: var(--text-base);
 	font-weight: 600;
-	min-width: 24px;
+	min-width: calc(1.5rem * var(--ui-scale));
 }
 
 /* Custom Range Slider */
@@ -1020,7 +1016,7 @@
 	font-size: calc(0.75rem * var(--ui-scale));
 	word-break: break-all;
 	min-height: var(--dis-4);
-	max-height: 150px;
+	max-height: calc(150px * var(--ui-scale));
 	overflow-y: auto;
 }
 

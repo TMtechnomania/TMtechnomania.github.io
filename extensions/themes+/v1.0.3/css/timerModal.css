@@ -41,7 +41,11 @@
 .timer-tab {
 	flex: 1 1 0px;
 	width: 0;
-	text-align: center;
+	height: var(--dis-4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--dis-xs);
 	padding: var(--dis-xs);
 	border-radius: var(--radius-full);
 	cursor: pointer;
@@ -50,6 +54,11 @@
 	font-family: var(--font-family);
 	font-size: calc(0.95rem * var(--ui-scale));
 	font-weight: 500;
+}
+
+.timer-tab .ui-icon {
+	width: var(--dis-1);
+	height: var(--dis-1);
 }
 
 .timer-tab.active {
@@ -71,23 +80,12 @@
 	align-items: center;
 }
 
+/* edit-btn uses btn-icon icon sizing from base.css (45%) */
 .edit-btn {
 	position: absolute;
 	left: var(--dis-xs);
 	top: var(--dis-xs);
 	pointer-events: auto;
-	background: transparent;
-	border: none;
-	padding: 0;
-	cursor: pointer;
-	width: var(--dis-5);
-	height: var(--dis-5);
-	border-radius: 50%;
-}
-
-.edit-btn .ui-icon {
-	width: 80%;
-	height: 80%;
 }
 
 .custom-time-input-inline {
@@ -115,32 +113,8 @@
 	align-items: center;
 }
 
-.tm-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: var(--dis-4);
-	width: var(--dis-4);
-	min-width: var(--dis-4);
-	border-radius: 50%;
-	background: transparent;
-	cursor: pointer;
-	padding: 0;
-	border: none;
-	font-size: calc(0.95rem * var(--ui-scale));
-	font-weight: 500;
-	color: var(--text-base);
-}
+/* Button styling now uses unified btn-icon from base.css */
 
-.tm-btn.primary {
-	background: var(--color-accent);
-	color: var(--text-invert);
-}
-
-.tm-btn .ui-icon {
-	width: 60%;
-	height: 60%;
-}
 
 .stopwatch-laps {
 	width: 100%;
@@ -230,30 +204,7 @@
 	font-family: var(--font-family);
 }
 
-.custom-time-row .tm-btn {
-	padding: var(--dis-xs) var(--dis-1);
-}
 
-.tm-close {
-	position: absolute;
-	right: var(--dis-2);
-	top: var(--dis-1);
-	width: var(--dis-4);
-	height: var(--dis-4);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-	background: var(--color-off);
-	color: var(--text-base);
-	cursor: pointer;
-	padding: 0;
-}
-
-.tm-close .ui-icon {
-	width: 55%;
-	height: 55%;
-}
 
 @media (max-width: 420px) {
 	.timer-modal {

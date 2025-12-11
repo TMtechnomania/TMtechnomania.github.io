@@ -157,22 +157,19 @@
 	color: var(--text-off);
 }
 
-#search-voice-btn,
-#search-btn {
+/* Voice button */
+#search-voice-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	height: var(--dis-4);
-	border-radius: var(--radius-full);
-	cursor: pointer;
-}
-
-#search-voice-btn {
-	background: var(--color-off);
-	color: var(--text-accent);
 	width: var(--dis-4);
 	aspect-ratio: 1/1;
 	padding: 0;
+	border-radius: var(--radius-full);
+	background: var(--color-off);
+	color: var(--text-accent);
+	cursor: pointer;
 }
 
 #search-voice-btn .search-voice-icon {
@@ -185,11 +182,17 @@
 	color: var(--text-invert);
 }
 
+/* Search button */
 #search-btn {
-	background: var(--color-accent);
-	color: var(--text-invert);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--dis-4);
 	padding: 0 var(--dis-2);
 	border-radius: var(--radius-full);
+	background: var(--color-accent);
+	color: var(--text-invert);
+	cursor: pointer;
 	font-weight: 500;
 	font-size: calc(0.95rem * var(--ui-scale));
 	font-family: var(--font-family);

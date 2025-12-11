@@ -99,7 +99,7 @@ async function openSettingsModal() {
     title.appendChild(document.createTextNode(' Settings'));
     
     const closeBtn = document.createElement('button');
-    closeBtn.className = 'settings-close';
+    closeBtn.className = 'btn-icon-lg settings-close';
     const closeIcon = document.createElement('span');
     closeIcon.className = 'ui-icon settings-close-icon';
     closeIcon.setAttribute('aria-hidden', 'true');
@@ -749,7 +749,7 @@ function addRange(container, label, unit, min, max, value, defaultValue, onChang
     
     // Reset Button (individual)
     const resetBtn = document.createElement('button');
-    resetBtn.className = 'range-reset-btn';
+    resetBtn.className = 'btn-icon-sm range-reset-btn';
     resetBtn.title = 'Reset to default';
     resetBtn.innerHTML = '<span class="ui-icon"></span>';
     renderInlineIcon(resetBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/rotate-left.svg'); // or similar icon
@@ -886,7 +886,7 @@ function updateWallpaperDynamicContent(container, settings) {
 
     // Always show Reset All
     const resetAll = document.createElement('button');
-    resetAll.className = 'action-btn';
+    resetAll.className = 'btn-combo action-btn';
     resetAll.title = 'Reset all filters to default';
     
     const resetIcon = document.createElement('span');
@@ -1058,7 +1058,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 
     // Upload Button
     const uploadBtn = document.createElement('button');
-    uploadBtn.className = 'action-btn upload-btn';
+    uploadBtn.className = 'btn-combo action-btn upload-btn';
     uploadBtn.innerHTML = `<span class="ui-icon"></span> Upload`;
     renderInlineIcon(uploadBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/upload.svg');
     
@@ -1070,6 +1070,15 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
     fileInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Enforce Limits
+        const isVideo = file.type.startsWith('video');
+        const limitBytes = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB or 10MB
+        if (file.size > limitBytes) {
+            alert(`File too large. Maximum size is ${isVideo ? '100MB' : '10MB'}.`);
+            fileInput.value = '';
+            return;
+        }
         
         uploadBtn.disabled = true;
         uploadBtn.innerHTML = `<span class="ui-icon"></span> Processing...`;
@@ -1079,6 +1088,17 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
         try {
             const isVideo = file.type.startsWith('video');
             const type = isVideo ? 'video' : 'img';
+            
+            // Check Count Limit
+            const currentCount = allUserWalls.filter(w => w.type === type).length;
+            const maxCount = isVideo ? 10 : 20;
+            
+            if (currentCount >= maxCount) {
+                alert(`Upload limit reached. You can only have ${maxCount} ${type} wallpapers.`);
+                fileInput.value = '';
+                return;
+            }
+
             let thumbBlob = null;
             
             if (isVideo) {
@@ -1108,7 +1128,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 
     // Refresh Button (Existing)
     const refreshBtn = document.createElement('button');
-    refreshBtn.className = 'action-btn refresh-all';
+    refreshBtn.className = 'btn-combo action-btn refresh-all';
     refreshBtn.innerHTML = `<span class="ui-icon"></span> Refresh`;
     renderInlineIcon(refreshBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/rotate.svg');
     refreshBtn.onclick = async () => {
@@ -1170,8 +1190,8 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
         // Delete All Uploads Button (for current type only)
         if (userWallpapers.length > 0) {
             const delUploadsBtn = document.createElement('button');
-            delUploadsBtn.className = 'action-btn delete-all';
-            delUploadsBtn.innerHTML = `<span class="ui-icon"></span> Delete All Uploads`;
+            delUploadsBtn.className = 'btn-combo action-btn delete-all';
+            delUploadsBtn.innerHTML = `<span class="ui-icon"></span> All`;
             renderInlineIcon(delUploadsBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');
             delUploadsBtn.onclick = () => {
                 const typeLabel = currentType === 'img' ? 'image' : 'video';
@@ -1363,12 +1383,12 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 
     // Download All button - only downloads current type (images OR videos)
     const downloadableCount = list.filter(i => !downloadedSet.has(i.id)).length;
-    const typeLabel = currentType === 'img' ? 'Images' : 'Videos';
+
     
     if (downloadableCount > 0) {
         const dlBtn = document.createElement('button');
-        dlBtn.className = 'action-btn download-all';
-        dlBtn.innerHTML = `<span class="ui-icon"></span> Download All ${typeLabel}`;
+        dlBtn.className = 'btn-combo action-btn download-all';
+        dlBtn.innerHTML = `<span class="ui-icon"></span> All`;
         renderInlineIcon(dlBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/download.svg');
         dlBtn.onclick = async () => {
              dlBtn.disabled = true;
@@ -1422,8 +1442,8 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
     const downloadedCount = list.filter(i => downloadedSet.has(i.id)).length;
     if (downloadedCount >= 1) {
         const delBtn = document.createElement('button');
-        delBtn.className = 'action-btn delete-all';
-        delBtn.innerHTML = `<span class="ui-icon"></span> Delete All ${typeLabel}`;
+        delBtn.className = 'btn-combo action-btn delete-all';
+        delBtn.innerHTML = `<span class="ui-icon"></span> All`;
         renderInlineIcon(delBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');
         delBtn.onclick = () => {
             const typeLabelLower = currentType === 'img' ? 'image' : 'video';
@@ -1831,7 +1851,7 @@ function renderShortcutsList(container, settings) {
     header.appendChild(title);
     
     const addBtn = document.createElement('button');
-    addBtn.className = 'action-btn add-shortcut-btn';
+    addBtn.className = 'btn-combo action-btn add-shortcut-btn';
     addBtn.innerHTML = `<span class="ui-icon"></span> Add New`;
     renderInlineIcon(addBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/plus.svg');
     addBtn.onclick = () => {
@@ -1913,7 +1933,7 @@ function renderShortcutsList(container, settings) {
                 
                 // Edit
                 const editBtn = document.createElement('button');
-                editBtn.className = 'action-btn small';
+                editBtn.className = 'btn-combo action-btn small';
                 editBtn.title = 'Edit';
                 editBtn.innerHTML = '<span class="ui-icon"></span>';
                 renderInlineIcon(editBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/pen.svg');
@@ -1934,7 +1954,7 @@ function renderShortcutsList(container, settings) {
                 
                 // Delete
                 const delBtn = document.createElement('button');
-                delBtn.className = 'action-btn small danger';
+                delBtn.className = 'btn-combo action-btn small danger';
                 delBtn.title = 'Delete';
                 delBtn.innerHTML = '<span class="ui-icon"></span>';
                 renderInlineIcon(delBtn.querySelector('.ui-icon'), 'assets/svgs-fontawesome/solid/trash.svg');

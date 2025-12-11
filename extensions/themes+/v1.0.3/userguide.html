@@ -53,6 +53,24 @@
                     New Tab Extension v1.0.3.<br>
                     A powerful, customizable, and feature-rich new tab dashboard for optimal productivity.
                 </p>
+                <div class="feature-card" style="width: 100%; margin: 2rem 0; padding: 2.5rem; text-align: left;">
+                    <h3 class="feature-title" style="font-size: 1.6rem; margin-bottom: 1.5rem;">Under the Hood</h3>
+                    <p class="feature-desc" style="margin-bottom: 1rem;">
+                        Themes+ leverages advanced browser technologies to deliver a premium experience without compromising performance:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Smart Storage (IndexedDB):</strong> We use IndexedDB to locally store your 4K images and large video wallpapers (up to 100MB). This bypasses standard browser limits, ensures zero-latency loading, and guarantees your personal files never leave your device.</li>
+                        <li><strong>Manifest Permissions:</strong>
+                            <ul style="padding-left: 1rem; margin-top: 0.5rem; opacity: 0.9;">
+                                <li><code>Storage</code>: Saving preferences and offline assets.</li>
+                                <li><code>System Display/CPU</code>: Real-time system monitoring charts.</li>
+                                <li><code>Search</code>: Integration with active tab media controls.</li>
+                                <li><code>Tabs</code>: Saving and restoring Workspaces.</li>
+                                <li><code>Alarms/Notifications</code>: Reliable background scheduling for timers.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </header>
 
             <section id="core" class="ug-section">
@@ -60,15 +78,30 @@
                     <svg class="ug-section-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L3.15 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                     <h2 class="ug-section-title">Core Settings</h2>
                 </div>
+                <p class="ug-subtitle" style="margin-bottom: 2rem;">Personalize the fundamental look and feel of your dashboard.</p>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/></svg></div>
-                        <h3 class="feature-title">Theme Personalization</h3>
-                        <p class="feature-desc">Customize the visual appearance.</p>
+                        <h3 class="feature-title">Theme</h3>
+                        <p class="feature-desc">Visual appearance.</p>
                         <ul class="feature-list">
-                            <li><strong>Theme:</strong> Switch between System (default), Light, or Dark mode.</li>
-                            <li><strong>UI Scale:</strong> Adjust the interface size from 80% (compact) to 120% (large).</li>
-                            <li><strong>Font:</strong> Choose from curated fonts like Outfit, Inter, Roboto, etc.</li>
+                            <li><strong>Options:</strong> System (Default), Light, or Dark.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div> <!-- Generic Icon -->
+                        <h3 class="feature-title">UI Scale</h3>
+                        <p class="feature-desc">Interface sizing.</p>
+                        <ul class="feature-list">
+                            <li><strong>Range:</strong> 80% (Compact) to 120% (Large).</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                         <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M9.93 13.5h4.14L12 7.98zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4.05 16.5l-1.14-3H9.17l-1.12 3H5.96l5.11-13h1.86l5.11 13h-2.09z"/></svg></div>
+                        <h3 class="feature-title">Font</h3>
+                        <p class="feature-desc">Typography style.</p>
+                        <ul class="feature-list">
+                            <li><strong>Selection:</strong> Modern, Serif, or Monospace families.</li>
                         </ul>
                     </div>
                 </div>
@@ -79,8 +112,10 @@
                     <svg class="ug-section-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
                     <h2 class="ug-section-title">Search & Browsing</h2>
                 </div>
+                <p class="ug-subtitle" style="margin-bottom: 2rem;">Optimize your web navigation and search experience.</p>
                 <div class="features-grid">
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
                         <h3 class="feature-title">Search Engine</h3>
                         <p class="feature-desc">Quickly switch between multiple providers.</p>
                         <ul class="feature-list">
@@ -90,6 +125,7 @@
                         </ul>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M4 5v13h17V5H4zm2 11V7h3v9H6zm5 0V7h3v9h-3zm5 0V7h3v9h-3z"/></svg></div>
                         <h3 class="feature-title">Layout Control</h3>
                         <p class="feature-desc">Position the search bar where you want it.</p>
                         <ul class="feature-list">
@@ -106,31 +142,46 @@
                     <svg class="ug-section-icon" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
                     <h2 class="ug-section-title">Wallpaper</h2>
                 </div>
+                <p class="ug-subtitle" style="margin-bottom: 2rem;">Manage visual backdrops, uploads, and filters.</p>
                 <div class="features-grid">
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
                         <h3 class="feature-title">Background Types</h3>
                         <ul class="feature-list">
-                            <li><strong>Images:</strong> High-resolution static backgrounds.</li>
-                            <li><strong>Live Video:</strong> Loopable video backgrounds.</li>
-                            <li><strong>Mono:</strong> Minimalist solid color mode.</li>
+                            <li class="dual-col">
+                                <span class="col-main"><strong>Images:</strong> Static (Low RAM).</span>
+                                <span class="col-meta">Limit: 10MB/file.</span>
+                            </li>
+                            <li class="dual-col">
+                                <span class="col-main"><strong>Live Video:</strong> Loopable.</span>
+                                <span class="col-meta">Limit: 100MB/file.</span>
+                            </li>
                         </ul>
                     </div>
                     <div class="feature-card">
-                        <h3 class="feature-title">Collections & Modes</h3>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg></div>
+                        <h3 class="feature-title">Collections</h3>
                         <ul class="feature-list">
-                            <li><strong>Collections:</strong> Choose 'Predefined' or 'User Uploaded'.</li>
-                            <li><strong>Mode - Random:</strong> Surprises you on every load.</li>
-                            <li><strong>Mode - Sequence:</strong> Cycles through wallpapers in order.</li>
-                            <li><strong>Mode - Specific:</strong> Lock to a single favorite wallpaper.</li>
+                            <li><strong>Predefined:</strong> curated selection.</li>
+                            <li><strong>User Uploads:</strong> Add your own.</li>
                         </ul>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M19 12h-2v2h2v-2zm-4 0h-2v2h2v-2zm-4 0H9v2h2v-2zm-4 0H5v2h2v-2zm12-4h-2v2h2V8zm-4 0h-2v2h2V8zm-4 0H9v2h2V8zm-4 0H5v2h2V8zm12-4h-2v2h2V4zm-4 0h-2v2h2V4zm-4 0H9v2h2V4zm-4 0H5v2h2V4zM5 19h14c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2z"/></svg></div>
+                        <h3 class="feature-title">Storage Limits</h3>
+                        <p class="feature-desc">Per-user quotas.</p>
+                        <ul class="feature-list">
+                            <li><strong>Videos:</strong> Max 10 uploads.</li>
+                            <li><strong>Images:</strong> Max 20 uploads.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg></div>
                         <h3 class="feature-title">Visual Filters</h3>
-                        <p class="feature-desc">Fine-tune readability and aesthetics.</p>
                         <ul class="feature-list">
-                            <li><strong>Blur:</strong> Soften background focus.</li>
-                            <li><strong>Brightness/Contrast:</strong> Adjust lighting levels.</li>
-                            <li><strong>Grayscale:</strong> Black and white mode.</li>
+                            <li><strong>Blur:</strong> Soften focus.</li>
+                            <li><strong>Brightness:</strong> Adjust light.</li>
+                            <li><strong>Contrast/Gray:</strong> Tone mapping.</li>
                         </ul>
                     </div>
                 </div>
@@ -144,20 +195,45 @@
                 <p class="ug-subtitle" style="margin-bottom: 2rem;">The control center at the bottom of your screen.</p>
                 <div class="features-grid">
                     <div class="feature-card">
-                        <h3 class="feature-title">Display Settings</h3>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg></div>
+                        <h3 class="feature-title">Core Controls</h3>
                         <ul class="feature-list">
-                            <li><strong>Auto-Hide:</strong> Fade out when not interacting.</li>
-                            <li><strong>Style - Centralised:</strong> Compact center island.</li>
-                            <li><strong>Style - Spread:</strong> Split media, tools, and widgets across the bottom.</li>
+                            <li><strong>Tabs Toggle:</strong> Opens Tabs Ribbon (Sidebar).</li>
+                            <li><strong>Tools Toggle:</strong> Opens Tools Dashboard (Overlay).</li>
+                            <li><strong>Bookmarks Toggle:</strong> Opens Bookmarks Panel (Sidebar).</li>
+                            <li><strong>Fullscreen:</strong> Toggles immersive mode.</li>
                         </ul>
                     </div>
                     <div class="feature-card">
-                        <h3 class="feature-title">Widgets</h3>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+                        <h3 class="feature-title">Widgets & Media</h3>
                         <ul class="feature-list">
-                            <li><strong>Media Player:</strong> Controls for Spotify, YouTube (requires permissions).</li>
-                            <li><strong>Weather:</strong> Real-time conditions (needs API key).</li>
-                            <li><strong>Clock/Date:</strong> Configurable formats (12h/24h).</li>
-                            <li><strong>Shortcuts:</strong> Quick links to favorite sites.</li>
+                            <li class="dual-col">
+                                <span class="col-main"><strong>Weather:</strong> Real-time conditions.</span>
+                                <span class="col-meta"><strong>Impact:</strong> Periodic Internet.</span>
+                            </li>
+                            <li class="dual-col">
+                                <span class="col-main"><strong>Media:</strong> Controls playback (Spotify, YouTube, SoundCloud, Apple Music, Amazon Music, Twitch, Netflix, Disney+ Hotstar, Vimeo).</span>
+                                <span class="col-meta"><strong>Perms:</strong> 'Tab Capture' req.</span>
+                            </li>
+                            <li><strong>Clock:</strong> Local system time. Settings available.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+                        <h3 class="feature-title">Shortcuts</h3>
+                        <p class="feature-desc">Quick access to favorite sites.</p>
+                        <ul class="feature-list">
+                            <li><strong>Add/Edit:</strong> Manage in Settings > Action Bar.</li>
+                            <li><strong>Impact:</strong> Negligible. Icons cached locally.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13.01 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></svg></div>
+                        <h3 class="feature-title">Smart Actions</h3>
+                        <ul class="feature-list">
+                            <li><strong>Upcoming Alarm:</strong> Displays next alarm time if scheduled.</li>
+                            <li><strong>Timer Status:</strong> Shows countdown if timer active.</li>
                         </ul>
                     </div>
                 </div>
@@ -168,30 +244,127 @@
                     <svg class="ug-section-icon" viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
                     <h2 class="ug-section-title">Tools Dashboard</h2>
                 </div>
+                <p class="ug-subtitle" style="margin-bottom: 2rem;">Access a suite of 13 productivity utilities from the Tools menu.</p>
                 <div class="features-grid modal-grid">
                     <div class="feature-card">
-                        <h3 class="feature-title">System</h3>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></div>
+                        <h3 class="feature-title">System Stats</h3>
+                        <p class="feature-desc">Monitor real-time system performance.</p>
                         <ul class="feature-list">
-                            <li><strong>System Stats:</strong> CPU, RAM, and Storage usage monitors.</li>
-                            <li><strong>Workspaces:</strong> Save and restore groups of tabs.</li>
+                            <li><strong>View:</strong> Graphs for CPU, Memory, and Storage.</li>
+                            <li><strong>Details:</strong> Hover to see specific model info and available capacities.</li>
+                            <li><strong>Impact:</strong> Low. Queries local browser API every second.</li>
                         </ul>
                     </div>
                     <div class="feature-card">
-                        <h3 class="feature-title">Utilities</h3>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></div>
+                        <h3 class="feature-title">Workspaces</h3>
+                        <p class="feature-desc">Save and restore session tab groups.</p>
                         <ul class="feature-list">
-                            <li><strong>Calculator:</strong> Standard arithmetic.</li>
-                            <li><strong>Converter:</strong> Unit conversion (Currency, Length, etc.).</li>
-                            <li><strong>QR Generator:</strong> Create QR codes from text.</li>
-                            <li><strong>Password Gen:</strong> Create secure, random passwords.</li>
+                            <li><strong>Create:</strong> Click (+), name your workspace, and select tabs to save.</li>
+                            <li><strong>Restore:</strong> Click 'Open' to launch all tabs in the group.</li>
+                            <li><strong>Impact:</strong> Negligible. Stores text data locally.</li>
                         </ul>
                     </div>
                     <div class="feature-card">
-                        <h3 class="feature-title">Developer</h3>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14H7v-2h6v2zm4-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+                        <h3 class="feature-title">Calculator</h3>
+                        <p class="feature-desc">Standard arithmetic usage.</p>
                         <ul class="feature-list">
-                            <li><strong>JSON Formatter:</strong> Minify/Format JSON.</li>
-                            <li><strong>Base64:</strong> Encode/Decode strings.</li>
-                            <li><strong>Regex Tester:</strong> Test regular expressions.</li>
-                            <li><strong>Hash Gen:</strong> MD5, SHA-256 generators.</li>
+                            <li><strong>Input:</strong> Click buttons or type numbers/operators.</li>
+                            <li><span><strong>Shortcuts:</strong> <code>Enter</code> to calculate, <code>Esc</code> to clear, <code>Backspace</code> to delete.</span></li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg></div>
+                        <h3 class="feature-title">Converter</h3>
+                        <p class="feature-desc">Unit conversion for everyday needs.</p>
+                        <ul class="feature-list">
+                            <li><strong>Step 1:</strong> Select type (Length, Weight, Currency).</li>
+                            <li><strong>Step 2:</strong> Enter value and choose From/To units.</li>
+                            <li><strong>Currency:</strong> Uses Internet to fetch rates (cached).</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zM13 13h8v8h-8zm2 2v4h4v-4z"/></svg></div>
+                        <h3 class="feature-title">QR Generator</h3>
+                        <p class="feature-desc">Create QR codes instantly.</p>
+                        <ul class="feature-list">
+                            <li><strong>Generate:</strong> Type text or URL in the input box.</li>
+                            <li><strong>Download:</strong> Click 'Download QR' to save the image.</li>
+                            <li><strong>Impact:</strong> Client-side generation (No internet).</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z"/></svg></div>
+                        <h3 class="feature-title">Text Tools</h3>
+                        <p class="feature-desc">Analyze and manipulate text.</p>
+                        <ul class="feature-list">
+                            <li><strong>Stats:</strong> Live count of characters, words, and lines.</li>
+                            <li><strong>Actions:</strong> Convert Case (Upper/Lower/Title), Trim Whitespace, Copy.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3 3.1-3s3.1 1.29 3.1 3v2z"/></svg></div>
+                        <h3 class="feature-title">Password Generator</h3>
+                        <p class="feature-desc">Create strong credentials.</p>
+                        <ul class="feature-list">
+                            <li><strong>Config:</strong> Adjust length slider (8-32). Toggle Uppercase, Numbers, Symbols.</li>
+                            <li><strong>Impact:</strong> Secure (Generated locally, nothing sent).</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg></div>
+                        <h3 class="feature-title">JSON Formatter</h3>
+                        <p class="feature-desc">Validate and beautify JSON data.</p>
+                        <ul class="feature-list">
+                            <li><strong>Format:</strong> Paste raw JSON, click 'Format' to indent.</li>
+                            <li><strong>Minify:</strong> Remove whitespace for compacting.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg></div>
+                        <h3 class="feature-title">Base64 Helper</h3>
+                        <p class="feature-desc">Encode and decode data strings.</p>
+                        <ul class="feature-list">
+                            <li><strong>Encode:</strong> Type text -> Click Encode -> Get Base64.</li>
+                            <li><strong>Decode:</strong> Paste Base64 -> Click Decode -> Get text.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+                        <h3 class="feature-title">Regex Tester</h3>
+                        <p class="feature-desc">Test regular expressions.</p>
+                        <ul class="feature-list">
+                            <li><strong>Usage:</strong> Enter Regex pattern and Test String.</li>
+                            <li><strong>Status:</strong> Shows 'Match Found' or 'No Match'.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M20 10V8h-4V4h-2v4h-4V4H8v4H4v2h4v4H4v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4h4zm-6 4h-4v-4h4v4z"/></svg></div>
+                        <h3 class="feature-title">Hash Generator</h3>
+                        <p class="feature-desc">Generate cryptographic hashes.</p>
+                        <ul class="feature-list">
+                            <li><strong>algo:</strong> Select MD5, SHA-1, or SHA-256.</li>
+                            <li><strong>Impact:</strong> Compute intensive for large texts (Client-side).</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z"/></svg></div>
+                        <h3 class="feature-title">Lorem Ipsum</h3>
+                        <p class="feature-desc">Generate placeholder text.</p>
+                        <ul class="feature-list">
+                            <li><strong>Config:</strong> Choose number of paragraphs/sentences.</li>
+                            <li><strong>Copy:</strong> One-click copy to clipboard.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9zM4 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+                        <h3 class="feature-title">RSS Reader</h3>
+                        <p class="feature-desc">Quick feed preview.</p>
+                        <ul class="feature-list">
+                            <li><strong>Load:</strong> Enter RSS URL and click Load.</li>
+                            <li><strong>Impact:</strong> Uses Internet. Parses feed locally.</li>
                         </ul>
                     </div>
                 </div>
@@ -202,26 +375,63 @@
                     <svg class="ug-section-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
                     <h2 class="ug-section-title">Feature Modals</h2>
                 </div>
+                <p class="ug-subtitle" style="margin-bottom: 2rem;">Floatable widgets for notes, bookmarks, and time management.</p>
                 <div class="features-grid modal-grid">
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
                         <h3 class="feature-title">Notes</h3>
-                        <p class="feature-desc">Rich text editor with checklist support. Notes can be <strong>pinned</strong> to the desktop.</p>
+                        <p class="feature-desc">Capture thoughts and tasks.</p>
+                        <ul class="feature-list">
+                            <li class="dual-col">
+                                <span class="col-main"><strong>Create:</strong> Click (+).</span>
+                                <span class="col-meta"><strong>Limit:</strong> Max 10 Notes.</span>
+                            </li>
+                            <li><strong>Pinning:</strong> Click the 'Pin' icon to keep note on desktop.</li>
+                            <li><strong>Impact:</strong> Low. Saved to local storage (max 5MB text).</li>
+                        </ul>
                     </div>
                     <div class="feature-card">
-                        <h3 class="feature-title">Bookmarks</h3>
-                        <p class="feature-desc">Searchable tree view of your browser bookmarks. Right-click to Copy or Share.</p>
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+                        <h3 class="feature-title">Bookmarks Panel</h3>
+                        <p class="feature-desc">Advanced bookmark management.</p>
+                        <ul class="feature-list">
+                            <li><strong>Access:</strong> Click the 'Star' toggle in Action Bar.</li>
+                            <li><strong>Search:</strong> Filter bookmarks, folders, and URLs instantly.</li>
+                            <li><strong>Impact:</strong> Low. Queries browser index on open.</li>
+                        </ul>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zm-10-7h9v6h-9z"/></svg></div>
                         <h3 class="feature-title">Tabs Ribbon</h3>
-                        <p class="feature-desc">Vertical list of all open tabs/windows. Includes "Merge Windows" to consolidate.</p>
+                        <p class="feature-desc">Vertical tab management sidebar.</p>
+                        <ul class="feature-list">
+                            <li><strong>Access:</strong> Click the 'App' toggle (leftmost) in Action Bar.</li>
+                            <li><strong>Merge:</strong> Click 'Merge Windows' to consolidate tabs.</li>
+                            <li><strong>Impact:</strong> Zero background usage. Active only when open.</li>
+                        </ul>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg></div>
                         <h3 class="feature-title">Timer & Stopwatch</h3>
-                        <p class="feature-desc">Countdown timer with presets (Coffee, Focus) and a lap-capable stopwatch.</p>
+                        <p class="feature-desc">Time management tools.</p>
+                        <ul class="feature-list">
+                            <li><strong>Timer:</strong> Select preset (Short/Long Break) or click Edit to type custom time.</li>
+                            <li><strong>Audio:</strong> Toggle sound alerts on/off.</li>
+                            <li><strong>Impact:</strong> Minimal. Uses lightweight interval timers.</li>
+                        </ul>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon"><svg class="feature-svg" viewBox="0 0 24 24"><path d="M22 5.72l-4.6-3.86-1.29 1.53 4.6 3.86L22 5.72zM7.88 3.39L6.6 1.86 2 5.71l1.29 1.53 4.59-3.85zM12.5 8H11v6l4.75 2.85.75-1.23-4-2.37V8zM12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg></div>
                         <h3 class="feature-title">Alarms</h3>
-                        <p class="feature-desc">Schedule one-time or repeating alarms (Daily, Weekdays). Supports desktop notifications.</p>
+                        <p class="feature-desc">Never miss an event.</p>
+                        <ul class="feature-list">
+                            <li class="dual-col">
+                                <span class="col-main"><strong>Add:</strong> Frequency opts/once.</span>
+                                <span class="col-meta"><strong>Limit:</strong> Max 3 Alarms.</span>
+                            </li>
+                            <li><strong>Perms:</strong> Grant "Notifications" for desktop alerts.</li>
+                            <li><strong>Impact:</strong> Uses Chrome Alarms API (efficient).</li>
+                        </ul>
                     </div>
                 </div>
             </section>

@@ -23,6 +23,7 @@
 	gap: var(--dis-xs);
 }
 
+/* action-item - actionbar icon buttons */
 .action-item {
 	display: flex;
 	align-items: center;
@@ -34,6 +35,11 @@
 	transition: background var(--transition-fast), color var(--transition-fast);
 }
 
+.action-item .ui-icon {
+	width: 45%;
+	height: 45%;
+}
+
 .action-group .action-item.active,
 .action-group .action-item:hover,
 .action-group .action-item:active {
@@ -41,17 +47,6 @@
 	color: var(--text-accent);
 }
 
-.action-item img,
-.action-item svg {
-	width: 70%;
-	height: 70%;
-	object-fit: contain;
-}
-
-.action-item .ui-icon {
-	width: 70%;
-	height: 70%;
-}
 
 .action-group {
 	display: flex;
@@ -134,29 +129,12 @@
 	gap: var(--dis-xs);
 }
 
+/* media-btn extends btn-icon from base.css */
 .media-btn {
-	width: var(--dis-4);
-	height: var(--dis-4);
-	border-radius: 50%;
-	border: none;
 	background: transparent;
-	color: var(--text-base);
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: background var(--transition-fast);
 }
 
-.media-btn:hover {
-	background: var(--color-off);
-	color: var(--text-accent);
-}
-
-.media-btn .ui-icon {
-	width: 50%;
-	height: 50%;
-}
+/* media-btn uses btn-icon icon sizing from base.css (45%) */
 
 /* Clock in Action Bar */
 .clock-group {
@@ -307,8 +285,8 @@
 }
 
 .shortcut-action-btn .ui-icon {
-	width: 100%;
-	height: 100%;
+	width: 45%;
+	height: 45%;
 }
 
 /* Edit Mode Toggle Button Active State */

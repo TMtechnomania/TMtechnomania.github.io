@@ -53,27 +53,11 @@ async function loadSettings() {
 }
 
 function initNavigation() {
-    const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('.ug-nav-item');
-    const main = document.querySelector('.ug-main');
-
-    if (!main) return;
-
-    main.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            // Adjustment for offset
-            if (main.scrollTop >= (sectionTop - 150)) {
-                current = section.getAttribute('id');
-            }
-        });
-
-        navItems.forEach(li => {
-            li.classList.remove('active');
-            if (li.getAttribute('href').includes(current)) {
-                li.classList.add('active');
-            }
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+             navItems.forEach(n => n.classList.remove('active'));
+             item.classList.add('active');
         });
     });
 }

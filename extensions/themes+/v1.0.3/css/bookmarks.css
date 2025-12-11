@@ -4,10 +4,10 @@
 	left: 0;
 	right: 0;
 	margin: 0 auto;
-	width: 600px;
+	width: calc(600px * var(--ui-scale));
 	max-width: 90vw;
 	height: 60vh;
-	max-height: 800px;
+	max-height: calc(800px * var(--ui-scale));
 	z-index: var(--z-panel);
 	background: var(--color-base);
 	display: flex;
@@ -38,6 +38,7 @@
 	margin-bottom: var(--dis-1);
 }
 
+/* bookmarks-expand */
 .bookmarks-expand {
 	width: var(--dis-5);
 	height: var(--dis-5);
@@ -52,8 +53,8 @@
 }
 
 .bookmarks-expand .ui-icon {
-	width: 60%;
-	height: 60%;
+	width: 40%;
+	height: 40%;
 }
 
 .bookmarks-search {
@@ -73,18 +74,9 @@
 	color: var(--text-off);
 }
 
+/* bookmarks-close extends btn-pill primary from base.css */
 .bookmarks-close {
-	padding: var(--dis-xs) var(--dis-2);
-	border-radius: var(--radius-full);
-	background: var(--color-accent);
-	color: var(--text-invert);
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
 	min-height: var(--dis-5);
-	font-weight: 500;
-	font-size: calc(0.95rem * var(--ui-scale));
 }
 
 .bookmarks-search-results,
@@ -209,7 +201,7 @@
 	flex-direction: column;
 	min-width: 0;
 	flex: 1 1 auto;
-	gap: 2px;
+	gap: calc(2px * var(--ui-scale));
 }
 
 .bookmark-actions {
@@ -219,6 +211,7 @@
 	flex-shrink: 0;
 }
 
+/* bookmark-action-btn */
 .bookmark-action-btn {
 	width: var(--dis-4);
 	height: var(--dis-4);
@@ -228,12 +221,11 @@
 	border-radius: var(--radius-full);
 	cursor: pointer;
 	background: transparent;
-	padding: var(--dis-xs);
 }
 
 .bookmark-action-btn .ui-icon {
-	width: 80%;
-	height: 80%;
+	width: 45%;
+	height: 45%;
 }
 
 .bookmarks-none {

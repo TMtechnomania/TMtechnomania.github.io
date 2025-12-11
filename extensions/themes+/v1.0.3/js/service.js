@@ -142,14 +142,8 @@ self.addEventListener("install", (event) => {
                 self.skipWaiting();
             } catch (e) {}
 
-            try {
-                const url = (typeof chrome !== 'undefined' && chrome.runtime) ? chrome.runtime.getURL('newtab.html') : 'newtab.html';
-                if (app && app.tabs && app.tabs.create) {
-                    try { app.tabs.create({ url }); } catch (err) { }
-                } else if (self.clients && self.clients.openWindow) {
-                    try { await self.clients.openWindow(url); } catch (err) { }
-                }
-            } catch (err) {}
+            // Removed auto-open of newtab.html on SW install. 
+            // We handle this in chrome.runtime.onInstalled now.
 		})(),
 	);
 });
@@ -166,6 +160,13 @@ chrome.runtime.onInstalled.addListener(async (details) => {
         req.onerror = () => {}; // console.warn('Legacy videoDB cleanup error');
     } catch (e) {
         // console.warn('Legacy videoDB cleanup exception', e);
+    }
+
+    // Open User Guide on processing install or update
+    if (details.reason === 'install' || details.reason === 'update') {
+        try {
+            chrome.tabs.create({ url: 'userguide.html' });
+        } catch (e) {}
     }
 });
 
@@ -281,6 +282,7 @@ async function handleMessage(data, sendResponse, sender) { // Added sender param
             }
             // MEDIA_PRESENCE updates for non-priority tabs are silently stored without broadcasting
         }
+        if (sendResponse) sendResponse({});
         return;
     }
 
@@ -304,6 +306,7 @@ async function handleMessage(data, sendResponse, sender) { // Added sender param
         } else {
             // console.warn('[Service] No active media tab to send control to');
         }
+        if (sendResponse) sendResponse({});
         return;
     }
 
@@ -320,6 +323,7 @@ async function handleMessage(data, sendResponse, sender) { // Added sender param
                 });
             });
         });
+        if (sendResponse) sendResponse({});
         return;
     }
     
@@ -562,3 +566,34 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     }
 });
 
+
+// Watch for navigation to clear media state (e.g. user goes from Amazon Music to Google)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'loading' && mediaTabs.has(tabId)) {
+        mediaTabs.delete(tabId);
+        
+        const newPriorityTabId = selectHighestPriorityTab();
+        
+        if (newPriorityTabId !== currentPriorityTabId) {
+            currentPriorityTabId = newPriorityTabId;
+            
+            if (currentPriorityTabId) {
+                const priorityTabInfo = mediaTabs.get(currentPriorityTabId);
+                if (priorityTabInfo) {
+                    chrome.runtime.sendMessage({ 
+                        type: 'MEDIA_UPDATE', 
+                        data: priorityTabInfo.data,
+                        tabId: currentPriorityTabId,
+                        fromService: true
+                    }).catch(() => {});
+                }
+            } else {
+                 chrome.runtime.sendMessage({ 
+                    type: 'MEDIA_UPDATE', 
+                    data: null,
+                    fromService: true
+                }).catch(() => {});
+            }
+        }
+    }
+});

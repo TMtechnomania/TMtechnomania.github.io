@@ -202,7 +202,7 @@ function renderAlarms(modal) {
         const freq = document.createElement('div'); freq.className='alarm-freq'; freq.textContent = al.frequency === 'once' ? 'Once' : (al.frequency==='daily'?'Daily':'Weekdays');
         left.appendChild(label); left.appendChild(time); left.appendChild(freq);
         const right = document.createElement('div'); right.className='alarm-right';
-        const toggle = document.createElement('button'); toggle.className='tm-btn alarm-toggle round'; toggle.title = al.on ? 'Disable' : 'Enable';
+        const toggle = document.createElement('button'); toggle.className='btn-icon-lg alarm-toggle'; toggle.title = al.on ? 'Disable' : 'Enable';
         toggle.setAttribute('aria-pressed', al.on ? 'true' : 'false');
         const checkIcon = 'assets/svgs-fontawesome/solid/square-check.svg';
         const uncheckIcon = 'assets/svgs-fontawesome/regular/square.svg';
@@ -211,10 +211,10 @@ function renderAlarms(modal) {
             al.on = !al.on; saveState(); renderAlarms(modal);
             if (al.on) scheduleAlarm(al, modal); else { clearScheduled(al.id); clearChromeAlarm(al.id); }
         });
-        const edit = document.createElement('button'); edit.className='tm-btn alarm-edit round'; edit.title='Edit';
+        const edit = document.createElement('button'); edit.className='btn-icon-lg alarm-edit'; edit.title='Edit';
         addIconWithLabel(edit, 'assets/svgs-fontawesome/regular/pen-to-square.svg');
         edit.addEventListener('click', ()=> openEditForm(modal, al));
-        const del = document.createElement('button'); del.className='tm-btn alarm-del round'; del.title='Delete';
+        const del = document.createElement('button'); del.className='btn-icon-lg alarm-del'; del.title='Delete';
         addIconWithLabel(del, 'assets/svgs-fontawesome/regular/circle-xmark.svg');
         del.addEventListener('click', ()=> { _state.alarms = _state.alarms.filter(x=>x.id!==al.id); clearScheduled(al.id); clearChromeAlarm(al.id); saveState(); renderAlarms(modal); });
         right.appendChild(toggle); right.appendChild(edit); right.appendChild(del);
@@ -230,8 +230,8 @@ function openEditForm(modal, alarm) {
     const time = document.createElement('input'); time.type='time'; time.value = alarm ? formatTime(alarm.hour,alarm.minute) : '07:00';
     const freq = document.createElement('select'); freq.innerHTML = `<option value="once">Once</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option>`; freq.value = alarm ? alarm.frequency : 'once';
     const row = document.createElement('div'); row.className='alarm-form-row';
-    const save = document.createElement('button'); save.className='tm-btn'; save.title='Save'; addIconWithLabel(save, 'assets/svgs-fontawesome/regular/floppy-disk.svg', 'Save');
-    const cancel = document.createElement('button'); cancel.className='tm-btn'; cancel.title='Cancel'; addIconWithLabel(cancel, 'assets/svgs-fontawesome/regular/circle-xmark.svg', 'Cancel');
+    const save = document.createElement('button'); save.className='btn-combo'; save.title='Save'; addIconWithLabel(save, 'assets/svgs-fontawesome/regular/floppy-disk.svg', 'Save');
+    const cancel = document.createElement('button'); cancel.className='btn-combo'; cancel.title='Cancel'; addIconWithLabel(cancel, 'assets/svgs-fontawesome/regular/circle-xmark.svg', 'Cancel');
     row.appendChild(save); row.appendChild(cancel);
     form.appendChild(label); form.appendChild(time); form.appendChild(freq); form.appendChild(row);
     modal.querySelector('.alarm-body').appendChild(form);
@@ -261,7 +261,7 @@ async function openAlarmModal() {
     const permText = document.createElement('div'); permText.className='perm-text';
     if (window.Notification && Notification.permission !== 'granted' && !_state.permissionAsked) {
         permText.textContent = 'Enable notifications to allow alarms to show notifications (optional).';
-        const permBtn = document.createElement('button'); permBtn.className='tm-btn'; permBtn.title='Enable Notifications';
+        const permBtn = document.createElement('button'); permBtn.className='btn-combo'; permBtn.title='Enable Notifications';
         addIconWithLabel(permBtn, 'assets/svgs-fontawesome/regular/bell.svg', 'Enable Notifications');
         permBtn.addEventListener('click', async ()=>{
             try { const res = await Notification.requestPermission(); localStorage.setItem(PERMISSION_FLAG,'1'); _state.permissionAsked = true; permArea.remove(); } catch (e) { localStorage.setItem(PERMISSION_FLAG,'1'); _state.permissionAsked = true; permArea.remove(); }
@@ -274,7 +274,7 @@ async function openAlarmModal() {
         if (chrome && chrome.permissions && chrome.permissions.contains) {
             chrome.permissions.contains({ permissions: ['alarms'] }, (has) => {
                 if (!has) {
-                    const btn = document.createElement('button'); btn.className='tm-btn'; btn.title = 'Enable Background Alarms';
+                    const btn = document.createElement('button'); btn.className='btn-combo'; btn.title = 'Enable Background Alarms';
                     addIconWithLabel(btn, 'assets/svgs-fontawesome/regular/bell.svg', 'Enable Background Alarms');
                     btn.addEventListener('click', () => {
                         try {
@@ -298,10 +298,10 @@ async function openAlarmModal() {
     const list = document.createElement('div'); list.id='alarms-list'; list.className='alarms-list';
     body.appendChild(list);
     const controls = document.createElement('div'); controls.className='alarm-controls';
-    const add = document.createElement('button'); add.id='alarm-add'; add.className='tm-btn'; add.title='Add Alarm';
+    const add = document.createElement('button'); add.id='alarm-add'; add.className='btn-combo'; add.title='Add Alarm';
     addIconWithLabel(add, 'assets/svgs-fontawesome/solid/plus.svg', 'Add');
     add.addEventListener('click', ()=> openEditForm(modal, null));
-    const test = document.createElement('button'); test.className='tm-btn'; test.title='Test Alarm';
+    const test = document.createElement('button'); test.className='btn-combo'; test.title='Test Alarm';
     addIconWithLabel(test, 'assets/svgs-fontawesome/regular/bell.svg', 'Test');
     test.addEventListener('click', ()=>{ if (_state.audio) { _state.audio.currentTime = 0; _state.audio.loop = true; _state.audio.play(); setTimeout(() => { _state.audio.pause(); _state.audio.loop = false; }, 5000); } try{ if (window.Notification && Notification.permission==='granted') new Notification('Test Alarm',{body:'This is a test alarm', icon: chrome.runtime.getURL('icons/icon128.png')}); }catch(e){} });
     controls.appendChild(add); controls.appendChild(test);
@@ -310,7 +310,8 @@ async function openAlarmModal() {
     modal.appendChild(body);
     _backdrop.appendChild(modal); document.body.appendChild(_backdrop);
 
-    _state.audio = new Audio(AUDIO_SRC); _state.audio.loop = false;
+    if (!_state.audio) { _state.audio = new Audio(AUDIO_SRC); }
+    _state.audio.loop = false;
     _state.audio.addEventListener('ended', () => {
         if (_state.audio) {
             _state.audio.currentTime = 0;

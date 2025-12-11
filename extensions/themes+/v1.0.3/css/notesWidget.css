@@ -6,8 +6,8 @@
 	flex-direction: column;
 	z-index: var(--z-panel);
 	overflow: hidden;
-	min-width: 150px;
-	min-height: 100px;
+	min-width: calc(150px * var(--ui-scale));
+	min-height: calc(100px * var(--ui-scale));
 	font-family: var(--font-family);
     resize: both;
     overflow: hidden;
@@ -85,7 +85,7 @@
 }
 
 .widget-checklist-box {
-    margin-top: 3px;
+    margin-top: calc(3px * var(--ui-scale));
     cursor: pointer;
 }
 

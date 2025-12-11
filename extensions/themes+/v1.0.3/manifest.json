@@ -19,23 +19,53 @@
 		"type": "module"
 	},
 	"host_permissions": ["https://buildwithkt.dev/*", "*://*/*"],
-	"content_scripts": [
-		{
-			"matches": ["https://open.spotify.com/*"],
-			"js": ["js/content/spotify.js"],
-			"run_at": "document_idle"
-		},
-		{
-			"matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
-			"js": ["js/content/youtube.js"],
-			"run_at": "document_idle"
-		},
-		{
-			"matches": ["https://soundcloud.com/*"],
-			"js": ["js/content/soundcloud.js"],
-			"run_at": "document_idle"
-		}
-	],
+    "content_scripts": [
+        {
+            "matches": ["https://open.spotify.com/*"],
+            "js": ["js/content/spotify.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+            "js": ["js/content/youtube.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://soundcloud.com/*"],
+            "js": ["js/content/soundcloud.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://music.apple.com/*"],
+            "js": ["js/content/apple_music.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://music.amazon.com/*"],
+            "js": ["js/content/amazon_music.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://www.twitch.tv/*"],
+            "js": ["js/content/twitch.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://www.netflix.com/*"],
+            "js": ["js/content/netflix.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://www.disneyplus.com/*", "https://www.hotstar.com/*", "https://www.disneyplus.hotstar.com/*"],
+            "js": ["js/content/disney_hotstar.js"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://vimeo.com/*"],
+            "js": ["js/content/vimeo.js"],
+            "run_at": "document_idle"
+        }
+    ],
 	"web_accessible_resources": [
 		{
 			"resources": ["assets/*", "css/*", "icons/*"],
