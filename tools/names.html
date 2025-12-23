@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Particles | Digital Invite</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #c5a059; /* Sophisticated Muted Gold */
+            --bg: #0a0a0a; /* Darker theme makes particles pop more professionally */
+            --accent: #e2c08d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            touch-action: none; /* Prevents scrolling while interacting with particles */
+        }
+
+        /* Setup Screen - Glassmorphism */
+        #setup-screen {
+            position: relative;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: clamp(1.25rem, 3vw, 3rem);
+            border-radius: 24px;
+            text-align: center;
+            width: 90%;
+            max-width: 560px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+            margin-bottom: clamp(1.2rem, 3vw, 2rem);
+            color: var(--primary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+            background: transparent;
+            font-size: clamp(1.0rem, 2.2vw, 1.35rem);
+            outline: none;
+            color: white;
+            transition: border-color 0.4s;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+
+        input:focus {
+            border-bottom: 1px solid var(--primary);
+        }
+
+        button {
+            margin-top: 1.5rem;
+            padding: 16px 45px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: clamp(0.75rem, 1.4vw, 0.9rem);
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+        }
+
+        /* Fix: Button only moves upward slightly */
+        button:hover {
+            transform: translateY(-5px); 
+            background: var(--accent);
+        }
+
+        /* Render Screen */
+        #render-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .back-btn {
+            pointer-events: auto;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            font-size: clamp(0.65rem, 1.3vw, 0.85rem);
+        }
+
+        .back-btn:hover {
+            color: white;
+            border-color: white;
+        }
+
+        .hint {
+            position: absolute;
+            top: 40px;
+            width: 100%;
+            text-align: center;
+            color: var(--primary);
+            font-size: clamp(0.7rem, 1.6vw, 1rem);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            animation: fadeInOut 3s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Input Form -->
+    <div id="setup-screen">
+        <h1>Celestial Union</h1>
+        <div class="input-group">
+            <input type="text" id="name1" placeholder="Enter Name" maxlength="12">
+        </div>
+        <div class="input-group">
+            <input type="text" id="name2" placeholder="Enter Name" maxlength="12">
+        </div>
+        <button onclick="startExperience()">Create Magic</button>
+    </div>
+
+    <!-- Interactive Particle Screen -->
+    <div id="render-screen">
+        <div class="hint">Move or Touch to Interact</div>
+        <canvas id="particle-canvas"></canvas>
+        <div class="controls">
+            <button class="back-btn" onclick="location.reload()">CREATE NEW</button>
+        </div>
+    </div>
+
+    <!-- GSAP for smooth transitions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let particles = [];
+        let mouse = { x: 0, y: 0, radius: 80 };
+        let viewportW = window.innerWidth;
+        let viewportH = window.innerHeight;
+
+        let lastFrameTime = performance.now();
+        let nextBurstAt = 0;
+
+        let desiredBurstCount = 10;
+        let burstSeq = 0;
+        const activeBursts = new Map(); // burstId -> { ttl }
+        const burstParticleCounts = new Map(); // burstId -> count
+
+        const HOVER_A = '#EC265F';
+        const HOVER_B = '#F25377';
+
+        function hexToRgb(hex) {
+            const clean = hex.replace('#', '').trim();
+            const full = clean.length === 3
+                ? clean.split('').map((c) => c + c).join('')
+                : clean;
+            const value = parseInt(full, 16);
+            return {
+                r: (value >> 16) & 255,
+                g: (value >> 8) & 255,
+                b: value & 255,
+            };
+        }
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        function lerpRgb(c1, c2, t) {
+            return {
+                r: Math.round(lerp(c1.r, c2.r, t)),
+                g: Math.round(lerp(c1.g, c2.g, t)),
+                b: Math.round(lerp(c1.b, c2.b, t)),
+            };
+        }
+
+        const HOVER_RGB_A = hexToRgb(HOVER_A);
+        const HOVER_RGB_B = hexToRgb(HOVER_B);
+
+        function getHoverColor(x, y) {
+            const tx = viewportW > 0 ? x / viewportW : 0.5;
+            const ty = viewportH > 0 ? y / viewportH : 0.5;
+            const mix = Math.max(0, Math.min(1, 0.15 + tx * 0.85));
+            const rgb = lerpRgb(HOVER_RGB_A, HOVER_RGB_B, mix);
+            const alpha = 0.75 + ty * 0.25;
+            return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+        }
+
+        function randBetween(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
+        function clamp01(v) {
+            return Math.max(0, Math.min(1, v));
+        }
+
+        function scheduleNextBurst(now) {
+            nextBurstAt = now + randBetween(220, 520);
+        }
+
+        function randInt(min, max) {
+            return Math.floor(randBetween(min, max + 1));
+        }
+
+        function sampleHeartPoints(pointCount) {
+            // Parametric heart curve; normalized roughly to [-1..1]
+            const pts = [];
+            for (let i = 0; i < pointCount; i++) {
+                const t = (i / pointCount) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+
+                // Normalize: x range about [-16..16], y about [-17..13]
+                const nx = x / 16;
+                const ny = -y / 17; // flip so "up" is negative in canvas
+                pts.push({ x: nx, y: ny });
+            }
+            return pts;
+        }
+
+        function sampleSparkPoints(pointsPerEdge) {
+            // 4-point spark (like ✨) as an 8-vertex indented diamond
+            const verts = [
+                { x: 0, y: -1 },
+                { x: 0.25, y: -0.25 },
+                { x: 1, y: 0 },
+                { x: 0.25, y: 0.25 },
+                { x: 0, y: 1 },
+                { x: -0.25, y: 0.25 },
+                { x: -1, y: 0 },
+                { x: -0.25, y: -0.25 },
+            ];
+            const pts = [];
+            for (let i = 0; i < verts.length; i++) {
+                const a = verts[i];
+                const b = verts[(i + 1) % verts.length];
+                for (let j = 0; j < pointsPerEdge; j++) {
+                    const t = j / pointsPerEdge;
+                    pts.push({
+                        x: lerp(a.x, b.x, t),
+                        y: lerp(a.y, b.y, t),
+                    });
+                }
+            }
+            return pts;
+        }
+
+        function spawnBurst(kind) {
+            const now = performance.now();
+            const minDim = Math.min(viewportW, viewportH);
+
+            const centerX = randBetween(viewportW * 0.18, viewportW * 0.82);
+            const centerY = randBetween(viewportH * 0.18, viewportH * 0.82);
+            const ttl = randBetween(3000, 6000);
+
+            const centerVx = randBetween(-0.25, 0.25);
+            const centerVy = randBetween(-0.45, -0.15);
+
+            const baseScale = kind === 'heart'
+                ? randBetween(minDim * 0.045, minDim * 0.07)
+                : randBetween(minDim * 0.032, minDim * 0.055);
+
+            // Requirement: 50% of current size
+            const scaledBase = baseScale * 0.5;
+
+            const pts = kind === 'heart'
+                ? sampleHeartPoints(220)
+                : sampleSparkPoints(14);
+
+            const maxExtra = kind === 'heart' ? 26 : 18;
+            const density = kind === 'heart' ? 0.95 : 1.0;
+
+            const burstId = ++burstSeq;
+            activeBursts.set(burstId, { ttl });
+
+            let created = 0;
+            for (let i = 0; i < pts.length; i++) {
+                if (Math.random() > density) continue;
+                const p = pts[i];
+                const jitterX = randBetween(-maxExtra, maxExtra) * 0.12;
+                const jitterY = randBetween(-maxExtra, maxExtra) * 0.12;
+
+                const particle = new Particle(
+                    centerX + (p.x * scaledBase) + jitterX,
+                    centerY + (p.y * scaledBase) + jitterY,
+                    kind === 'heart' ? getHoverColor(centerX, centerY) : `hsla(40, 55%, 70%, 0.9)`,
+                    {
+                        mode: 'burst',
+                        burstKind: kind,
+                        burstId,
+                        bornAt: now,
+                        ttl,
+                        centerX,
+                        centerY,
+                        centerVx,
+                        centerVy,
+                        localX: p.x,
+                        localY: p.y,
+                        baseScale: scaledBase,
+                    }
+                );
+                particles.push(particle);
+                created++;
+            }
+
+            burstParticleCounts.set(burstId, created);
+        }
+
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            viewportW = window.innerWidth;
+            viewportH = window.innerHeight;
+
+            canvas.width = Math.floor(viewportW * dpr);
+            canvas.height = Math.floor(viewportH * dpr);
+            canvas.style.width = `${viewportW}px`;
+            canvas.style.height = `${viewportH}px`;
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (document.getElementById('render-screen').style.display === 'block') {
+                location.reload(); // Simplest way to re-render complex particle text
+            }
+        });
+
+        // Track Mouse & Touch
+        const updateMouse = (e) => {
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            mouse.x = x;
+            mouse.y = y;
+        };
+        window.addEventListener('mousemove', updateMouse);
+        window.addEventListener('touchstart', updateMouse);
+        window.addEventListener('touchmove', updateMouse);
+
+        class Particle {
+            constructor(x, y, color, opts = {}) {
+                this.mode = opts.mode || 'text';
+                this.burstKind = opts.burstKind;
+                this.burstId = opts.burstId;
+                this.bornAt = opts.bornAt || 0;
+                this.ttl = opts.ttl || 0;
+
+                this.centerX = opts.centerX;
+                this.centerY = opts.centerY;
+                this.centerVx = opts.centerVx || 0;
+                this.centerVy = opts.centerVy || 0;
+                this.localX = opts.localX || 0;
+                this.localY = opts.localY || 0;
+                this.baseScale = opts.baseScale || 0;
+
+                this.isDead = false;
+
+                this._countedDead = false;
+
+                // Text particles can "assemble"; decorative bursts should appear as a clean shape.
+                if (this.mode === 'burst') {
+                    this.x = x;
+                    this.y = y;
+                } else {
+                    this.x = Math.random() * viewportW;
+                    this.y = Math.random() * viewportH;
+                }
+                this.destX = x;
+                this.destY = y;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.baseColor = color;
+                this.color = color;
+                this.friction = 0.92;
+                this.ease = 0.08;
+                this.vx = 0;
+                this.vy = 0;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            update() {
+                const now = performance.now();
+
+                if (this.mode === 'burst') {
+                    const age = now - this.bornAt;
+                    const t = this.ttl > 0 ? age / this.ttl : 1;
+                    if (t >= 1) {
+                        this.isDead = true;
+                        return;
+                    }
+
+                    // Drift the shape center slightly
+                    this.centerX += this.centerVx;
+                    this.centerY += this.centerVy;
+
+                    // Subtle scale pulse + fade-out
+                    const pulse = 0.78 + 0.28 * Math.sin(Math.PI * clamp01(t));
+                    const scale = this.baseScale * pulse;
+                    const alpha = Math.pow(1 - t, 1.35);
+
+                    this.destX = this.centerX + this.localX * scale;
+                    this.destY = this.centerY + this.localY * scale;
+
+                    if (this.burstKind === 'heart') {
+                        const mix = clamp01(0.15 + (this.localX * 0.5 + 0.5) * 0.85);
+                        const rgb = lerpRgb(HOVER_RGB_A, HOVER_RGB_B, mix);
+                        this.baseColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+                        this.color = this.baseColor;
+                    } else {
+                        const tx = clamp01(this.localX * 0.5 + 0.5);
+                        const ty = clamp01(this.localY * 0.5 + 0.5);
+                        const hue = 35 + tx * 15;
+                        const light = 62 + ty * 18;
+                        this.baseColor = `hsla(${hue}, 50%, ${light}%, ${alpha})`;
+                        this.color = this.baseColor;
+                    }
+                }
+
+                // Physics to return to original position
+                let dx = this.destX - this.x;
+                let dy = this.destY - this.y;
+                this.vx += dx * this.ease;
+                this.vy += dy * this.ease;
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Mouse Interaction
+                let mdx = mouse.x - this.x;
+                let mdy = mouse.y - this.y;
+                let dist = Math.sqrt(mdx * mdx + mdy * mdy);
+
+                if (dist < mouse.radius) {
+                    let force = (mouse.radius - dist) / mouse.radius;
+                    let angle = Math.atan2(mdy, mdx);
+                    this.vx -= Math.cos(angle) * force * 10;
+                    this.vy -= Math.sin(angle) * force * 10;
+                    if (this.mode === 'text') {
+                        this.color = getHoverColor(this.destX, this.destY);
+                    }
+                } else {
+                    this.color = this.baseColor;
+                }
+            }
+        }
+
+        function startExperience() {
+            const n1 = document.getElementById('name1').value.toUpperCase() || "NAME";
+            const n2 = document.getElementById('name2').value.toUpperCase() || "NAME";
+
+            gsap.to("#setup-screen", {
+                duration: 0.8,
+                opacity: 0,
+                y: -20,
+                ease: "power2.in",
+                onComplete: () => {
+                    document.getElementById('setup-screen').style.display = 'none';
+                    document.getElementById('render-screen').style.display = 'block';
+                    initParticles(n1, n2);
+                }
+            });
+        }
+
+        function initParticles(t1, t2) {
+            particles = [];
+            resizeCanvas();
+
+            activeBursts.clear();
+            burstParticleCounts.clear();
+            desiredBurstCount = randInt(8, 12);
+            scheduleNextBurst(performance.now());
+
+            // Use offscreen canvas to sample text pixels
+            const offscreen = document.createElement('canvas');
+            const octx = offscreen.getContext('2d');
+            offscreen.width = viewportW;
+            offscreen.height = viewportH;
+
+            // Configure text style
+            let fontSize = Math.max(44, Math.min(Math.min(viewportW, viewportH) * 0.18, 180));
+            const maxTextWidth = viewportW * 0.86;
+
+            const longest = t1.length >= t2.length ? t1 : t2;
+            octx.textAlign = 'center';
+            octx.fillStyle = 'white';
+
+            // Fit-to-width: shrink font until the longest name fits
+            while (fontSize > 34) {
+                octx.font = `700 ${fontSize}px 'Playfair Display'`;
+                if (octx.measureText(longest).width <= maxTextWidth) break;
+                fontSize *= 0.92;
+            }
+            // Draw names on invisible canvas
+            const centerX = viewportW / 2;
+            const centerY = viewportH / 2;
+            const lineGap = fontSize * 0.95;
+
+            octx.font = `700 ${fontSize}px 'Playfair Display'`;
+            octx.fillText(t1, centerX, centerY - lineGap);
+
+            octx.font = `italic 300 ${Math.max(22, fontSize * 0.55)}px 'Playfair Display'`;
+            octx.fillText("&", centerX, centerY);
+
+            octx.font = `700 ${fontSize}px 'Playfair Display'`;
+            octx.fillText(t2, centerX, centerY + lineGap);
+
+            // Scan the canvas for "text" pixels
+            const pixels = octx.getImageData(0, 0, viewportW, viewportH).data;
+            const gap = Math.max(2, Math.round(fontSize / 50)); // Space between particles
+
+            for (let y = 0; y < viewportH; y += gap) {
+                for (let x = 0; x < viewportW; x += gap) {
+                    const index = (y * viewportW + x) * 4;
+                    if (pixels[index + 3] > 128) { // If pixel is not transparent
+                        // Create a gold/rose-gold gradient feel based on X position
+                        const color = `hsl(${35 + (x / viewportW) * 15}, 50%, ${60 + (y / viewportH) * 20}%)`;
+                        particles.push(new Particle(x, y, color));
+                    }
+                }
+            }
+            animate();
+        }
+
+        function animate() {
+            const now = performance.now();
+            const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+            lastFrameTime = now;
+
+            ctx.clearRect(0, 0, viewportW, viewportH);
+            
+            // Subtle ambient background glow
+            const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 200);
+            gradient.addColorStop(0, 'rgba(197, 160, 89, 0.05)');
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, viewportW, viewportH);
+
+            // Keep 8-12 decorative bursts on-screen concurrently
+            if (document.getElementById('render-screen').style.display === 'block') {
+                if (activeBursts.size < 8) {
+                    desiredBurstCount = randInt(8, 12);
+                }
+                if (activeBursts.size < desiredBurstCount && now >= nextBurstAt) {
+                    spawnBurst(Math.random() < 0.55 ? 'spark' : 'heart');
+                    scheduleNextBurst(now);
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update(dt);
+                if (p.isDead) {
+                    if (p.mode === 'burst' && p.burstId && !p._countedDead) {
+                        p._countedDead = true;
+                        const remaining = (burstParticleCounts.get(p.burstId) || 0) - 1;
+                        if (remaining <= 0) {
+                            burstParticleCounts.delete(p.burstId);
+                            activeBursts.delete(p.burstId);
+                        } else {
+                            burstParticleCounts.set(p.burstId, remaining);
+                        }
+                    }
+                    particles.splice(i, 1);
+                    continue;
+                }
+                p.draw();
+            }
+            requestAnimationFrame(animate);
+        }
+    </script>
+</body>
+</html>

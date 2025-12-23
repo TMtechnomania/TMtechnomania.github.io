@@ -1,0 +1,138 @@
+/* ============================================
+   SEARCHBAR COMPONENT
+   Uses base.css .btn and .input classes
+   ============================================ */
+
+/* === SEARCHBAR CONTAINER === */
+#searchbar {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--dis-4);
+	height: auto;
+	min-width: calc(40rem * var(--ui-scale));
+	width: 30vw;
+	z-index: var(--z-widget);
+}
+
+/* === SEARCH ROW === */
+/* Height: dis-5 (button) + 2×dis-1 (padding) = dis-7 */
+.search-row {
+	display: flex;
+	align-items: center;
+	gap: var(--dis-1);
+	height: var(--dis-7);
+	width: 100%;
+	background: var(--color-base);
+	border-radius: var(--radius-full);
+	padding: var(--dis-1);
+	position: relative;
+}
+
+/* === SEARCH INPUT === */
+#search-input {
+	flex: 1;
+}
+
+/* === ENGINE CHIPS DROPDOWN === */
+.search-engine-chips {
+	position: absolute;
+	left: 50%;
+	top: calc(100% + var(--dis-1));
+	transform: translateX(-50%);
+	display: none;
+	gap: var(--dis-1);
+	padding: var(--dis-1);
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius-full);
+}
+
+.searchbar-wrapper.chips-open .search-engine-chips {
+	display: flex;
+	animation: chipsContainerIn var(--transition-normal) ease-out forwards;
+}
+
+.searchbar-wrapper.chips-closing .search-engine-chips {
+	display: flex;
+	animation: chipsContainerOut var(--transition-fast) ease-in forwards;
+}
+
+@keyframes chipsContainerIn {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(calc(-4px * var(--ui-scale)));
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+@keyframes chipsContainerOut {
+	from {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateX(-50%) translateY(calc(-4px * var(--ui-scale)));
+	}
+}
+
+/* === ENGINE CHIP === */
+/* Chips start invisible and animate in when container opens */
+.search-engine-chip {
+	opacity: 0;
+	transform: scale(0.8);
+}
+
+/* When container is open, animate chips in */
+.searchbar-wrapper.chips-open .search-engine-chip {
+	animation: chipIn 0.2s ease-out forwards;
+}
+
+/* When container is closing, animate chips out */
+.searchbar-wrapper.chips-closing .search-engine-chip {
+	opacity: 1;
+	transform: scale(1);
+	animation: chipOut 0.15s ease-in forwards;
+}
+
+@keyframes chipIn {
+	0% {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes chipOut {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+}
+
+/* === VOICE BUTTON LISTENING STATE === */
+#search-voice-btn.listening {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+/* === UTILITY === */
+.searchbar-hidden {
+	display: none !important;
+}

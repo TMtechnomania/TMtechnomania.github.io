@@ -1,0 +1,289 @@
+.alarm-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	background: none;
+	pointer-events: none;
+	z-index: var(--z-panel);
+}
+
+.alarm-modal {
+	background: var(--color-base);
+	border-radius: var(--radius-container);
+	padding: var(--dis-2);
+	width: var(--width-6);
+	max-width: 92vw;
+	max-height: 70vh;
+	overflow: auto;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+	font-family: var(--font-family);
+	pointer-events: auto;
+	margin-bottom: var(--width-1);
+	animation: slideUp var(--transition-normal) forwards;
+}
+
+.alarm-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--dis-2);
+	border-radius: var(--radius-xs);
+	background: var(--color-off);
+}
+
+.alarm-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+}
+
+/* Modal Header - uses base.css .modal-header */
+
+.alarm-permission {
+	display: flex;
+	gap: var(--dis-1);
+	align-items: center;
+	margin-bottom: var(--dis-xs);
+}
+
+.perm-text {
+	flex: 1;
+	color: var(--text-off);
+	font-size: calc(0.9rem * var(--ui-scale));
+}
+
+.alarm-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+}
+
+.alarms-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+}
+
+.alarm-left {
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+}
+
+.alarm-label {
+	font-weight: 600;
+	color: var(--text-base);
+	font-size: calc(0.95rem * var(--ui-scale));
+}
+
+.alarm-time {
+	font-size: calc(1.05rem * var(--ui-scale));
+	font-weight: 700;
+	color: var(--text-base);
+}
+
+.alarm-freq {
+	font-size: calc(0.85rem * var(--ui-scale));
+	color: var(--text-off);
+}
+
+.alarm-right {
+	display: flex;
+	gap: var(--dis-1);
+	align-items: center;
+}
+
+.alarm-controls {
+	display: flex;
+	gap: var(--dis-1);
+	margin-top: auto;
+	align-self: stretch;
+	align-items: center;
+}
+
+.alarm-controls .btn {
+	flex: 1;
+}
+
+.alarm-empty {
+	color: var(--text-off);
+	padding: var(--dis-xs);
+	text-align: center;
+	font-size: calc(0.95rem * var(--ui-scale));
+}
+
+
+
+.alarm-form .alarm-form-row {
+	display: flex;
+	gap: var(--dis-1);
+}
+
+.alarm-form .btn {
+	flex: 1;
+}
+
+.alarm-display.editing {
+	outline: calc(2px * var(--ui-scale)) solid var(--color-accent);
+}
+
+/* Alarm Controls */
+.alarm-controls button[disabled] {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+/* Alarm Type Toggle */
+.alarm-type-group {
+	display: flex;
+	background: var(--color-base);
+	padding: 2px;
+	border-radius: var(--radius-full);
+	gap: 2px;
+}
+
+.alarm-type-btn {
+	flex: 1;
+	background: transparent;
+	color: var(--text-off);
+	border-radius: var(--radius-full);
+	box-shadow: none;
+}
+
+.alarm-type-btn:hover {
+	background: transparent;
+	color: var(--text-base);
+}
+
+.alarm-type-btn.active {
+	background: var(--color-off);
+	color: var(--text-base);
+	font-weight: 600;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Day Picker */
+.day-picker {
+	display: flex;
+	justify-content: space-between;
+	gap: 2px;
+}
+
+.day-btn {
+	width: var(--dis-4);
+	height: var(--dis-4);
+	border: none;
+	background: var(--color-base);
+	color: var(--text-off);
+	border-radius: var(--radius-full);
+	cursor: pointer;
+	font-family: var(--font-family);
+	font-size: calc(0.8rem * var(--ui-scale));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all var(--transition-fast);
+}
+
+.day-btn:hover {
+	background: var(--color-off);
+	color: var(--text-base);
+}
+
+.day-btn.active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+	font-weight: 600;
+}
+
+/* Date Input Wrapper to match layout */
+.date-input-wrapper {
+	display: flex;
+	width: 100%;
+}
+
+/* Alarm Popup Toast */
+.alarm-popup {
+	position: fixed;
+	top: var(--width-1);
+	right: var(--width-1);
+	left: auto;
+	z-index: var(--z-modal);
+	background: var(--color-base);
+	border-radius: var(--radius-container);
+	padding: var(--dis-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+	min-width: var(--width-5);
+	max-width: 90vw;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	animation: alarmPopupIn var(--transition-normal) forwards;
+	font-family: var(--font-family);
+}
+
+@keyframes alarmPopupIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.alarm-popup-header {
+	display: flex;
+	align-items: center;
+	gap: var(--dis-1);
+}
+
+.alarm-popup-icon {
+	width: var(--dis-4);
+	height: var(--dis-4);
+	animation: alarmBell 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes alarmBell {
+	from {
+		transform: rotate(-10deg);
+	}
+
+	to {
+		transform: rotate(10deg);
+	}
+}
+
+.alarm-popup-info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-xs);
+}
+
+.alarm-popup-label {
+	font-weight: 600;
+	font-size: calc(1rem * var(--ui-scale));
+	color: var(--text-base);
+}
+
+.alarm-popup-time {
+	font-size: calc(0.9rem * var(--ui-scale));
+	color: var(--text-off);
+}
+
+.alarm-popup-actions {
+	display: flex;
+	gap: var(--dis-1);
+}
+
+.alarm-popup-actions .btn {
+	flex: 1;
+}

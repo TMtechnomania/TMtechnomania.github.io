@@ -1,0 +1,180 @@
+.timer-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	background: none;
+	pointer-events: none;
+	z-index: var(--z-panel);
+}
+
+.timer-modal {
+	width: var(--width-6);
+	max-width: 92vw;
+	max-height: 70vh;
+	overflow: auto;
+	background: var(--color-base);
+	border-radius: var(--radius-container);
+	padding: var(--dis-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+	font-family: var(--font-family);
+	position: relative;
+	margin-bottom: var(--width-1);
+	pointer-events: auto;
+	animation: slideUp var(--transition-normal) forwards;
+}
+
+.timer-tabs {
+	display: flex;
+	gap: var(--dis-1);
+	margin-top: auto;
+	align-self: stretch;
+	align-items: center;
+}
+
+.timer-tab {
+	border-radius: var(--radius-full);
+	flex: 1 1 0px;
+	padding: var(--dis-1);
+	width: 0;
+}
+
+.timer-tab.active {
+	background: var(--color-base);
+	color: var(--text-base);
+}
+
+.timer-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+	align-items: center;
+}
+
+.timer-display-wrap {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* edit-btn uses btn-icon icon sizing from base.css (45%) */
+.edit-btn {
+	position: absolute;
+	left: 0;
+	top: 0;
+	pointer-events: auto;
+}
+
+.custom-time-input-inline {
+	display: none;
+	width: 78%;
+	padding: var(--dis-1);
+	border-radius: var(--radius-1);
+	border: 1px solid var(--color-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	text-align: center;
+	color: var(--text-base);
+	background: var(--color-off);
+	font-family: var(--font-family);
+}
+
+.timer-display {
+	font-size: calc(4.2rem * var(--ui-scale));
+	font-weight: 500;
+	color: var(--text-base);
+}
+
+.timer-controls {
+	display: flex;
+	gap: var(--dis-1);
+	align-items: center;
+}
+
+/* Button styling now uses unified btn-icon from base.css */
+
+
+.stopwatch-laps {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--dis-1);
+	max-height: var(--dis-15);
+	overflow: auto;
+}
+
+.lap-item {
+	justify-content: space-between;
+	padding: var(--dis-1);
+}
+
+.lap-list-empty {
+	color: var(--text-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	text-align: center;
+	padding: var(--dis-1);
+}
+
+.presets {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--dis-1);
+	width: 100%;
+	max-height: 30vh;
+	overflow: auto;
+}
+
+.preset-btn {
+	justify-content: space-between;
+	flex: 1 1 calc(50% - (var(--dis-1) / 2));
+	min-width: var(--dis-14);
+}
+
+.preset-btn>div:first-child {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+	flex: 1;
+	text-align: left;
+	margin-right: var(--dis-1);
+}
+
+.preset-btn>div:last-child {
+	flex-shrink: 0;
+}
+
+.custom-time-row {
+	display: flex;
+	gap: var(--dis-1);
+	width: 100%;
+	align-items: center;
+}
+
+.custom-time-input {
+	flex: 1;
+	padding: var(--dis-1);
+	border-radius: var(--radius-1);
+	border: 1px solid var(--color-off);
+	font-size: calc(0.95rem * var(--ui-scale));
+	color: var(--text-base);
+	background: var(--color-off);
+	font-family: var(--font-family);
+}
+
+
+
+@media (max-width: 420px) {
+	.timer-modal {
+		width: 92vw;
+		padding: var(--dis-2);
+	}
+
+	.timer-display {
+		font-size: calc(3.2rem * var(--ui-scale));
+	}
+}
