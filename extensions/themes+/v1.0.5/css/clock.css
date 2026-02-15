@@ -1,0 +1,97 @@
+/* On-Screen Clock Container */
+#on-screen-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: var(--dis-4);
+    /* Space between clock and search bar */
+    z-index: var(--z-widget);
+    /* Above wallpaper */
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity var(--transition-normal);
+}
+
+/* Time Display */
+.os-clock-time {
+    /* Using calc based on base.css conventions if exact variable not available for this specific large size */
+    /* 6rem is size-md in base.css logic but actually base.css defines size-md as width/height. 
+       Let's use the calc explicitly but cleaner, or define a local var. 
+       User wants "variables and classes". 
+       I will use calc(var(--ui-scale) * 6rem) as before but remove shadows and explicit color hex if any.
+    */
+    font-size: calc(6rem * var(--ui-scale));
+    line-height: 1;
+    font-weight: 700;
+    color: var(--text-base);
+    /* text-shadow: removed */
+    font-family: var(--clock-font, inherit);
+    white-space: nowrap;
+}
+
+/* Greeting Display */
+.os-clock-greeting {
+    font-size: var(--dis-6);
+    font-weight: 600;
+    color: var(--text-base);
+    font-family: var(--clock-font, inherit);
+    line-height: 1.2;
+}
+
+/* Date Display */
+.os-clock-date {
+    font-size: var(--dis-5);
+    font-weight: 500;
+    color: var(--text-base);
+    font-family: var(--clock-font, inherit);
+}
+
+/* Responsive adjustments if needed */
+@media (max-width: 768px) {
+    .os-clock-time {
+        font-size: calc(4rem * var(--ui-scale));
+    }
+
+    .os-clock-greeting {
+        font-size: calc(2rem * var(--ui-scale));
+    }
+
+    .os-clock-date {
+        font-size: calc(1.2rem * var(--ui-scale));
+    }
+}
+
+/* Color Styles */
+#on-screen-clock.color-inverse .os-clock-time,
+#on-screen-clock.color-inverse .os-clock-date,
+#on-screen-clock.color-inverse .os-clock-greeting {
+    color: var(--text-invert);
+}
+
+#on-screen-clock.color-custom .os-clock-time,
+#on-screen-clock.color-custom .os-clock-date,
+#on-screen-clock.color-custom .os-clock-greeting {
+    color: var(--ui-text-display, var(--text-base));
+}
+
+/* Outline Styles */
+#on-screen-clock.clock-outline .os-clock-time {
+    -webkit-text-stroke: 0.015em var(--ui-text-outline, var(--text-invert));
+}
+
+#on-screen-clock.clock-outline .os-clock-date,
+#on-screen-clock.clock-outline .os-clock-greeting {
+    -webkit-text-stroke: 0.02em var(--ui-text-outline, var(--text-invert));
+}
+
+#on-screen-clock.clock-outline.color-inverse .os-clock-time {
+    -webkit-text-stroke: 0.015em var(--ui-text-outline, var(--text-base));
+}
+
+#on-screen-clock.clock-outline.color-inverse .os-clock-date,
+#on-screen-clock.clock-outline.color-inverse .os-clock-greeting {
+    -webkit-text-stroke: 0.02em var(--ui-text-outline, var(--text-base));
+}
