@@ -20,7 +20,8 @@
 		"system.storage",
 		"bookmarks",
 		"alarms",
-		"notifications"
+		"notifications",
+		"search"
 	],
 	"background": {
 		"service_worker": "js/service.js",

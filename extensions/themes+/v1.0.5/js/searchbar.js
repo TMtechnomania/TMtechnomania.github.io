@@ -345,6 +345,20 @@ export async function renderSearchbar(searchCfg = {}) {
 					currentEngineBtn.getAttribute("data-engine")) ||
 				cfg.engine ||
 				"default";
+
+			// Use chrome.search API for default engine to comply with policy
+			if (engineKey === "default") {
+				chrome.search.query({
+					text: q,
+					disposition:
+						cfg.target === "self" || cfg.target === "_self" ?
+							"CURRENT_TAB"
+						:	"NEW_TAB",
+				});
+				suggestionsDropdown.style.display = "none";
+				return;
+			}
+
 			const engineInfo = ENGINE_MAP[engineKey] || ENGINE_MAP.default;
 			const url = `${engineInfo.url}${encodeURIComponent(q)}`;
 			const target =
