@@ -51,37 +51,59 @@ function shouldInlineSvg(path) {
 }
 
 function pickBrandIconPath(url) {
-	if (!url) return DEFAULT_ICON;
+	if (!url || typeof url !== "string") return DEFAULT_ICON;
+	const trimmed = url.trim();
+	if (!trimmed) return DEFAULT_ICON;
+
+	const isOwn =
+		trimmed.startsWith("chrome://newtab") ||
+		(typeof chrome !== "undefined" &&
+			chrome.runtime &&
+			chrome.runtime.id &&
+			trimmed.startsWith(`chrome-extension://${chrome.runtime.id}`));
+	if (isOwn) return OWN_ICON;
+
+	let hostname = "";
 	try {
-		const isOwn =
-			url.startsWith("chrome://newtab") ||
-			(typeof chrome !== "undefined" &&
-				chrome.runtime &&
-				chrome.runtime.id &&
-				url.startsWith(`chrome-extension://${chrome.runtime.id}`));
-		if (isOwn) return OWN_ICON;
-		const u = new URL(url);
-		const hostname = u.hostname.toLowerCase();
-		const parts = hostname.replace(/^www\./, "").split(".");
-		let brandMatch = null;
-		if (parts.length > 0) {
-			const mainPart = parts[0];
-			if (BRAND_ICONS.includes(mainPart)) {
-				brandMatch = mainPart;
-			} else {
-				for (const part of parts) {
-					if (BRAND_ICONS.includes(part)) {
-						brandMatch = part;
-						break;
-					}
+		const parseTarget = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(trimmed)
+			? trimmed
+			: `https://${trimmed}`;
+		const u = new URL(parseTarget);
+		hostname = u.hostname ? u.hostname.toLowerCase() : "";
+	} catch {
+		// Partial typing (e.g. "http:", incomplete URLs) is normal during user input
+		const match = trimmed.match(/(?:^|:\/\/|www\.)([a-zA-Z0-9-]+)(?:\.[a-zA-Z]{2,})?/);
+		if (match && match[1]) {
+			const brand = match[1].toLowerCase();
+			if (BRAND_ICONS.includes(brand)) {
+				return `assets/svgs-fontawesome/brands/${brand}.svg`;
+			}
+		}
+		return DEFAULT_ICON;
+	}
+
+	if (!hostname) return DEFAULT_ICON;
+
+	const cleanHost = hostname.replace(/^www\./, "");
+	const parts = cleanHost.split(".").filter(Boolean);
+	let brandMatch = null;
+	if (parts.length > 0) {
+		const mainPart = parts[0];
+		if (BRAND_ICONS.includes(mainPart)) {
+			brandMatch = mainPart;
+		} else {
+			for (const part of parts) {
+				if (BRAND_ICONS.includes(part)) {
+					brandMatch = part;
+					break;
 				}
 			}
 		}
-		if (brandMatch)
-			return `assets/svgs-fontawesome/brands/${brandMatch}.svg`;
-	} catch (e) {
-		console.warn('[brandIconLoader] operation failed', e);
 	}
+	if (brandMatch) {
+		return `assets/svgs-fontawesome/brands/${brandMatch}.svg`;
+	}
+
 	return DEFAULT_ICON;
 }
 
