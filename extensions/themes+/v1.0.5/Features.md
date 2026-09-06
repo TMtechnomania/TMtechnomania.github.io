@@ -6,7 +6,11 @@
 
 -   **Wallpapers**:
     -   Types: Mono (Color), Image (4K supported), Video (Live), **Duotone** (Generative).
-    -   Features: Custom uploads (IndexedDB storage), Blurs/Filters, Theme Sync.
+    -   Features: Custom uploads (IndexedDB unlimited storage — up to 50 images and 25 videos with 100MB limit), Visual Storage Meter (user uploads vs extension media), Blurs/Filters, Theme Sync.
+-   **Shortcuts**:
+    -   Built-in Brand Logo Picker (500+ FontAwesome brand SVGs).
+    -   Custom Logo Upload (local image/SVG file or custom URL with live preview).
+    -   Manage from Settings > Action Bar.
 -   **Search**:
     -   Multi-engine support (Google, Bing, etc.).
     -   Voice Search.

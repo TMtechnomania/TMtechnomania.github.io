@@ -5,7 +5,19 @@ const OWN_ICON = "icons/icon128.png";
 const svgMarkupCache = new Map();
 const REMOTE_PROTOCOL = /^https?:\/\//i;
 
-function resolveExtensionUrl(relativePath) {
+export function resolveExtensionUrl(relativePath) {
+	if (!relativePath || typeof relativePath !== "string") return relativePath;
+	// Do NOT alter if already an absolute remote URL, data URI, blob URI, or chrome internal URL
+	if (
+		relativePath.startsWith("http://") ||
+		relativePath.startsWith("https://") ||
+		relativePath.startsWith("data:") ||
+		relativePath.startsWith("blob:") ||
+		relativePath.startsWith("chrome-extension://") ||
+		relativePath.startsWith("chrome://")
+	) {
+		return relativePath;
+	}
 	try {
 		if (
 			typeof chrome !== "undefined" &&
@@ -14,8 +26,19 @@ function resolveExtensionUrl(relativePath) {
 		) {
 			return chrome.runtime.getURL(relativePath);
 		}
-	} catch (e) {}
+	} catch (e) {
+		console.warn('[brandIconLoader] operation failed', e);
+	}
 	return relativePath;
+}
+
+export function normalizeIconPath(path) {
+	if (!path || typeof path !== "string") return path;
+	const trimmed = path.trim();
+	if (BRAND_ICONS.includes(trimmed)) {
+		return `assets/svgs-fontawesome/brands/${trimmed}.svg`;
+	}
+	return trimmed;
 }
 
 function isSvgPath(path) {
@@ -24,7 +47,7 @@ function isSvgPath(path) {
 
 function shouldInlineSvg(path) {
 	if (!path) return false;
-	return isSvgPath(path) && !REMOTE_PROTOCOL.test(path);
+	return isSvgPath(path) && !REMOTE_PROTOCOL.test(path) && !path.startsWith("data:");
 }
 
 function pickBrandIconPath(url) {
@@ -56,7 +79,9 @@ function pickBrandIconPath(url) {
 		}
 		if (brandMatch)
 			return `assets/svgs-fontawesome/brands/${brandMatch}.svg`;
-	} catch (e) {}
+	} catch (e) {
+		console.warn('[brandIconLoader] operation failed', e);
+	}
 	return DEFAULT_ICON;
 }
 
@@ -104,7 +129,9 @@ export async function renderInlineIcon(targetEl, iconPath, options = {}) {
 	} = options;
 	targetEl.innerHTML = "";
 	if (fallbackClass) targetEl.classList.remove(fallbackClass);
-	if (!iconPath) {
+
+	const normalizedPath = normalizeIconPath(iconPath);
+	if (!normalizedPath) {
 		if (fallbackSrc)
 			return renderInlineIcon(targetEl, fallbackSrc, {
 				...options,
@@ -113,12 +140,12 @@ export async function renderInlineIcon(targetEl, iconPath, options = {}) {
 		if (fallbackClass) targetEl.classList.add(fallbackClass);
 		return null;
 	}
-	if (!shouldInlineSvg(iconPath)) {
-		const img = createImgElement(iconPath, imgClass, fallbackSrc);
+	if (!shouldInlineSvg(normalizedPath)) {
+		const img = createImgElement(normalizedPath, imgClass, fallbackSrc);
 		targetEl.appendChild(img);
 		return img;
 	}
-	const svgMarkup = await fetchSvgMarkup(iconPath);
+	const svgMarkup = await fetchSvgMarkup(normalizedPath);
 	if (!svgMarkup) {
 		if (fallbackSrc)
 			return renderInlineIcon(targetEl, fallbackSrc, {
