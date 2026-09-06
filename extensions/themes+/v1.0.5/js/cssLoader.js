@@ -21,7 +21,7 @@ export function loadCSS(href, id) {
             link.onerror = () => { once(link); resolve(link); };
             document.head.appendChild(link);
         } catch (e) {
-            // console.error('loadCSS error', e);
+            console.error('[cssLoader] loadCSS error', e);
             resolve(null);
         }
     });
@@ -32,6 +32,6 @@ export function unloadCSS(id) {
         const el = document.getElementById(id);
         if (el) el.remove();
     } catch (e) {
-        
+	console.warn('[cssLoader] operation failed', e);
     }
 }

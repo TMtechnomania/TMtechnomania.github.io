@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"author": "buildwithkt.dev",
 	"name": "Themes+ New Tab",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"description": "Video-wallpaper new tab with weather, notes, tasks, timers, tools, bookmarks, tab manager & media controls on music/video sites.",
 	"icons": {
 		"16": "icons/icon16.png",

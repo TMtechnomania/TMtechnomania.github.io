@@ -18,13 +18,17 @@ function clearPreviousWallpaper() {
 	if (lastObjectUrl) {
 		try {
 			URL.revokeObjectURL(lastObjectUrl);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 		lastObjectUrl = null;
 	}
 	if (lastThumbUrl) {
 		try {
 			URL.revokeObjectURL(lastThumbUrl);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 		lastThumbUrl = null;
 	}
 	// Always clear media session when removing wallpaper to free keys
@@ -40,7 +44,9 @@ function clearPreviousWallpaper() {
 		].forEach((action) => {
 			try {
 				navigator.mediaSession.setActionHandler(action, null);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 		});
 	}
 	const prev = document.getElementById("wallpaper");
@@ -110,7 +116,9 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 			].forEach((action) => {
 				try {
 					navigator.mediaSession.setActionHandler(action, noop);
-				} catch (e) {}
+				} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 			});
 		}
 	} else {
@@ -123,7 +131,9 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 	try {
 		const normalizedStyle = normalizeWallpaperConfig(styleCfg || {});
 		applyStyleConfigToElement(el, normalizedStyle);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 }
 
 // Global Visibility Listener for Video Wallpaper
@@ -305,7 +315,6 @@ async function tryLoadFromBlob(entry, type, styleCfg = {}) {
 
 export async function renderWallpaper(config, manifest) {
 	const cfg = normalizeWallpaperConfig(config || {});
-	console.log("[Wallpaper] Rendering with config:", cfg);
 
 	// Apply Rain Effect
 	toggleRain(cfg.rain);
@@ -432,7 +441,7 @@ export async function renderWallpaper(config, manifest) {
 
 	if (!entry) {
 		// Should not happen if predefined wallpapers exist
-		// console.warn('No wallpaper entry found');
+		console.warn('[Wallpaper] no wallpaper entry found');
 		return null;
 	}
 
@@ -452,7 +461,7 @@ export async function renderWallpaper(config, manifest) {
 	}
 
 	// Should not reach here if predefined wallpapers exist and are downloaded
-	// console.warn('Failed to load any wallpaper');
+	console.warn('[Wallpaper] failed to load any wallpaper');
 	return null;
 }
 function normalizeStyleValue(prop, v) {
@@ -509,13 +518,17 @@ function buildFilterString(styleCfg = {}) {
 			styleCfg.grayscale !== 0
 		) {
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 	return filterStr;
 }
 function applyStyleConfigToElement(el, styleCfg = {}) {
 	if (!el || !styleCfg) return;
 	try {
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[wallpaper] operation failed', e);
+    }
 	const filter = buildFilterString(styleCfg);
 	if (filter) el.style.filter = filter;
 	if (styleCfg.position) el.style.objectPosition = String(styleCfg.position);

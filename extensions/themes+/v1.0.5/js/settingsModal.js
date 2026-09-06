@@ -246,7 +246,15 @@ async function openSettingsModal() {
 				.querySelectorAll(".settings-section")
 				.forEach((s) => s.classList.remove("active"));
 			const target = content.querySelector(`#settings-section-${tab.id}`);
-			if (target) target.classList.add("active");
+			if (target) {
+				target.classList.add("active");
+				if (tab.id === "wallpaper") {
+					const card = target.querySelector(".storage-stats-card");
+					if (card && typeof refreshStorageMeter === "function") {
+						refreshStorageMeter(card);
+					}
+				}
+			}
 		});
 		sidebar.appendChild(btn);
 	});
@@ -1524,7 +1532,7 @@ function renderSectionContent(container, tabId, settings) {
 		headerGroup.innerHTML = `
             <img src="icons/icon128.png" alt="Themes+ Logo" style="width: var(--dis-8); height: var(--dis-8);">
             <h2 style="font-size: var(--dis-3); font-weight: 700; color: var(--text-base);">Themes+</h2>
-            <div class="setting-desc" style="font-weight: 500;">v${chrome.runtime?.getManifest?.()?.version || "1.0.5"}</div>
+            <div class="setting-desc" style="font-weight: 500;">v${chrome.runtime?.getManifest?.()?.version || "1.0.6"}</div>
             <p class="setting-desc" style="max-width: 400px; margin-top: var(--dis-1);">
                 A beautiful, customizable dashboard for your new tab. <br>
                 Built for performance, privacy, and productivity.
@@ -2531,12 +2539,59 @@ function applyFont(fontCfg) {
 // --- Wallpaper Grid Helpers ---
 
 let gridObjectUrls = [];
+let _storagePollInterval = null;
 
 function cleanupWallpaperGrid() {
+	if (_storagePollInterval) {
+		clearInterval(_storagePollInterval);
+		_storagePollInterval = null;
+	}
 	if (gridObjectUrls.length > 0) {
 		// console.debug(`[Settings] Cleaning up ${gridObjectUrls.length} blob URLs.`);
 		gridObjectUrls.forEach((url) => URL.revokeObjectURL(url));
 		gridObjectUrls = [];
+	}
+}
+
+function formatStorageBytes(bytes) {
+	if (!bytes || bytes <= 0) return "0 B";
+	const k = 1024;
+	const sizes = ["B", "KB", "MB", "GB"];
+	const i = Math.floor(Math.log(bytes) / Math.log(k));
+	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+}
+
+async function refreshStorageMeter(statsCard) {
+	if (!statsCard || !statsCard.isConnected) return;
+	try {
+		const freshStats = await getStorageBreakdown();
+		const freshImgCount = freshStats.userImagesCount || 0;
+		const freshVidCount = freshStats.userVideosCount || 0;
+		const freshImgPct = Math.min(100, Math.round((freshImgCount / 50) * 100));
+		const freshVidPct = Math.min(100, Math.round((freshVidCount / 25) * 100));
+
+		const totalEl = statsCard.querySelector(".storage-total-val");
+		if (totalEl) totalEl.textContent = formatStorageBytes(freshStats.totalStorageUsedBytes);
+
+		const imgCountEl = statsCard.querySelector(".storage-img-count");
+		if (imgCountEl) imgCountEl.textContent = `${freshImgCount} / 50`;
+
+		const imgBarEl = statsCard.querySelector(".storage-img-bar");
+		if (imgBarEl) imgBarEl.style.width = `${freshImgPct}%`;
+
+		const vidCountEl = statsCard.querySelector(".storage-vid-count");
+		if (vidCountEl) vidCountEl.textContent = `${freshVidCount} / 25`;
+
+		const vidBarEl = statsCard.querySelector(".storage-vid-bar");
+		if (vidBarEl) vidBarEl.style.width = `${freshVidPct}%`;
+
+		const userUploadsEl = statsCard.querySelector(".storage-user-val");
+		if (userUploadsEl) userUploadsEl.textContent = formatStorageBytes(freshStats.userWallpapersBytes);
+
+		const extMediaEl = statsCard.querySelector(".storage-ext-val");
+		if (extMediaEl) extMediaEl.textContent = formatStorageBytes(freshStats.extensionMediaBytes);
+	} catch (e) {
+		console.warn("[Settings] real-time storage update failed", e);
 	}
 }
 
@@ -2569,13 +2624,6 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 
 	// --- Storage & Upload Limits Meter (Top) ---
 	const storageStats = await getStorageBreakdown();
-	const formatBytes = (bytes) => {
-		if (!bytes || bytes <= 0) return "0 B";
-		const k = 1024;
-		const sizes = ["B", "KB", "MB", "GB"];
-		const i = Math.floor(Math.log(bytes) / Math.log(k));
-		return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-	};
 
 	const statsCard = document.createElement("div");
 	statsCard.className = "storage-stats-card";
@@ -2596,35 +2644,59 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 	statsCard.innerHTML = `
 		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
 			<div style="font-weight: 600; font-size: 0.95rem; color: var(--text-base);">Storage & Upload Capacity</div>
-			<div style="font-size: 0.8rem; color: var(--text-off);">Total Used: <strong style="color: var(--text-accent);">${formatBytes(storageStats.totalStorageUsedBytes)}</strong></div>
+			<div style="font-size: 0.8rem; color: var(--text-off);">Total Used: <strong class="storage-total-val" style="color: var(--text-accent);">${formatStorageBytes(storageStats.totalStorageUsedBytes)}</strong></div>
 		</div>
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 0.75rem;">
 			<div style="background: var(--color-base); padding: 0.75rem; border-radius: var(--radius-child); border: 1px solid rgba(128, 128, 128, 0.1);">
 				<div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
 					<span style="color: var(--text-base); font-weight: 500;">Images Capacity</span>
-					<span style="color: var(--text-accent); font-weight: 600;">${imgCount} / ${imgMax}</span>
+					<span class="storage-img-count" style="color: var(--text-accent); font-weight: 600;">${imgCount} / ${imgMax}</span>
 				</div>
 				<div style="height: 6px; background: var(--color-off); border-radius: 3px; overflow: hidden;">
-					<div style="height: 100%; width: ${imgPercent}%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s ease;"></div>
+					<div class="storage-img-bar" style="height: 100%; width: ${imgPercent}%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s ease;"></div>
 				</div>
 			</div>
 			<div style="background: var(--color-base); padding: 0.75rem; border-radius: var(--radius-child); border: 1px solid rgba(128, 128, 128, 0.1);">
 				<div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
 					<span style="color: var(--text-base); font-weight: 500;">Videos Capacity</span>
-					<span style="color: var(--text-accent); font-weight: 600;">${vidCount} / ${vidMax}</span>
+					<span class="storage-vid-count" style="color: var(--text-accent); font-weight: 600;">${vidCount} / ${vidMax}</span>
 				</div>
 				<div style="height: 6px; background: var(--color-off); border-radius: 3px; overflow: hidden;">
-					<div style="height: 100%; width: ${vidPercent}%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s ease;"></div>
+					<div class="storage-vid-bar" style="height: 100%; width: ${vidPercent}%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s ease;"></div>
 				</div>
 			</div>
 		</div>
 		<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8rem; color: var(--text-off); padding-top: 0.5rem; border-top: 1px solid rgba(128, 128, 128, 0.1);">
-			<div>User Uploads: <span style="font-weight: 500; color: var(--text-base);">${formatBytes(storageStats.userWallpapersBytes)}</span></div>
-			<div>Extension Media: <span style="font-weight: 500; color: var(--text-base);">${formatBytes(storageStats.extensionMediaBytes)}</span></div>
+			<div>User Uploads: <span class="storage-user-val" style="font-weight: 500; color: var(--text-base);">${formatStorageBytes(storageStats.userWallpapersBytes)}</span></div>
+			<div>Extension Media: <span class="storage-ext-val" style="font-weight: 500; color: var(--text-base);">${formatStorageBytes(storageStats.extensionMediaBytes)}</span></div>
 			<div>Limits: <span style="font-weight: 500; color: var(--text-base);">10MB / Image, 100MB / Video</span></div>
 		</div>
 	`;
 	container.appendChild(statsCard);
+
+	// Real-time polling every 2s while wallpaper tab is rendering/visible
+	if (_storagePollInterval) {
+		clearInterval(_storagePollInterval);
+		_storagePollInterval = null;
+	}
+
+	_storagePollInterval = setInterval(async () => {
+		const section = statsCard.closest(".settings-section");
+		if (!statsCard.isConnected || !document.getElementById("settings-modal")) {
+			if (_storagePollInterval) {
+				clearInterval(_storagePollInterval);
+				_storagePollInterval = null;
+			}
+			return;
+		}
+
+		// Skip ticking if user is viewing a different settings section
+		if (section && !section.classList.contains("active")) {
+			return;
+		}
+
+		await refreshStorageMeter(statsCard);
+	}, 2000);
 
 	// --- Actions Container (Top) ---
 	const actionsContainer = document.createElement("div");

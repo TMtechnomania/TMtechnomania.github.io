@@ -2,10 +2,37 @@
 import { renderInlineIcon } from "./brandIconLoader.js";
 import { closeSettingsModalIfOpen } from "./settingsModal.js";
 import { loadCSS, unloadCSS } from "./cssLoader.js";
+import { hasPermissions, requestPermissions } from "./permUtil.js";
+import { escapeHtml, showConfirm, setupModalA11y } from "./uiUtil.js";
 
 let toolsModal = null;
 let toolsBackdrop = null;
 let statsInterval = null;
+let _statsPermAsked = false; // Ask for system.* optional perms at most once per session
+let _toolsA11yCleanup = null; // focus-trap/Escape cleanup from setupModalA11y
+const QR_LIB_PATH = "js/lib/qrcode.js"; // Vendored MIT-licensed QR generator (kazuhikoarase)
+let _qrLibPromise = null;
+
+// Lazily load the vendored QR library. It is a classic script that assigns
+// window.qrcode, so it must be injected as a <script> tag (importing it as an
+// ES module would throw because its top-level `this`/exports checks differ).
+function loadQrLib() {
+	if (_qrLibPromise) return _qrLibPromise;
+	_qrLibPromise = new Promise((resolve, reject) => {
+		const s = document.createElement("script");
+		s.src = chrome.runtime.getURL(QR_LIB_PATH);
+		s.onload = () =>
+			window.qrcode
+				? resolve(window.qrcode)
+				: reject(new Error("QR library loaded but window.qrcode is missing"));
+		s.onerror = () => {
+			_qrLibPromise = null; // allow a retry next time
+			reject(new Error("Failed to load QR library"));
+	};
+		document.documentElement.appendChild(s);
+	});
+	return _qrLibPromise;
+}
 
 export function initToolsModal() {
 	if (document.getElementById("tools-modal")) return;
@@ -56,6 +83,7 @@ export function initToolsModal() {
 	const closeBtn = document.createElement("button");
 	closeBtn.className = "btn btn-icon";
 	closeBtn.title = "Close";
+	closeBtn.setAttribute("aria-label", "Close tools");
 	const closeIcon = document.createElement("span");
 	renderInlineIcon(closeIcon, "assets/svgs-fontawesome/solid/xmark.svg");
 	closeBtn.appendChild(closeIcon);
@@ -87,11 +115,13 @@ export function initToolsModal() {
 	toolsModal.appendChild(dashboard);
 	document.body.appendChild(toolsModal);
 
-	// Escape key
-	document.addEventListener("keydown", (e) => {
-		if (e.key === "Escape" && toolsModal.classList.contains("active")) {
-			closeToolsModal();
-		}
+	// Accessibility: dialog semantics, initial focus, Tab trap and
+	// Escape-to-close. (The previous ad-hoc Escape handler checked for an
+	// "active" class that is never applied to this element, so Escape
+	// silently did nothing.)
+	_toolsA11yCleanup = setupModalA11y(toolsModal, {
+		onClose: closeToolsModal,
+		whenActive: () => toolsModal && toolsModal.isConnected,
 	});
 }
 
@@ -324,6 +354,21 @@ function createStatsWidget() {
 		}
 	};
 
+	// System stats rely on optional permissions (system.cpu/memory/storage).
+	// Ask for them once per session when the widget is first created so the
+	// always-on permission set stays minimal; existing chrome.system?.* guards
+	// keep the widget rendering placeholders until they are granted.
+	if (!_statsPermAsked) {
+		_statsPermAsked = true;
+		const needed = ["system.cpu", "system.memory", "system.storage"];
+		hasPermissions(needed).then((granted) => {
+			if (granted) return updateStats();
+			return requestPermissions(needed).then((ok) => {
+				if (ok) updateStats();
+			});
+		});
+	}
+
 	updateStats();
 	statsInterval = setInterval(updateStats, 2000);
 
@@ -381,8 +426,9 @@ function createWorkspacesWidget() {
 				workspaces.forEach((ws, idx) => {
 					const item = document.createElement("div");
 					item.className = "ws-item";
+					// Escape workspace names (user input) before markup injection.
 					item.innerHTML = `
-                        <div class="ws-name">${ws.name}</div>
+                        <div class="ws-name">${escapeHtml(ws.name)}</div>
                         <div class="ws-count">${ws.urls.length} tabs</div>
                         <div class="ws-actions">
                             <button class="btn btn-icon btn-small ws-open" title="Open"><span></span></button>
@@ -402,8 +448,8 @@ function createWorkspacesWidget() {
 						ws.urls.forEach((url) =>
 							chrome.tabs.create({ url, active: false }),
 						);
-					item.querySelector(".ws-delete").onclick = () => {
-						if (confirm(`Delete "${ws.name}"?`)) {
+					item.querySelector(".ws-delete").onclick = async () => {
+						if (await showConfirm(`Delete "${ws.name}"?`, "Delete workspace")) {
 							workspaces.splice(idx, 1);
 							chrome.storage.local.set(
 								{ workspaces },
@@ -748,7 +794,7 @@ function createQRWidget() {
 	const output = widget.querySelector(".qr-output");
 	const downloadBtn = widget.querySelector(".qr-download-btn");
 
-	const generateQR = () => {
+	const generateQR = async () => {
 		const text = input.value.trim();
 		if (!text) {
 			output.innerHTML =
@@ -757,43 +803,50 @@ function createQRWidget() {
 			return;
 		}
 
-		// Generate QR using canvas
-		const size = 150;
-
-		// Simple QR generation using data URI approach with Google Charts API
-		const img = new Image();
-		img.crossOrigin = "anonymous";
-		img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
-			text,
-		)}`;
-
-		img.onload = () => {
-			output.innerHTML = "";
-			output.appendChild(img);
-			downloadBtn.disabled = false;
-			downloadBtn.onclick = () => {
-				fetch(img.src)
-					.then((res) => res.blob())
-					.then((blob) => {
-						const url = URL.createObjectURL(blob);
-						const link = document.createElement("a");
-						link.download = "qrcode.png";
-						link.href = url;
-						link.click();
-						URL.revokeObjectURL(url);
-					});
-			};
-		};
-
-		img.onerror = () => {
-			output.innerHTML =
-				'<div class="qr-error">Failed to generate QR</div>';
+		// Generate the QR code fully locally (no third-party request, so user
+		// input never leaves the machine).
+		let dataUrl = null;
+		try {
+			const qrFactory = await loadQrLib();
+			const qr = qrFactory(0, "L"); // type 0 = auto-size for content length
+			qr.addData(text);
+			qr.make();
+			const count = qr.getModuleCount();
+			const scale = Math.max(2, Math.round(150 / count));
+			const canvas = document.createElement("canvas");
+			canvas.width = count * scale;
+			canvas.height = count * scale;
+			const ctx = canvas.getContext("2d");
+			ctx.fillStyle = "#ffffff";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = "#111111";
+			for (let row = 0; row < count; row++) {
+				for (let col = 0; col < count; col++) {
+					if (qr.isDark(row, col)) {
+						ctx.fillRect(col * scale, row * scale, scale, scale);
+					}
+				}
+			}
+			dataUrl = canvas.toDataURL("image/png");
+		} catch (_) {
+			output.innerHTML = '<div class="qr-error">Failed to generate QR</div>';
 			downloadBtn.disabled = true;
+			return;
+		}
+
+		const img = new Image();
+		img.src = dataUrl;
+		img.style.maxWidth = "150px";
+		output.innerHTML = "";
+		output.appendChild(img);
+		downloadBtn.disabled = false;
+		downloadBtn.onclick = () => {
+			const link = document.createElement("a");
+			link.download = "qrcode.png";
+			link.href = dataUrl; // local data URL - no network fetch needed
+			link.click();
 		};
 	};
-
-	input.addEventListener("input", debounce(generateQR, 500));
-	generateQR();
 
 	input.addEventListener("input", debounce(generateQR, 500));
 	generateQR();
@@ -1356,7 +1409,33 @@ function createRssWidget() {
 		itemsContainer.innerHTML = '<div class="rss-loading">Loading...</div>';
 
 		try {
-			// Direct fetch - Chrome extension has host_permissions for all URLs
+			// Feeds can live on any domain, so fetching them needs the optional
+			// <all_urls> host permission. It is requested on first use (MV3) and
+			// granted permanently once accepted.
+			if (!(await hasPermissions(["<all_urls>"]))) {
+				itemsContainer.innerHTML = "";
+				const box = document.createElement("div");
+				box.className = "rss-error";
+				const msg = document.createElement("span");
+				msg.textContent =
+					"Loading feeds needs permission to read feed URLs. ";
+				const btn = document.createElement("button");
+				btn.className = "btn btn-small btn-text primary";
+				btn.textContent = "Grant access & load";
+				btn.onclick = async () => {
+					if (await requestPermissions(["<all_urls>"])) {
+						loadFeed();
+					} else {
+						itemsContainer.innerHTML =
+							'<div class="rss-error">Access not granted - feed loading stays disabled.</div>';
+					}
+				};
+				box.appendChild(msg);
+				box.appendChild(btn);
+				itemsContainer.appendChild(box);
+				return;
+			}
+
 			const res = await fetch(url);
 			const text = await res.text();
 
@@ -1436,6 +1515,11 @@ export async function toggleToolsModal() {
 }
 
 export function closeToolsModal() {
+	if (_toolsA11yCleanup) {
+		_toolsA11yCleanup(); // remove key handler + restore focus
+		_toolsA11yCleanup = null;
+	}
+
 	// Clear stats interval
 	if (statsInterval) {
 		clearInterval(statsInterval);
@@ -1451,7 +1535,9 @@ export function closeToolsModal() {
 			() => {
 				try {
 					modal.remove();
-				} catch (e) {}
+				} catch (e) {
+	console.warn('[toolsModal] operation failed', e);
+    }
 				toolsModal = null;
 				unloadCSS("tools-modal-css");
 			},

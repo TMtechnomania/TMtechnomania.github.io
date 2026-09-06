@@ -1,9 +1,12 @@
 import { loadCSS, unloadCSS } from "./cssLoader.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
+import { showAlert, showConfirm, setupModalA11y } from "./uiUtil.js";
+import { storageGetSync, storageSetAsync, storageRemoveAsync } from "./storageUtil.js";
 const CSS_ID = "timer-modal-css";
 const CSS_PATH = "css/timerModal.css";
 const AUDIO_SRC = "assets/audio/mixkit-positive-interface-beep-221.wav";
 let _backdrop = null;
+let _a11yCleanup = null; // focus-trap cleanup from setupModalA11y
 let _state = {
 	mode: "timer",
 	timerRemaining: 0,
@@ -98,7 +101,9 @@ async function openTimerModal() {
 	if (_backdrop) {
 		try {
 			_backdrop.querySelector(".timer-modal").focus();
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		return;
 	}
 	try {
@@ -106,27 +111,35 @@ async function openTimerModal() {
 			clearInterval(_state.timerInterval);
 			_state.timerInterval = null;
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	try {
 		if (_state.stopwatchInterval) {
 			clearInterval(_state.stopwatchInterval);
 			_state.stopwatchInterval = null;
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	try {
 		if (_state.audio) {
 			_state.audio.pause();
 			_state.audio.currentTime = 0;
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	_state.timerRunning = false;
 	_state.stopwatchRunning = false;
 	if (typeof _state.alertEnabled === "undefined") _state.alertEnabled = true;
 	await loadCSS(CSS_PATH, CSS_ID);
 	try {
-		const raw = localStorage.getItem("timer_last_laps");
+		const raw = storageGetSync("timer_last_laps");
 		if (raw) _state.stopwatchLaps = JSON.parse(raw).slice(-3);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	_backdrop = document.createElement("div");
 	_backdrop.className = "timer-modal-backdrop";
 	const modal = document.createElement("div");
@@ -156,6 +169,7 @@ async function openTimerModal() {
 	const closeBtn = document.createElement("button");
 	closeBtn.className = "btn btn-icon";
 	closeBtn.title = "Close";
+	closeBtn.setAttribute("aria-label", "Close timer");
 	const closeIcon = document.createElement("span");
 	renderInlineIcon(closeIcon, "assets/svgs-fontawesome/solid/xmark.svg");
 	closeBtn.appendChild(closeIcon);
@@ -203,7 +217,9 @@ async function openTimerModal() {
 					editBtn,
 					"assets/svgs-fontawesome/solid/pen-to-square.svg",
 				);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			_state.timerRemaining = p.seconds * 1000;
 			updateDisplay();
 			try {
@@ -211,7 +227,9 @@ async function openTimerModal() {
 					"tm-start-pause",
 					"assets/svgs-fontawesome/solid/circle-play.svg",
 				);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		});
 		presets.appendChild(btn);
 	});
@@ -223,16 +241,22 @@ async function openTimerModal() {
 			_state.editing = true;
 			try {
 				pauseTimer();
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			try {
 				display.contentEditable = "true";
 				display.classList.add("editing");
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			try {
 				updateAttachedIcon(editBtn, saveIcon);
 				const sp = document.getElementById("tm-start-pause");
 				if (sp) sp.disabled = true;
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			try {
 				display.focus();
 				const range = document.createRange();
@@ -240,14 +264,18 @@ async function openTimerModal() {
 				const sel = window.getSelection();
 				sel.removeAllRanges();
 				sel.addRange(range);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			return;
 		}
 		const ms = parseTimeInput(display.textContent);
 		if (ms === null) {
 			try {
-				alert("Please enter a valid time (mm:ss or seconds).");
-			} catch (e) {}
+				showAlert("Please enter a valid time (mm:ss or seconds).", "Invalid time");
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			return;
 		}
 		_state.timerRemaining = ms;
@@ -255,18 +283,24 @@ async function openTimerModal() {
 		try {
 			display.contentEditable = "false";
 			display.classList.remove("editing");
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		try {
 			updateAttachedIcon(
 				editBtn,
 				"assets/svgs-fontawesome/solid/pen-to-square.svg",
 			);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		updateDisplay();
 		try {
 			const sp = document.getElementById("tm-start-pause");
 			if (sp) sp.disabled = !(_state.timerRemaining > 0);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	});
 	display.addEventListener("keydown", (ev) => {
 		if (!_state.editing) return;
@@ -274,24 +308,32 @@ async function openTimerModal() {
 			ev.preventDefault();
 			try {
 				editBtn.click();
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		}
 		if (ev.key === "Escape") {
 			_state.editing = false;
 			try {
 				display.contentEditable = "false";
 				display.classList.remove("editing");
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			try {
 				updateAttachedIcon(
 					editBtn,
 					"assets/svgs-fontawesome/solid/pen-to-square.svg",
 				);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			try {
 				const sp = document.getElementById("tm-start-pause");
 				if (sp) sp.disabled = !(_state.timerRemaining > 0);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			updateDisplay();
 		}
 	});
@@ -321,7 +363,9 @@ async function openTimerModal() {
 	try {
 		document.getElementById("tm-start-pause").disabled =
 			_state.editing || !(_state.timerRemaining > 0);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	if (_state.alertEnabled) alertBtn.classList.add("active");
 	else alertBtn.classList.remove("active");
 	const swLaps = document.createElement("div");
@@ -379,6 +423,14 @@ async function openTimerModal() {
 	modal.appendChild(tabs);
 	_backdrop.appendChild(modal);
 	document.body.appendChild(_backdrop);
+
+	// Accessibility: dialog semantics + Tab focus trap (Escape is handled by
+	// the backdrop keydown listener below; the trap keeps focus inside so it
+	// always receives the event).
+	_a11yCleanup = setupModalA11y(modal, {
+		whenActive: () => !!_backdrop,
+	});
+
 	_state.audio = new Audio(AUDIO_SRC);
 	_state.audio.loop = true;
 	t1.addEventListener("click", () => switchMode("timer", modal));
@@ -415,7 +467,9 @@ async function openTimerModal() {
 		alertBtn.setAttribute("aria-pressed", String(!!_state.alertEnabled));
 		try {
 			updateAttachedIcon(alertBtn, _state.alertEnabled ? volOn : volOff);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	});
 	_backdrop.addEventListener("keydown", (ev) => {
 		if (ev.key === "Escape") closeTimerModal();
@@ -425,18 +479,22 @@ async function openTimerModal() {
 	renderLaps();
 	try {
 		modal.focus();
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 }
-function closeTimerModal() {
+async function closeTimerModal() {
 	if (!_backdrop) return;
+	if (_a11yCleanup) {
+		_a11yCleanup(); // remove key handler + restore focus
+		_a11yCleanup = null;
+	}
 	if (_state.timerRunning || _state.stopwatchRunning) {
-		if (
-			!confirm(
-				"Timer or Stopwatch is running. Closing will reset it. Continue?",
-			)
-		) {
-			return;
-		}
+		const ok = await showConfirm(
+			"Timer or Stopwatch is running. Closing will reset it. Continue?",
+			"Close timer?",
+		);
+		if (!ok) return;
 	}
 	clearInterval(_state.timerInterval);
 	_state.timerInterval = null;
@@ -444,20 +502,28 @@ function closeTimerModal() {
 	_state.stopwatchInterval = null;
 	try {
 		document.body.removeChild(_backdrop);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	_backdrop = null;
 	try {
 		unloadCSS(CSS_ID);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	try {
 		if (_state.audio) {
 			_state.audio.pause();
 			_state.audio.currentTime = 0;
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	try {
 		document.dispatchEvent(new CustomEvent("timer:closed"));
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 }
 export function toggleTimerModal() {
 	if (_backdrop) {
@@ -489,7 +555,9 @@ function switchMode(mode, modal) {
 	if (custom) custom.style.display = mode === "timer" ? "" : "none";
 	try {
 		if (editBtn) editBtn.style.display = mode === "timer" ? "" : "none";
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	if (mode === "stopwatch" && _state.editing) {
 		_state.editing = false;
 		try {
@@ -498,7 +566,9 @@ function switchMode(mode, modal) {
 				disp.contentEditable = "false";
 				disp.classList.remove("editing");
 			}
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		try {
 			const sp = modal.querySelector("#tm-start-pause");
 			if (sp) {
@@ -508,14 +578,18 @@ function switchMode(mode, modal) {
 				);
 				sp.disabled = !(_state.timerRemaining > 0);
 			}
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		try {
 			if (editBtn)
 				updateAttachedIcon(
 					editBtn,
 					"assets/svgs-fontawesome/solid/pen-to-square.svg",
 				);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	}
 	updateDisplay();
 }
@@ -529,7 +603,9 @@ function updateDisplay() {
 			const sp = document.getElementById("tm-start-pause");
 			if (sp)
 				sp.disabled = _state.editing || !(_state.timerRemaining > 0);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	} else {
 		disp.textContent = formatTimeMs(_state.stopwatchTime, true);
 	}
@@ -549,13 +625,17 @@ function startTimer() {
 			_state.timerRunning = false;
 			try {
 				if (_state.audio && _state.alertEnabled) _state.audio.play();
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 			try {
 				updateIconById(
 					"tm-start-pause",
 					"assets/svgs-fontawesome/solid/circle-play.svg",
 				);
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 		}
 	}, 200);
 }
@@ -569,7 +649,9 @@ function pauseTimer() {
 			"tm-start-pause",
 			"assets/svgs-fontawesome/solid/circle-play.svg",
 		);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 }
 function resetTimer() {
 	_state.timerRunning = false;
@@ -581,7 +663,9 @@ function resetTimer() {
 			_state.audio.pause();
 			_state.audio.currentTime = 0;
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	updateDisplay();
 	try {
 		const el = document.getElementById("tm-start-pause");
@@ -592,7 +676,9 @@ function resetTimer() {
 			);
 			el.disabled = true;
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 }
 function toggleStopwatch(ev) {
 	const btn = ev.currentTarget;
@@ -606,7 +692,9 @@ function toggleStopwatch(ev) {
 					btn,
 					"assets/svgs-fontawesome/solid/circle-play.svg",
 				);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	} else {
 		_state.stopwatchRunning = true;
 		const last = Date.now();
@@ -621,7 +709,9 @@ function toggleStopwatch(ev) {
 					btn,
 					"assets/svgs-fontawesome/solid/circle-pause.svg",
 				);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	}
 }
 function recordLap() {
@@ -630,11 +720,13 @@ function recordLap() {
 	_state.stopwatchLaps.push(val);
 	_state.stopwatchLaps = _state.stopwatchLaps.slice(-3);
 	try {
-		localStorage.setItem(
+		void storageSetAsync(
 			"timer_last_laps",
 			JSON.stringify(_state.stopwatchLaps),
 		);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	renderLaps();
 }
 function resetStopwatch() {
@@ -644,8 +736,10 @@ function resetStopwatch() {
 	_state.stopwatchTime = 0;
 	_state.stopwatchLaps = [];
 	try {
-		localStorage.removeItem("timer_last_laps");
-	} catch (e) {}
+		void storageRemoveAsync("timer_last_laps");
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 	renderLaps();
 	updateDisplay();
 	try {
@@ -653,7 +747,9 @@ function resetStopwatch() {
 			"sw-start",
 			"assets/svgs-fontawesome/solid/circle-play.svg",
 		);
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[timerModal] operation failed', e);
+    }
 }
 function renderLaps() {
 	const cont = document.getElementById("stopwatch-laps");

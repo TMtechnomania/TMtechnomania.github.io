@@ -1,5 +1,6 @@
 import { renderInlineIcon } from "./brandIconLoader.js";
 import { loadCSS, unloadCSS } from "./cssLoader.js";
+import { hasPermissions, requestPermissions } from "./permUtil.js";
 
 const CSS_ID = "famcam-css";
 const CSS_PATH = "css/famcam.css";
@@ -17,6 +18,24 @@ function ensureFamCamCSS() {
 	}
 }
 
+// snapdom (~98KB) is only needed for screenshots, so it is injected on
+// demand instead of being loaded eagerly in newtab.html.
+let _snapdomPromise = null;
+function ensureSnapdom() {
+	if (_snapdomPromise) return _snapdomPromise;
+	_snapdomPromise = new Promise((resolve, reject) => {
+		const s = document.createElement("script");
+		s.src = "js/snapdom.js";
+		s.onload = () => resolve(window.snapdom);
+		s.onerror = () => {
+			_snapdomPromise = null;
+			reject(new Error("Failed to load snapdom"));
+		};
+		document.head.appendChild(s);
+	});
+	return _snapdomPromise;
+}
+
 function unloadFamCamCSSIfUnused() {
 	const hasPreview = !!_previewEl || !!document.getElementById("famcam-preview");
 	const hasFlash = !!_flashOverlay || !!document.getElementById("famcam-flash-overlay");
@@ -30,12 +49,16 @@ export function destroyFamCam() {
 		// Remove any active flash UI
 		try {
 			toggleFlash(false);
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 
 		if (_stream) {
 			try {
 				_stream.getTracks().forEach((t) => t.stop());
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 			_stream = null;
 		}
 
@@ -44,17 +67,23 @@ export function destroyFamCam() {
 				if (typeof interact !== "undefined") {
 					interact(_previewEl).unset();
 				}
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 			try {
 				_previewEl.remove();
-			} catch (e) {}
+			} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 			_previewEl = null;
 		}
 
 		// Ensure any leftover flash overlay is removed
 		try {
 			document.getElementById("famcam-flash-overlay")?.remove();
-		} catch (e) {}
+		} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 		_flashOverlay = null;
 	} finally {
 		_famCamConfig = null;
@@ -244,9 +273,39 @@ export function toggleFlash(enable) {
 			_flashOverlay = document.getElementById("famcam-flash-overlay");
 		}
 		if (_flashOverlay) _flashOverlay.remove();
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 	_flashOverlay = null;
 	unloadFamCamCSSIfUnused();
+}
+
+/* --- Inline error toast (replaces blocking alert() dialogs) --- */
+function showFamCamError(msg) {
+	try {
+		let t = document.getElementById("famcam-error-toast");
+		if (!t) {
+			t = document.createElement("div");
+			t.id = "famcam-error-toast";
+			t.style.cssText =
+				"position:fixed;bottom:24px;left:50%;transform:translateX(-50%);" +
+				"z-index:2147483647;padding:10px 18px;border-radius:10px;" +
+				"background:rgba(20,20,25,.92);color:#fff;font-size:13px;" +
+				"font-family:system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.4);" +
+				"max-width:80vw;text-align:center;pointer-events:none;";
+			document.body.appendChild(t);
+		}
+		t.textContent = msg;
+		t.style.opacity = "1";
+		clearTimeout(t._hideTimer);
+		t._hideTimer = setTimeout(() => {
+			t.style.transition = "opacity .4s";
+			t.style.opacity = "0";
+			setTimeout(() => t.remove(), 450);
+		}, 4200);
+	} catch (e) {
+	console.warn('[famcam] operation failed', e);
+    }
 }
 
 /* --- SNAP FEATURES --- */
@@ -265,6 +324,13 @@ export async function handleSnap() {
 
 async function captureCamera() {
 	try {
+		// video-capture is an optional permission in MV3 - ask when the user
+		// actually takes a snap, not at install time.
+		if (!(await hasPermissions(["video-capture"]))) {
+			const ok = await requestPermissions(["video-capture"]);
+			if (!ok) throw new Error("Camera permission not granted");
+		}
+
 		_stream = await navigator.mediaDevices.getUserMedia({
 			video: {
 				facingMode: "user",
@@ -296,22 +362,39 @@ async function captureCamera() {
 		}, "image/png");
 	} catch (err) {
 		console.error("FamCam Error:", err);
-		alert("Could not access camera. Please allow camera permissions.");
+		showFamCamError(
+			err && err.name === "NotAllowedError"
+				? "Camera access denied - allow it in Chrome site settings."
+				: "Could not start the camera. Try again.",
+		);
 	}
 }
 
 async function captureTabAndDownload() {
 	try {
+		// chrome.tabs.captureVisibleTab needs a host permission; <all_urls> is
+		// optional and requested on first use (activeTab does not apply to the
+		// new-tab page, so this must be granted by the user).
+		if (!(await hasPermissions(["<all_urls>"]))) {
+			const ok = await requestPermissions(["<all_urls>"]);
+			if (!ok) throw new Error("Capture permission not granted");
+		}
+
 		const dataUrl = await captureVisibleTabAsync();
 		const finalUrl = await compositeWatermark(dataUrl, true);
 		downloadDataUrl(finalUrl, `snap-screenshot-${Date.now()}.png`);
 	} catch (e) {
 		console.error(e);
-		alert("Screenshot failed. Permission issue?");
+		showFamCamError(
+			e && e.message === "Capture permission not granted"
+				? "Tab screenshots need capture access - the request was declined."
+				: "Screenshot failed. Try again.",
+		);
 	}
 }
 
 async function captureVisibleTabAsync(includePreview = false) {
+	await ensureSnapdom();
 	// Handle Video Wallpaper: manually rasterize to canvas for SnapDOM
 	const wallpaper = document.getElementById("wallpaper");
 	let canvasPlaceholder = null;

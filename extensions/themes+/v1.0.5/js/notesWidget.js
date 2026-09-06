@@ -1,5 +1,6 @@
 import { loadCSS } from "./cssLoader.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
+import { storageGetSync, storageSetAsync } from "./storageUtil.js";
 
 const CSS_ID = "notes-widget-css";
 const CSS_PATH = "css/notesWidget.css";
@@ -32,7 +33,7 @@ export async function initNotesWidget() {
 
 function getNotes() {
 	try {
-		return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+		return JSON.parse(storageGetSync(STORAGE_KEY) || "[]");
 	} catch (e) {
 		return [];
 	}
@@ -43,7 +44,7 @@ function saveNoteState(updatedNote) {
 	const idx = notes.findIndex((n) => n.id === updatedNote.id);
 	if (idx !== -1) {
 		notes[idx] = updatedNote;
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+		void storageSetAsync(STORAGE_KEY, JSON.stringify(notes));
 		// We do NOT dispatch 'notes-updated' here to avoid infinite render loop loops during drag,
 		// or we just be careful. Drag ends only trigger save.
 	}
@@ -60,10 +61,14 @@ function renderWidgets() {
 				.forEach((el) => {
 					try {
 						interact(el).unset();
-					} catch (e) {}
+					} catch (e) {
+	console.warn('[notesWidget] operation failed', e);
+    }
 				});
 		}
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[notesWidget] operation failed', e);
+    }
 
 	_container.innerHTML = "";
 
@@ -190,7 +195,9 @@ function setupInteract(widgetEl, headerEl, note) {
 
 	try {
 		interact(widgetEl).unset();
-	} catch (e) {}
+	} catch (e) {
+	console.warn('[notesWidget] operation failed', e);
+    }
 
 	const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
 
@@ -223,7 +230,9 @@ function setupInteract(widgetEl, headerEl, note) {
 						note.x = parseFloat(widgetEl.dataset.x) || 0;
 						note.y = parseFloat(widgetEl.dataset.y) || 0;
 						saveNoteState(note);
-					} catch (e) {}
+					} catch (e) {
+	console.warn('[notesWidget] operation failed', e);
+    }
 				},
 			},
 		})
@@ -264,7 +273,9 @@ function setupInteract(widgetEl, headerEl, note) {
 						note.width = widgetEl.getBoundingClientRect().width;
 						note.height = widgetEl.getBoundingClientRect().height;
 						saveNoteState(note);
-					} catch (e) {}
+					} catch (e) {
+	console.warn('[notesWidget] operation failed', e);
+    }
 				},
 			},
 			modifiers: [
