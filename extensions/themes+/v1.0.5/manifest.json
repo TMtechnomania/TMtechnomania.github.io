@@ -18,18 +18,16 @@
 		"tabs",
 		"alarms",
 		"notifications",
-		"search",
-		"permissions"
+		"search"
 	],
 	"optional_permissions": [
 		"bookmarks",
-		"<all_urls>",
-		"video-capture",
-		"audio-capture",
-		"geolocation",
 		"system.cpu",
 		"system.memory",
 		"system.storage"
+	],
+	"optional_host_permissions": [
+		"<all_urls>"
 	],
 	"background": {
 		"service_worker": "js/service.js",

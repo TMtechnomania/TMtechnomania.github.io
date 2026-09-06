@@ -41,18 +41,17 @@ The new-tab page shows a small media widget (now-playing title + play/pause/skip
 | `alarms` | Wake the service worker at alarm times (the Chrome-internal scheduler; no network involved). |
 | `notifications` | Show alarm and timer alerts as system notifications. |
 | `search` | Open search-engine results from the new-tab search bar. |
-| `permissions` | Needed to *ask* for the optional permissions below on first use (MV3 requirement). |
 
 ### Optional (only active after you explicitly grant them)
 
-| Permission | Used by | What it enables |
+| Permission / Origin | Used by | What it enables |
 | --- | --- | --- |
 | `bookmarks` | Bookmarks panel & search suggestions | Manage your Chrome bookmarks from the new tab. |
-| `<all_urls>` | RSS reader; FamCam tab screenshots | Fetch user-entered feed URLs; capture a screenshot of the active tab. |
-| `video-capture` | FamCam | Webcam selfies and ring-flash effects. |
-| `audio-capture` | Voice search | Microphone access for dictating searches (audio processed by Google's speech service — see table above). |
-| `geolocation` | Weather widget | Show weather for your current location instead of a typed city. |
+| `<all_urls>` (Optional Host Permission) | RSS reader; FamCam tab screenshots | Fetch user-entered feed URLs; capture a screenshot of the active tab. |
 | `system.cpu`, `system.memory`, `system.storage` | System-stats tool | Display live CPU/RAM/disk usage charts in the tools dashboard. |
+| Camera (`getUserMedia`) | FamCam | Webcam selfies and ring-flash effects (standard browser permission prompt). |
+| Microphone (`SpeechRecognition`) | Voice search | Microphone access for dictating searches (standard browser permission prompt). |
+| Geolocation (Web API) | Weather widget | Show weather for your current location instead of a typed city (standard browser permission prompt). |
 
 You can revoke any optional permission at any time in **chrome://extensions → Themes+ → Permissions**; the affected feature will simply prompt you again next time it is used.
 
