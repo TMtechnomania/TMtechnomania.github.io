@@ -61,6 +61,7 @@ export const DEFAULT_CONFIG = {
 		brightness: 100, // in percentage
 		contrast: 100, // in percentage
 		grayscale: 0, // in percentage
+		saturate: 100, // in percentage
 		muted: true, // Default to muted for video wallpapers
 		rain: false, // Rain customization
 	},

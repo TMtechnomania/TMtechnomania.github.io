@@ -2345,6 +2345,7 @@ function updateWallpaperDynamicContent(container, settings) {
 		settings.wallpaper.brightness = 100;
 		settings.wallpaper.contrast = 100;
 		settings.wallpaper.grayscale = 0;
+		settings.wallpaper.saturate = 100;
 		settings.wallpaper.rain = false; // Reset Rain
 		saveSettings(settings);
 		updateWallpaperFilters(settings.wallpaper);
@@ -2418,6 +2419,21 @@ function updateWallpaperDynamicContent(container, settings) {
 
 	addRange(
 		filterGroup,
+		"Saturation",
+		"%",
+		0,
+		200,
+		settings.wallpaper.saturate ?? 100,
+		100,
+		(val) => {
+			settings.wallpaper.saturate = val;
+			saveSettings(settings);
+			updateWallpaperFilters(settings.wallpaper);
+		},
+	);
+
+	addRange(
+		filterGroup,
 		"Grayscale",
 		"%",
 		0,
@@ -2450,6 +2466,8 @@ function updateWallpaperFilters(cfg) {
 	if (cfg.brightness !== 100) parts.push(`brightness(${cfg.brightness}%)`);
 	if (cfg.contrast !== 100) parts.push(`contrast(${cfg.contrast}%)`);
 	if (cfg.grayscale > 0) parts.push(`grayscale(${cfg.grayscale}%)`);
+	if (cfg.saturate !== 100 && cfg.saturate != null)
+		parts.push(`saturate(${cfg.saturate}%)`);
 
 	el.style.filter = parts.join(" ");
 }

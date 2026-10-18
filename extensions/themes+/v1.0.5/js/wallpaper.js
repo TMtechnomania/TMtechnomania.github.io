@@ -60,7 +60,7 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 		el.preload = "auto"; // Optimize loading
 
 		// Default to true if undefined to be safe, or respect config
-		el.muted = styleCfg.muted !== false;
+		el.muted = _autoMuted || (styleCfg.muted !== false);
 		el.playsInline = true;
 		el.disablePictureInPicture = true; // Prevent PiP button
 
@@ -125,6 +125,84 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 		applyStyleConfigToElement(el, normalizedStyle);
 	} catch (e) {}
 }
+
+// === AUTO-MUTE STATE (managed by service worker) ===
+let _autoMuted = false;
+
+function _applyAutoMute() {
+	const el = document.getElementById("wallpaper");
+	if (el && el.tagName === "VIDEO") {
+		el.muted = _autoMuted;
+	}
+}
+
+// === WALLPAPER SYNC STATE ===
+let _syncDebounceTimer = null;
+
+function _getWallpaperVideo() {
+	const el = document.getElementById("wallpaper");
+	return el && el.tagName === "VIDEO" ? el : null;
+}
+
+function _reportSyncTime() {
+	const video = _getWallpaperVideo();
+	if (!video) return;
+	// Throttle reports to ~4/sec
+	if (_syncDebounceTimer) return;
+	_syncDebounceTimer = setTimeout(() => { _syncDebounceTimer = null; }, 250);
+	try {
+		chrome.runtime.sendMessage({
+			type: "WALLPAPER_SYNC_TIME",
+			tabId: null,
+			time: video.currentTime,
+			duration: video.duration,
+			paused: video.paused,
+		}).catch(() => {});
+	} catch (e) {}
+}
+
+function _checkSyncStatus() {
+	const video = _getWallpaperVideo();
+	if (!video || video.paused) return;
+	const diff = Math.abs(video.currentTime);
+	if (diff > 0.3) {
+		// Out of sync — show button
+		try {
+			chrome.runtime.sendMessage({
+				type: "WALLPAPER_SYNC_STATUS",
+				needSync: true,
+			}).catch(() => {});
+		} catch (e) {}
+	}
+}
+
+// Report time periodically when video is playing
+setInterval(() => {
+	const video = _getWallpaperVideo();
+	if (video && !video.paused) {
+		_reportSyncTime();
+		_checkSyncStatus();
+	}
+}, 1000);
+
+chrome.runtime.onMessage.addListener((message) => {
+	if (message.type === "WALLPAPER_MUTE") {
+		_autoMuted = true;
+		_applyAutoMute();
+	} else if (message.type === "WALLPAPER_UNMUTE") {
+		if (_autoMuted) {
+			_autoMuted = false;
+			_applyAutoMute();
+		}
+	} else if (message.type === "WALLPAPER_SYNC") {
+		const video = _getWallpaperVideo();
+		if (video) {
+			video.currentTime = 0;
+			video.play().catch(() => {});
+		}
+	}
+	return false;
+});
 
 // Global Visibility Listener for Video Wallpaper
 document.addEventListener("visibilitychange", () => {
@@ -473,7 +551,8 @@ function normalizeStyleValue(prop, v) {
 		if (
 			prop === "brightness" ||
 			prop === "contrast" ||
-			prop === "grayscale"
+			prop === "grayscale" ||
+			prop === "saturate"
 		) {
 			if (v > 10) return `${v}%`;
 			return String(v);
@@ -497,6 +576,9 @@ function buildFilterString(styleCfg = {}) {
 		parts.push(`brightness(${brightness})`);
 	const contrast = normalizeStyleValue("contrast", styleCfg.contrast);
 	if (contrast && !isHundred(contrast)) parts.push(`contrast(${contrast})`);
+	const saturate = normalizeStyleValue("saturate", styleCfg.saturate);
+	if (saturate && !isHundred(saturate))
+		parts.push(`saturate(${saturate})`);
 	const grayscale = normalizeStyleValue("grayscale", styleCfg.grayscale);
 	if (grayscale && !isZero(grayscale)) parts.push(`grayscale(${grayscale})`);
 	const filterStr = parts.join(" ");
@@ -506,6 +588,7 @@ function buildFilterString(styleCfg = {}) {
 			styleCfg.blur !== 0 ||
 			styleCfg.brightness !== 100 ||
 			styleCfg.contrast !== 100 ||
+			styleCfg.saturate !== 100 ||
 			styleCfg.grayscale !== 0
 		) {
 		}
@@ -546,6 +629,7 @@ function normalizeWallpaperConfig(cfg = {}) {
 		brightness: src.brightness ?? 100,
 		contrast: src.contrast ?? 100,
 		grayscale: src.grayscale ?? 0,
+		saturate: src.saturate ?? 100,
 		position: src.position ?? src.objectPosition ?? undefined,
 		scale: src.scale ?? undefined,
 		muted: src.muted !== false, // Default true
