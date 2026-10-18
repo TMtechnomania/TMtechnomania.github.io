@@ -412,7 +412,19 @@ async function handleMessage(data, sendResponse, sender) {
 }
 
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
-	handleMessage(data, sendResponse, sender);
+	let responded = false;
+	const respond = (resp) => {
+		if (responded) return;
+		responded = true;
+		try {
+			if (sendResponse) sendResponse(resp);
+		} catch (e) {}
+	};
+	handleMessage(data, respond, sender).catch((err) => {
+		if (!responded) respond({ ok: false, error: (err && err.message) || String(err) });
+	}).finally(() => {
+		if (!responded) respond({ ok: true });
+	});
 	return true; // Keep channel open for async response
 });
 

@@ -413,7 +413,6 @@ function openEditor(container, type, existingNote = null) {
 				btn.classList.toggle("active");
 				setTimeout(() => {
 					applyingFmt = false;
-					updateFmtState();
 				}, 0);
 			});
 			fmtButtons.push({ btn, cmd, val });
