@@ -12,6 +12,9 @@ function resolveExtensionUrl(relativePath) {
 			chrome.runtime &&
 			chrome.runtime.getURL
 		) {
+			if (/^(https?:|data:|blob:|file:)/i.test(relativePath)) {
+				return relativePath;
+			}
 			return chrome.runtime.getURL(relativePath);
 		}
 	} catch (e) {}
@@ -75,7 +78,7 @@ function createImgElement(path, imgClass, fallbackSrc) {
 	if (imgClass) img.classList.add(imgClass);
 	img.alt = "";
 	img.decoding = "async";
-	img.loading = "lazy";
+	img.loading = "eager";
 	img.referrerPolicy = "no-referrer";
 	const resolved = resolveExtensionUrl(path);
 	img.src = resolved;
