@@ -48,6 +48,19 @@ async function getNotesModule() {
 
 const app = chrome || browser;
 
+// === NEW TAB INSTANCE REGISTRATION ===
+// Register this tab so the service worker can manage wallpaper audio across instances
+try {
+    app.runtime.sendMessage({ type: "NEWTAB_REGISTER" }).catch(() => {});
+} catch (e) {}
+
+// Deregister when the tab is closing
+window.addEventListener("pagehide", () => {
+    try {
+        app.runtime.sendMessage({ type: "NEWTAB_UNREGISTER" }).catch(() => {});
+    } catch (e) {}
+});
+
 // Automatic UI Scaling
 let uiScaleMultiplier = 1;
 
@@ -189,6 +202,20 @@ async function closeAllOverlays() {
 	if (_notesModule) _notesModule.closeNotesModal();
 	if (document.getElementById("bookmarks-panel")) toggleBookmarksPanel();
 	if (document.getElementById("tabs-ribbon")) toggleTabsRibbon();
+	const toolsRibbon = document.getElementById("tools-ribbon");
+	if (toolsRibbon) {
+		try {
+			document.body.removeChild(toolsRibbon);
+		} catch (e) {}
+		const toolsCss = document.getElementById("tools-ribbon-css");
+		if (toolsCss) toolsCss.remove();
+	}
+	const widgetPanel = document.getElementById("tools-widget-panel");
+	if (widgetPanel) {
+		try {
+			document.body.removeChild(widgetPanel);
+		} catch (e) {}
+	}
 }
 
 (async () => {
@@ -211,10 +238,15 @@ async function closeAllOverlays() {
 	const manifest = await getManifest();
 
 	initNotesWidget();
-	document.addEventListener("notes-open", async (e) => {
-		const mod = await getNotesModule();
-		mod.openNotesModal(e.detail || {});
-	});
+		document.addEventListener("notes-open", async (e) => {
+			const mod = await getNotesModule();
+			mod.openNotesModal(e.detail || {});
+		});
+		// Restore persistent floating tools
+		try {
+			const toolsMod = await import("./toolsRibbon.js");
+			toolsMod.restoreToolFloats();
+		} catch (e) {}
 	let renderedId = null;
 
 	if (!manifest || !(manifest.images || manifest.videos)) {
@@ -388,12 +420,13 @@ async function closeAllOverlays() {
 	try {
 		document.addEventListener("action:tools", async () => {
 			const toggleEl = document.getElementById("action-tools");
-			const isOpen = !!document.getElementById("tools-modal");
+			const isOpen = !!document.getElementById("tools-ribbon");
 			closeAllOverlays();
 
 			if (!isOpen) {
-				const mod = await getToolsModule();
-				mod.toggleToolsModal();
+				const { toggleToolsRibbon, setToolsToggleElement } = await import("./toolsRibbon.js");
+				setToolsToggleElement(toggleEl);
+				toggleToolsRibbon();
 				if (toggleEl) toggleEl.classList.add("active");
 			} else {
 				if (toggleEl) toggleEl.classList.remove("active");
