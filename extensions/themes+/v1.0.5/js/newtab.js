@@ -208,7 +208,10 @@ async function closeAllOverlays() {
 			document.body.removeChild(toolsRibbon);
 		} catch (e) {}
 		const toolsCss = document.getElementById("tools-ribbon-css");
-		if (toolsCss) toolsCss.remove();
+		if (toolsCss) {
+			// Only unload if no floating tool panels remain
+			if (!document.querySelector(".tool-float-widget")) toolsCss.remove();
+		}
 	}
 	const widgetPanel = document.getElementById("tools-widget-panel");
 	if (widgetPanel) {
