@@ -1400,6 +1400,23 @@ function createRssWidget() {
 	return widget;
 }
 
+// === WIDGET EXPORTS (for toolsRibbon reuse) ===
+export const TOOL_WIDGETS = [
+	{ id: "stats", label: "Stats", icon: "chart-pie", widget: createStatsWidget },
+	{ id: "workspaces", label: "Workspaces", icon: "layer-group", widget: createWorkspacesWidget },
+	{ id: "calculator", label: "Calculator", icon: "calculator", widget: createCalculatorWidget },
+	{ id: "converter", label: "Converter", icon: "arrow-right-arrow-left", widget: createConverterWidget },
+	{ id: "qr", label: "QR", icon: "qrcode", widget: createQRWidget },
+	{ id: "text", label: "Text", icon: "font", widget: createTextToolsWidget },
+	{ id: "password", label: "Password", icon: "key", widget: createPasswordWidget },
+	{ id: "json", label: "JSON", icon: "code", widget: createJsonWidget },
+	{ id: "base64", label: "Base64", icon: "lock", widget: createBase64Widget },
+	{ id: "lorem", label: "Lorem", icon: "paragraph", widget: createLoremWidget },
+	{ id: "regex", label: "Regex", icon: "asterisk", widget: createRegexWidget },
+	{ id: "hash", label: "Hash", icon: "fingerprint", widget: createHashWidget },
+	{ id: "rss", label: "RSS", icon: "rss", widget: createRssWidget },
+];
+
 // === PUBLIC API ===
 export async function toggleToolsModal() {
 	const existing = document.getElementById("tools-modal");
