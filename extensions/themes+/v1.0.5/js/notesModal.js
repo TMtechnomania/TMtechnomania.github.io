@@ -397,6 +397,7 @@ function openEditor(container, type, existingNote = null) {
 	if (type === "note") {
 		const toolbar = document.createElement("div");
 		toolbar.className = "note-format-toolbar";
+		const fmtButtons = [];
 		const addFmt = (label, cmd, val = null) => {
 			const btn = document.createElement("button");
 			btn.type = "button";
@@ -407,7 +408,9 @@ function openEditor(container, type, existingNote = null) {
 				document.execCommand(cmd, false, val);
 				editor.focus();
 				note.content = editor.innerHTML;
+				updateFmtState();
 			});
+			fmtButtons.push({ btn, cmd, val });
 			return btn;
 		};
 		toolbar.appendChild(addFmt("B", "bold"));
@@ -422,10 +425,32 @@ function openEditor(container, type, existingNote = null) {
 		editor.className = "textarea note-input-content";
 		editor.contentEditable = "true";
 		editor.innerHTML = note.content || "";
+		const updateFmtState = () => {
+			fmtButtons.forEach(({ btn, cmd, val }) => {
+				let active = false;
+				try {
+					if (cmd === "formatBlock") {
+						active = (document.queryCommandValue("formatBlock") || "")
+							.toLowerCase()
+							.includes("h3");
+					} else {
+						active = document.queryCommandState(cmd);
+					}
+				} catch (e) {}
+				btn.classList.toggle("active", active);
+			});
+		};
 		editor.addEventListener("input", () => {
 			note.content = editor.innerHTML;
+			updateFmtState();
+		});
+		editor.addEventListener("keyup", updateFmtState);
+		editor.addEventListener("mouseup", updateFmtState);
+		document.addEventListener("selectionchange", () => {
+			if (document.activeElement === editor) updateFmtState();
 		});
 		contentWrapper.appendChild(editor);
+		updateFmtState();
 	} else {
 		// Checklist
 		const checkContainer = document.createElement("div");

@@ -145,6 +145,11 @@
 	padding: var(--dis-xs) var(--dis-1);
 }
 
+.note-format-toolbar .btn.active {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
 .note-input-content {
 	flex: 1;
 	min-height: var(--dis-30);
