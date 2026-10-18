@@ -210,6 +210,10 @@ function openToolFloat(tool, pos) {
 function closeToolFloat(toolId) {
 	const panel = _floatPanels.get(toolId);
 	if (!panel) return;
+	if (panel._statsInterval) {
+		clearInterval(panel._statsInterval);
+		panel._statsInterval = null;
+	}
 	try {
 		if (typeof interact !== "undefined") interact(panel).unset();
 	} catch (e) {}

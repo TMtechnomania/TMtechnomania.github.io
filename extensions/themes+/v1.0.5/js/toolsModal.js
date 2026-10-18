@@ -324,8 +324,9 @@ function createStatsWidget() {
 		}
 	};
 
-	updateStats();
-	statsInterval = setInterval(updateStats, 2000);
+updateStats();
+statsInterval = setInterval(updateStats, 2000);
+widget._statsInterval = statsInterval;
 
 	return widget;
 }
