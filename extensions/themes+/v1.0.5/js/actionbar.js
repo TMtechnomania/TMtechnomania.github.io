@@ -6,6 +6,7 @@ import {
 } from "./config.js";
 
 import { renderInlineIcon, getIconForUrl } from "./brandIconLoader.js";
+import { toggleToolsRibbon, setToolsToggleElement } from "./toolsRibbon.js";
 import {
 	initFamCam,
 	destroyFamCam,
@@ -83,16 +84,17 @@ export async function initActionBar(actionCfg = {}) {
 		iconGroup.className = "action-group";
 
 		const actionKey = document.createElement("div");
-		actionKey.className = "btn btn-icon";
-		actionKey.id = "action-tools";
-		actionKey.title = "Tools";
-		actionKey.appendChild(
-			createUiIcon("assets/svgs-fontawesome/solid/keyboard.svg"),
-		);
-		actionKey.addEventListener("click", (e) => {
-			e.stopPropagation();
-			document.dispatchEvent(new CustomEvent("action:tools"));
-		});
+			actionKey.className = "btn btn-icon";
+			actionKey.id = "action-tools";
+			actionKey.title = "Tools";
+			actionKey.appendChild(
+				createUiIcon("assets/svgs-fontawesome/solid/keyboard.svg"),
+			);
+			actionKey.addEventListener("click", (e) => {
+				e.stopPropagation();
+				setToolsToggleElement(actionKey);
+				toggleToolsRibbon();
+			});
 		iconGroup.appendChild(actionKey);
 
 		const tabsIcon = document.createElement("div");
@@ -202,14 +204,14 @@ export async function initActionBar(actionCfg = {}) {
 				);
 				manage.title = "Manage shortcuts";
 
-				manage.addEventListener("click", (ev) => {
-					ev.stopPropagation();
-					document.dispatchEvent(
-						new CustomEvent("action:settings", {
-							detail: { tab: "actionbar" },
-						}),
-					);
-				});
+						manage.addEventListener("click", (ev) => {
+							ev.stopPropagation();
+							document.dispatchEvent(
+								new CustomEvent("action:settings", {
+									detail: { tab: "actionbar" },
+								}),
+							);
+						});
 				shortcutsContainer.appendChild(manage);
 			}
 
@@ -452,8 +454,49 @@ export async function initActionBar(actionCfg = {}) {
 		});
 		thirdGroup.appendChild(infoBtn);
 
-		// FamCam Group
-		let famcamCfg =
+				// Wallpaper Sync Button (hidden by default, end of middle section)
+				const syncBtn = document.createElement("div");
+				syncBtn.className = "btn btn-icon shortcut-sync";
+				syncBtn.id = "wallpaper-sync";
+				syncBtn.title = "Sync wallpaper across tabs";
+				syncBtn.style.display = "none";
+				syncBtn.appendChild(
+					createUiIcon("assets/svgs-fontawesome/solid/repeat.svg"),
+				);
+				syncBtn.addEventListener("click", (ev) => {
+					ev.stopPropagation();
+					chrome.runtime
+						.sendMessage({ type: "WALLPAPER_SYNC" })
+						.catch(() => {});
+				});
+				thirdGroup.appendChild(syncBtn);
+
+				// Listen for sync status from service worker
+				// Only show for specific video wallpapers (not random/sequence)
+				const isSpecificVideo =
+					stored.wallpaper?.mode === "specific" &&
+					stored.wallpaper?.type === "video";
+				chrome.runtime.onMessage.addListener((msg) => {
+					if (msg.type === "WALLPAPER_SYNC_STATUS" && isSpecificVideo) {
+						if (msg.needSync) {
+							syncBtn.style.display = "";
+						} else {
+							syncBtn.style.display = "none";
+						}
+					}
+				});
+
+				// Query initial sync state on action bar init
+				if (isSpecificVideo) {
+					chrome.runtime.sendMessage({ type: "WALLPAPER_SYNC_QUERY" }, (res) => {
+						if (res && res.needSync) {
+							syncBtn.style.display = "";
+						}
+					});
+				}
+
+				// FamCam Group
+				let famcamCfg =
 			stored.actionbar?.famcam ||
 			actionCfg.famcam ||
 			DEFAULT_CONFIG.actionbar.famcam ||

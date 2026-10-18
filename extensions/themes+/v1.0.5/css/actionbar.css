@@ -168,6 +168,20 @@
 	outline: calc(2px * var(--ui-scale)) solid var(--color-accent);
 }
 
+.shortcut-sync {
+	color: var(--text-off);
+}
+
+.shortcut-sync:hover {
+	color: var(--text-accent);
+}
+
+.shortcut-sync.active {
+	color: var(--text-accent);
+	background: var(--color-base);
+	outline: calc(2px * var(--ui-scale)) solid var(--color-accent);
+}
+
 /* Spread Layout Sections */
 .ab-section-left {
 	flex: 1;

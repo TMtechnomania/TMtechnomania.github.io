@@ -252,6 +252,18 @@ async function handleMessage(data, sendResponse, sender) {
 
 	if (!data) return;
 
+	// New Tab instance registration
+	if (data.type === "NEWTAB_REGISTER" && sender?.tab?.id) {
+		_registerNewTab(sender.tab.id);
+		if (sendResponse) sendResponse({ ok: true });
+		return;
+	}
+	if (data.type === "NEWTAB_UNREGISTER" && sender?.tab?.id) {
+		_unregisterNewTab(sender.tab.id);
+		if (sendResponse) sendResponse({ ok: true });
+		return;
+	}
+
 	// Media Message Routing
 	if (data.type === "MEDIA_UPDATE" || data.type === "MEDIA_PRESENCE") {
 		// From Content Script -> Service Worker
@@ -710,6 +722,159 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 			}
 		}
 	}
+});
+
+// === WALLPAPER SYNC MANAGEMENT ===
+const _syncTimes = new Map(); // tabId -> { time, duration, lastUpdate }
+let _syncState = false; // true = in sync, false = out of sync
+
+function _broadcastSyncStatus() {
+	if (newTabInstances.length < 2) return;
+	const latestTabId = newTabInstances[newTabInstances.length - 1].tabId;
+
+	if (_syncState) {
+		// In sync — tell latest tab to hide button
+		chrome.tabs.sendMessage(latestTabId, { type: "WALLPAPER_SYNC_STATUS", needSync: false }).catch(() => {});
+	} else {
+		// Out of sync — tell latest tab to show button
+		chrome.tabs.sendMessage(latestTabId, { type: "WALLPAPER_SYNC_STATUS", needSync: true }).catch(() => {});
+	}
+}
+
+function _checkSync() {
+	if (_syncTimes.size < 2) {
+		_syncState = true;
+		return;
+	}
+	const times = Array.from(_syncTimes.values()).map((v) => v.time);
+	const maxTime = Math.max(...times);
+	const minTime = Math.min(...times);
+	const spread = maxTime - minTime;
+	const wasInSync = _syncState;
+	_syncState = spread < 0.5; // 500ms tolerance
+	if (wasInSync !== _syncState) {
+		_broadcastSyncStatus();
+	}
+}
+
+chrome.runtime.onMessage.addListener((msg, sender) => {
+	if (msg.type === "WALLPAPER_SYNC" && sender.tab) {
+		// Broadcast sync to all newtab instances
+		for (const inst of newTabInstances) {
+			chrome.tabs.sendMessage(inst.tabId, { type: "WALLPAPER_SYNC" }).catch(() => {});
+		}
+		return false;
+	}
+	if (msg.type === "WALLPAPER_SYNC_TIME" && sender.tab) {
+		_syncTimes.set(sender.tab.id, {
+			time: msg.time,
+			duration: msg.duration,
+			lastUpdate: Date.now(),
+		});
+		// Clean up stale entries
+		const now = Date.now();
+		for (const [tid, info] of _syncTimes) {
+			if (now - info.lastUpdate > 5000) _syncTimes.delete(tid);
+		}
+		_checkSync();
+		return false;
+	}
+	if (msg.type === "WALLPAPER_SYNC_QUERY") {
+		// Return current sync state
+		return { needSync: !_syncState };
+	}
+	return false;
+});
+
+// === NEW TAB INSTANCE MANAGEMENT ===
+let newTabInstances = []; // Ordered list of {tabId, autoMuted}
+
+function _getNewtabUrl() {
+	try { return chrome.runtime.getURL("newtab.html"); } catch (e) { return null; }
+}
+
+function _isNewtabUrl(url) {
+	if (!url) return false;
+	const nt = _getNewtabUrl();
+	return nt && url.startsWith(nt);
+}
+
+function _rebuildNewTabInstances() {
+	const nt = _getNewtabUrl();
+	if (!nt) return;
+	chrome.tabs.query({ url: nt }, (tabs) => {
+		if (chrome.runtime.lastError) return;
+		const wasEmpty = newTabInstances.length === 0;
+		newTabInstances = tabs.map((t) => ({ tabId: t.id, autoMuted: false }));
+		// Mute all but the latest on rebuild (SW restart recovery)
+		if (newTabInstances.length > 1) {
+			const latest = newTabInstances[newTabInstances.length - 1];
+			newTabInstances.forEach((inst) => {
+				if (inst.tabId !== latest.tabId) {
+					inst.autoMuted = true;
+					chrome.tabs
+						.sendMessage(inst.tabId, { type: "WALLPAPER_MUTE" })
+						.catch(() => {});
+				}
+			});
+		}
+	});
+}
+
+function _registerNewTab(tabId) {
+	newTabInstances = newTabInstances.filter((i) => i.tabId !== tabId);
+	newTabInstances.push({ tabId, autoMuted: false });
+	// Mute all previous instances
+	if (newTabInstances.length > 1) {
+		for (let i = 0; i < newTabInstances.length - 1; i++) {
+			const inst = newTabInstances[i];
+			if (!inst.autoMuted) {
+				inst.autoMuted = true;
+				chrome.tabs
+					.sendMessage(inst.tabId, { type: "WALLPAPER_MUTE" })
+					.catch(() => {});
+			}
+		}
+	}
+}
+
+function _unregisterNewTab(tabId) {
+	const idx = newTabInstances.findIndex((i) => i.tabId === tabId);
+	if (idx === -1) return;
+	const wasLatest = idx === newTabInstances.length - 1;
+	newTabInstances.splice(idx, 1);
+	// If the closed tab was the latest, unmute the new latest if auto-muted
+	if (wasLatest && newTabInstances.length > 0) {
+		const newLatest = newTabInstances[newTabInstances.length - 1];
+		if (newLatest.autoMuted) {
+			newLatest.autoMuted = false;
+			chrome.tabs
+				.sendMessage(newLatest.tabId, { type: "WALLPAPER_UNMUTE" })
+				.catch(() => {});
+		}
+	}
+}
+
+// Rebuild instance list on SW startup
+_rebuildNewTabInstances();
+
+// Detect tabs navigating to newtab.html
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+	if (changeInfo.url && _isNewtabUrl(changeInfo.url)) {
+		_registerNewTab(tabId);
+	}
+	// If a registered tab navigates away, unregister it
+	if (changeInfo.url && !_isNewtabUrl(changeInfo.url)) {
+		const wasRegistered = newTabInstances.some((i) => i.tabId === tabId);
+		if (wasRegistered) {
+			_unregisterNewTab(tabId);
+		}
+	}
+});
+
+// Handle tab closure (catches cases where unload wasn't fired)
+chrome.tabs.onRemoved.addListener((tabId) => {
+	_unregisterNewTab(tabId);
 });
 
 // === ZEN MODE BLOCK WEB LOGIC ===
