@@ -65,6 +65,8 @@
     font-size: calc(0.9rem * var(--ui-scale));
     color: var(--text-base);
     white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Checklist in Widget */
