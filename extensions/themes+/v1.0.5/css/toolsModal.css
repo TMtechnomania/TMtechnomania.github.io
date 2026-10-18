@@ -368,6 +368,19 @@
 	color: var(--text-invert);
 }
 
+/* Compact floating stats widget typography */
+.stats-widget .stat-card-title {
+	font-size: calc(0.75rem * var(--ui-scale));
+}
+
+.stats-widget .stat-card-value {
+	font-size: calc(0.9rem * var(--ui-scale));
+}
+
+.stats-widget .stat-detail {
+	font-size: calc(0.75rem * var(--ui-scale));
+}
+
 .empty-msg {
 	text-align: center;
 	color: var(--text-off);
