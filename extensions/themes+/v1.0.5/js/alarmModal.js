@@ -1,7 +1,5 @@
 import { loadCSS, unloadCSS } from "./cssLoader.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
-import { showAlert, setupModalA11y } from "./uiUtil.js";
-import { storageGetSync, storageSetAsync } from "./storageUtil.js";
 
 const CSS_ID = "alarm-modal-css";
 const CSS_PATH = "css/alarmModal.css";
@@ -50,7 +48,6 @@ function getSpecificDateTimestamp(dateStr, h, m) {
 }
 
 let _backdrop = null;
-let _a11yCleanup = null; // focus-trap cleanup from setupModalA11y
 let _popupElement = null;
 let _currentFiringAlarm = null;
 let _state = {
@@ -93,9 +90,7 @@ function checkPendingAlarm() {
 				}
 			},
 		);
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 checkPendingAlarm();
@@ -139,27 +134,19 @@ try {
 								triggerAlarm(alarm, null);
 							}
 						}
-					} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+					} catch (e) {}
 				} else if (d && d.action === "alarm:stop") {
 					try {
 						if (_state.audio) {
 							_state.audio.pause();
 							_state.audio.currentTime = 0;
 						}
-					} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+					} catch (e) {}
 				}
-			} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+			} catch (e) {}
 		});
 	}
-} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+} catch (e) {}
 
 function hasChromeAlarmsPermission() {
 	return new Promise((resolve) => {
@@ -179,14 +166,12 @@ function clearChromeAlarm(id) {
 	try {
 		if (chrome && chrome.alarms && chrome.alarms.clear)
 			chrome.alarms.clear(id, () => {});
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 function loadState() {
 	try {
-		const raw = storageGetSync(STORAGE_KEY);
+		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw) _state.alarms = JSON.parse(raw) || [];
 	} catch (e) {
 		_state.alarms = [];
@@ -213,7 +198,7 @@ function loadState() {
 	}
 
 	try {
-		_state.permissionAsked = !!storageGetSync(PERMISSION_FLAG);
+		_state.permissionAsked = !!localStorage.getItem(PERMISSION_FLAG);
 	} catch (e) {
 		_state.permissionAsked = false;
 	}
@@ -221,11 +206,9 @@ function loadState() {
 
 function saveState() {
 	try {
-		void storageSetAsync(STORAGE_KEY, JSON.stringify(_state.alarms || []));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(_state.alarms || []));
 		document.dispatchEvent(new CustomEvent("alarms-updated"));
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 function uid(prefix = "a") {
@@ -350,9 +333,7 @@ function clearScheduled(id) {
 		const t = _state.scheduled[id];
 		if (t) clearTimeout(t);
 		delete _state.scheduled[id];
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 function triggerAlarm(alarm, modal) {
@@ -371,9 +352,7 @@ function triggerAlarm(alarm, modal) {
 	try {
 		_state.audio.currentTime = 0;
 		_state.audio.play().catch(() => {});
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 
 	// Show popup
 	showAlarmPopup(alarm);
@@ -387,9 +366,7 @@ async function showAlarmPopup(alarm) {
 	if (_popupElement) {
 		try {
 			_popupElement.remove();
-		} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+		} catch (e) {}
 	}
 
 	_currentFiringAlarm = alarm;
@@ -460,9 +437,7 @@ function closeAlarmPopup() {
 	if (_popupElement) {
 		try {
 			_popupElement.remove();
-		} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+		} catch (e) {}
 		_popupElement = null;
 	}
 	_currentFiringAlarm = null;
@@ -472,9 +447,7 @@ function closeAlarmPopup() {
 		try {
 			_state.audio.pause();
 			_state.audio.currentTime = 0;
-		} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+		} catch (e) {}
 	}
 }
 
@@ -504,9 +477,7 @@ function stopAlarm(alarm) {
 			alarm_id: null,
 			alarm_label: null,
 		});
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 
 	// Dispatch event so action bar updates
 	document.dispatchEvent(new CustomEvent("alarms-updated"));
@@ -549,9 +520,7 @@ function snoozeAlarm(alarm) {
 					};
 					chrome.storage.local.set({ snooze_alarms: snoozes });
 				});
-			} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+			} catch (e) {}
 		} else {
 			// Fallback: use setTimeout
 			setTimeout(() => {
@@ -567,9 +536,7 @@ function snoozeAlarm(alarm) {
 			alarm_id: null,
 			alarm_label: null,
 		});
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 
 	// Dispatch event so action bar updates
 	document.dispatchEvent(new CustomEvent("alarms-updated"));
@@ -675,9 +642,7 @@ function renderAlarms(modal) {
 	try {
 		const addBtn = modal.querySelector("#alarm-add");
 		if (addBtn) addBtn.disabled = _state.alarms.length >= MAX_ALARMS;
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 function openEditForm(modal, alarm) {
@@ -821,19 +786,19 @@ function openEditForm(modal, alarm) {
 	cancel.addEventListener("click", () => {
 		form.remove();
 	});
-	save.addEventListener("click", async () => {
+	save.addEventListener("click", () => {
 		const tv = parseTimeValue(time.value);
 		if (!tv) {
-			await showAlert("Please choose a valid time", "Invalid alarm");
+			alert("Please choose a valid time");
 			return;
 		}
 		// Validate
 		if (currentType === "repeating" && currentDays.length === 0) {
-			await showAlert("Please select at least one day", "Invalid alarm");
+			alert("Please select at least one day");
 			return;
 		}
 		if (currentType === "sdate" && !dateInput.value) {
-			await showAlert("Please select a date", "Invalid alarm");
+			alert("Please select a date");
 			return;
 		}
 		// Validate that sdate is in the future
@@ -844,7 +809,7 @@ function openEditForm(modal, alarm) {
 				tv.m,
 			);
 			if (!selectedTimestamp || selectedTimestamp <= Date.now()) {
-				await showAlert("Please select a future date and time", "Invalid alarm");
+				alert("Please select a future date and time");
 				return;
 			}
 		}
@@ -888,9 +853,7 @@ async function openAlarmModal() {
 	if (_backdrop) {
 		try {
 			_backdrop.querySelector(".alarm-modal").focus();
-		} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+		} catch (e) {}
 		return;
 	}
 	loadState();
@@ -920,7 +883,6 @@ async function openAlarmModal() {
 	const closeBtn = document.createElement("button");
 	closeBtn.className = "btn btn-icon";
 	closeBtn.title = "Close";
-	closeBtn.setAttribute("aria-label", "Close alarms");
 	renderInlineIcon(
 		closeBtn.appendChild(
 			createIconSpan("assets/svgs-fontawesome/solid/xmark.svg"),
@@ -954,11 +916,11 @@ async function openAlarmModal() {
 		permBtn.addEventListener("click", async () => {
 			try {
 				const res = await Notification.requestPermission();
-				void storageSetAsync(PERMISSION_FLAG, "1");
+				localStorage.setItem(PERMISSION_FLAG, "1");
 				_state.permissionAsked = true;
 				permArea.remove();
 			} catch (e) {
-				void storageSetAsync(PERMISSION_FLAG, "1");
+				localStorage.setItem(PERMISSION_FLAG, "1");
 				_state.permissionAsked = true;
 				permArea.remove();
 			}
@@ -991,31 +953,23 @@ async function openAlarmModal() {
 										});
 										try {
 											btn.remove();
-										} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+										} catch (e) {}
 									} else {
 										try {
-											showAlert(
+											alert(
 												"Background alarm permission not granted. Alarms will run while this page is open.",
 											);
-										} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+										} catch (e) {}
 									}
 								},
 							);
-						} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+						} catch (e) {}
 					});
 					modal._requestAlarmsBtn = btn;
 				}
 			});
 		}
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 
 	const body = document.createElement("div");
 	body.className = "alarm-body";
@@ -1059,9 +1013,7 @@ async function openAlarmModal() {
 					body: "This is a test alarm",
 					icon: chrome.runtime.getURL("icons/icon128.png"),
 				});
-		} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+		} catch (e) {}
 	});
 	controls.appendChild(add);
 	controls.appendChild(test);
@@ -1069,19 +1021,10 @@ async function openAlarmModal() {
 	try {
 		if (modal._requestAlarmsBtn)
 			controls.appendChild(modal._requestAlarmsBtn);
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 	modal.appendChild(body);
 	_backdrop.appendChild(modal);
 	document.body.appendChild(_backdrop);
-
-	// Accessibility: dialog semantics + Tab focus trap (Escape is handled by
-	// the backdrop keydown listener below; the trap keeps focus inside so it
-	// always receives the event).
-	_a11yCleanup = setupModalA11y(modal, {
-		whenActive: () => !!_backdrop,
-	});
 
 	if (!_state.audio) {
 		_state.audio = new Audio(AUDIO_SRC);
@@ -1105,27 +1048,17 @@ async function openAlarmModal() {
 
 function closeAlarmModal() {
 	if (!_backdrop) return;
-	if (_a11yCleanup) {
-		_a11yCleanup(); // remove key handler + restore focus
-		_a11yCleanup = null;
-	}
 	Object.keys(_state.scheduled).forEach((k) => clearScheduled(k));
 	try {
 		document.body.removeChild(_backdrop);
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 	_backdrop = null;
 	try {
 		unloadCSS(CSS_ID);
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 	try {
 		document.dispatchEvent(new CustomEvent("alarm:closed"));
-	} catch (e) {
-	console.warn('[alarmModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 export function toggleAlarmModal() {

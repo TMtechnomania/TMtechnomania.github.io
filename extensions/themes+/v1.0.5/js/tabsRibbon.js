@@ -20,9 +20,7 @@ export async function toggleTabsRibbon() {
 			_tabsToggleElement.classList.remove("active");
 			try {
 				_tabsToggleElement.setAttribute("aria-expanded", "false");
-			} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+			} catch (e) {}
 		}
 		unloadCSS("tabs-css");
 		return;
@@ -39,14 +37,12 @@ export async function toggleTabsRibbon() {
 			_tabsToggleElement.classList.add("active");
 			try {
 				_tabsToggleElement.setAttribute("aria-expanded", "true");
-			} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+			} catch (e) {}
 		}
 
 		_scheduleTabsRibbonAutoClose();
 	} catch (e) {
-		console.error('[TabsRibbon] failed to show ribbon', e);
+		// console.error('Failed to show tabs ribbon', e);
 	}
 }
 
@@ -100,7 +96,7 @@ function createTabsRibbon(tabs) {
 				await mergeAllToFirstWindow(windowIds);
 				await refreshTabsRibbon();
 			} catch (e) {
-				console.error('[TabsRibbon] failed to merge windows', e);
+				// console.error('Failed to merge windows', e);
 			}
 		});
 		wrapper.appendChild(mergeBtn);
@@ -170,7 +166,7 @@ function createTabsRibbon(tabs) {
 					}
 				}
 			} catch (e) {
-				console.error('[TabsRibbon] select window pill failed', e);
+				// console.error('Select window pill failed', e);
 			}
 		});
 
@@ -219,7 +215,7 @@ function createTabsRibbon(tabs) {
 					if (r) document.body.removeChild(r);
 					detachTabsListeners();
 				} catch (e) {
-					console.error('[TabsRibbon] failed to switch to tab', e);
+					// console.error('Failed to switch to tab', e);
 				}
 			});
 
@@ -241,9 +237,7 @@ function createTabsRibbon(tabs) {
 							focused: true,
 						});
 					}
-				} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+				} catch (e) {}
 			});
 			list.appendChild(counter);
 			totalHiddenTabs += hiddenInWindowCount;
@@ -294,7 +288,7 @@ async function refreshTabsRibbon() {
 		const newRibbon = createTabsRibbon(tabs);
 		ribbon.replaceWith(newRibbon);
 	} catch (e) {
-		console.error('[TabsRibbon] failed to refresh ribbon', e);
+		// console.error('Failed to refresh tabs ribbon', e);
 	}
 }
 
@@ -314,7 +308,7 @@ async function mergeAllToFirstWindow(windowIds) {
 				index: -1,
 			});
 		} catch (e) {
-			console.warn('[TabsRibbon] could not move tab', tabId, e);
+			// console.warn('Could not move tab', tabId, e);
 			try {
 				const tab = allTabs.find((t) => t.id === tabId);
 				if (tab && tab.url) {
@@ -325,7 +319,7 @@ async function mergeAllToFirstWindow(windowIds) {
 					await chrome.tabs.remove(tabId);
 				}
 			} catch (inner) {
-				console.error('[TabsRibbon] fallback move failed for tab', tabId, inner);
+				// console.error('Fallback move failed for tab', tabId, inner);
 			}
 		}
 	}
@@ -348,17 +342,13 @@ function _scheduleTabsRibbonAutoClose() {
 		if (ribbon) {
 			try {
 				document.body.removeChild(ribbon);
-			} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+			} catch (e) {}
 			detachTabsListeners();
 			if (_tabsToggleElement) {
 				_tabsToggleElement.classList.remove("active");
 				try {
 					_tabsToggleElement.setAttribute("aria-expanded", "false");
-				} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+				} catch (e) {}
 			}
 			unloadCSS("tabs-css");
 		}
@@ -400,9 +390,7 @@ function attachTabsListeners() {
 			if (ribbon) {
 				try {
 					document.body.removeChild(ribbon);
-				} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+				} catch (e) {}
 				detachTabsListeners();
 				if (_tabsToggleElement) {
 					_tabsToggleElement.classList.remove("active");
@@ -411,9 +399,7 @@ function attachTabsListeners() {
 							"aria-expanded",
 							"false",
 						);
-					} catch (e) {
-	console.warn('[tabsRibbon] operation failed', e);
-    }
+					} catch (e) {}
 				}
 				unloadCSS("tabs-css");
 			}

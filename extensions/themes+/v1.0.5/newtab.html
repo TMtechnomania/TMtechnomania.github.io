@@ -4,11 +4,10 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Themes+ New Tab</title>
-		<!-- Only always-visible UI styles are eager; modal CSS (toolsModal,
-		     settingsModal, ...) is lazy-loaded by its module via cssLoader to
-		     avoid double-loading and wasted parse cost per tab open. -->
 		<link rel="stylesheet" href="css/base.css" />
 		<link rel="stylesheet" href="css/actionbar.css" />
+		<link rel="stylesheet" href="css/toolsModal.css" />
+		<link rel="stylesheet" href="css/settingsModal.css" />
 		<link rel="stylesheet" href="css/clock.css" />
 		<link rel="shortcut icon" href="icons/icon16.png" type="image/x-icon" />
 	</head>
@@ -16,8 +15,7 @@
 		<div id="action-bar">
 			<div id="action-content"></div>
 		</div>
-		<!-- interact is needed by the notes widget at startup; snapdom (~98KB)
-		     is injected on demand by famcam.js only when taking screenshots. -->
+		<script src="js/snapdom.js" defer></script>
 		<script src="js/interact.min.js" defer></script>
 		<script type="module" src="js/newtab.js"></script>
 	</body>

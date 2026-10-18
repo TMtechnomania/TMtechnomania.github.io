@@ -96,11 +96,6 @@
 	--radius-xs: calc(var(--dis-3) / 2);
 	--radius-full: 999px;
 
-	/* Radius Aliases */
-	--radius-1: var(--radius-xs);
-	--radius-2: var(--radius-child);
-	--radius-3: var(--radius-container);
-
 	/* Z-Index Layers - Core stacking order */
 	/* wallpaper */
 	--z-wallpaper: -1;
@@ -132,7 +127,6 @@
 	--color-off: #EEF6FF;
 	--color-inverse: #000000;
 	--color-accent: #0072ff;
-	--color-accent-rgb: 0, 114, 255;
 	--color-error: #E53935;
 	--color-warning: #FB8C00;
 	--color-success: #43A047;

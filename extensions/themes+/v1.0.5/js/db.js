@@ -7,23 +7,16 @@ import {
 
 /**
  * Derive IndexedDB version from extension manifest version.
- * Formula: major * 1000000 + minor * 1000 + patch (each component must stay < 1000)
- * Example: "1.0.4" → 1000004, "1.1.0" → 1001000, "2.3.1" → 2003001
+ * Formula: major * 100 + minor * 10 + patch
+ * Example: "1.0.4" → 104, "1.1.0" → 110, "2.3.1" → 231
  */
 function getIDBVersion() {
 	try {
 		const version = chrome.runtime.getManifest().version; // e.g. "1.0.4"
 		const parts = version.split(".").map(Number);
-		return (
-			(parts[0] || 0) * 1000000 +
-			(parts[1] || 0) * 1000 +
-			(parts[2] || 0)
-		);
+		return (parts[0] || 0) * 100 + (parts[1] || 0) * 10 + (parts[2] || 0);
 	} catch (_) {
-		// Fallback: opening with a lower version than an existing database is
-		// spec-legal (it just serves the old data without upgrading), so this
-		// never forces an unexpected upgrade.
-		return 1;
+		return 104;
 	}
 }
 
@@ -341,105 +334,4 @@ export async function getAllUserWallpapers() {
 			resolve([]);
 		}
 	});
-}
-
-/**
- * Calculate storage consumed by extension cached media vs user uploads vs overall origin quota.
- * Uses cursor size aggregation without loading heavy blobs into memory.
- */
-export async function getStorageBreakdown() {
-	const db = await getDB();
-	const breakdown = {
-		extensionMediaBytes: 0,
-		userWallpapersBytes: 0,
-		totalStorageUsedBytes: 0,
-		originQuotaBytes: 0,
-		userImagesCount: 0,
-		userVideosCount: 0,
-	};
-
-	if (!db) return breakdown;
-
-	// 1. Extension cached media (IDB_STORE_MEDIA + IDB_STORE_THUMBS)
-	const measureStore = (storeName) => {
-		return new Promise((resolve) => {
-			if (!db.objectStoreNames.contains(storeName)) return resolve(0);
-			try {
-				const tx = db.transaction(storeName, "readonly");
-				const store = tx.objectStore(storeName);
-				let total = 0;
-				const cursorReq = store.openCursor();
-				cursorReq.onsuccess = (e) => {
-					const cursor = e.target.result;
-					if (!cursor) return resolve(total);
-					const val = cursor.value;
-					if (val?.blob?.size) total += val.blob.size;
-					cursor.continue();
-				};
-				cursorReq.onerror = () => resolve(total);
-			} catch (_) {
-				resolve(0);
-			}
-		});
-	};
-
-	// 2. User uploads (IDB_STORE_WALLPAPERS)
-	const measureUserWallpapers = () => {
-		return new Promise((resolve) => {
-			if (!db.objectStoreNames.contains(IDB_STORE_WALLPAPERS)) {
-				return resolve({ bytes: 0, imgCount: 0, vidCount: 0 });
-			}
-			try {
-				const tx = db.transaction(IDB_STORE_WALLPAPERS, "readonly");
-				const store = tx.objectStore(IDB_STORE_WALLPAPERS);
-				let total = 0;
-				let imgCount = 0;
-				let vidCount = 0;
-				const cursorReq = store.openCursor();
-				cursorReq.onsuccess = (e) => {
-					const cursor = e.target.result;
-					if (!cursor) return resolve({ bytes: total, imgCount, vidCount });
-					const val = cursor.value;
-					if (val?.blob?.size) total += val.blob.size;
-					if (val?.thumbBlob?.size) total += val.thumbBlob.size;
-					if (val?.type === "video") vidCount++;
-					else imgCount++;
-					cursor.continue();
-				};
-				cursorReq.onerror = () => resolve({ bytes: total, imgCount, vidCount });
-			} catch (_) {
-				resolve({ bytes: 0, imgCount: 0, vidCount: 0 });
-			}
-		});
-	};
-
-	const [mediaBytes, thumbsBytes, userStats] = await Promise.all([
-		measureStore(IDB_STORE_MEDIA),
-		measureStore(IDB_STORE_THUMBS),
-		measureUserWallpapers(),
-	]);
-
-	breakdown.extensionMediaBytes = mediaBytes + thumbsBytes;
-	breakdown.userWallpapersBytes = userStats.bytes;
-	breakdown.userImagesCount = userStats.imgCount;
-	breakdown.userVideosCount = userStats.vidCount;
-
-	// Total estimate from navigator.storage if available
-	try {
-		if (navigator.storage && navigator.storage.estimate) {
-			const est = await navigator.storage.estimate();
-			breakdown.totalStorageUsedBytes =
-				est.usage ||
-				breakdown.extensionMediaBytes + breakdown.userWallpapersBytes;
-			breakdown.originQuotaBytes = est.quota || 0;
-		} else {
-			breakdown.totalStorageUsedBytes =
-				breakdown.extensionMediaBytes + breakdown.userWallpapersBytes;
-		}
-	} catch (_) {
-		breakdown.totalStorageUsedBytes =
-			breakdown.extensionMediaBytes + breakdown.userWallpapersBytes;
-	}
-
-	return breakdown;
 }

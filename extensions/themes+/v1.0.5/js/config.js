@@ -4,7 +4,7 @@ export const WALLPAPER_JSON_URL =
 
 // IndexedDB Config
 // IDB version is derived dynamically from the manifest version in db.js
-//   Formula: major * 1000000 + minor * 1000 + patch (e.g. 1.0.4 → 1000004); each component must stay < 1000
+//   Formula: major * 10000 + minor * 100 + patch (e.g. 1.0.4 → 10004)
 export const IDB_NAME = "themes-assets";
 export const IDB_STORE_THUMBS = "thumbs"; // Store for thumbnails
 export const IDB_STORE_MEDIA = "media"; // Store for full media assets
@@ -118,9 +118,13 @@ export const DEFAULT_CONFIG = {
 		outline: false,
 		outlineColor: null,
 	},
-	// (A duplicate `greeting` key used to exist here; in JS object literals
-	// the last one silently wins, so it was removed. The single canonical
-	// greeting block lives below, next to `theme`.)
+	greeting: {
+		enabled: false,
+		outline: false,
+		type: "default", // 'default' | 'custom'
+		customName: "",
+		customText: "",
+	},
 	// Font settings: default to Google Outfit
 	font: {
 		family: "Outfit",

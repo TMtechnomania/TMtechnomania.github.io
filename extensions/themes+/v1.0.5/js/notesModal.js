@@ -1,7 +1,5 @@
 import { loadCSS, unloadCSS } from "./cssLoader.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
-import { showConfirm, setupModalA11y } from "./uiUtil.js";
-import { storageGetSync, storageSetAsync } from "./storageUtil.js";
 
 const CSS_ID = "notes-modal-css";
 const CSS_PATH = "css/notesModal.css";
@@ -9,7 +7,7 @@ const STORAGE_KEY = "tm_notes_v1";
 const MAX_NOTES = 10;
 
 let _backdrop = null;
-let _a11yCleanup = null; // focus-trap/Escape cleanup from setupModalA11y
+let _onKeyDown = null;
 let _state = {
 	notes: [],
 	currentEditId: null,
@@ -40,7 +38,7 @@ function uid() {
 // --- Storage ---
 function loadState() {
 	try {
-		const raw = storageGetSync(STORAGE_KEY);
+		const raw = localStorage.getItem(STORAGE_KEY);
 		_state.notes = raw ? JSON.parse(raw) : [];
 	} catch (e) {
 		_state.notes = [];
@@ -49,11 +47,9 @@ function loadState() {
 
 function saveState() {
 	try {
-		void storageSetAsync(STORAGE_KEY, JSON.stringify(_state.notes));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(_state.notes));
 		document.dispatchEvent(new CustomEvent("notes-updated"));
-	} catch (e) {
-	console.warn('[notesModal] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 // --- UI Rendering ---
@@ -71,9 +67,7 @@ export async function openNotesModal(opts = {}) {
 			} else {
 				_backdrop.querySelector(".notes-modal")?.focus();
 			}
-		} catch (e) {
-	console.warn('[notesModal] operation failed', e);
-    }
+		} catch (e) {}
 		return;
 	}
 	loadState();
@@ -102,7 +96,6 @@ export async function openNotesModal(opts = {}) {
 	const closeBtn = document.createElement("button");
 	closeBtn.className = "btn btn-icon";
 	closeBtn.title = "Close";
-	closeBtn.setAttribute("aria-label", "Close notes");
 	attachIcon(closeBtn, "assets/svgs-fontawesome/solid/xmark.svg");
 	closeBtn.addEventListener("click", () => closeNotesModal());
 
@@ -120,18 +113,14 @@ export async function openNotesModal(opts = {}) {
 	document.body.appendChild(modal);
 	_backdrop = modal;
 
-	// Accessibility: dialog semantics, initial focus, Tab trap and
-	// Escape-to-close (replaces the previous ad-hoc Escape listener).
-	_a11yCleanup = setupModalA11y(modal, {
-		onClose: closeNotesModal,
-		whenActive: () => !!_backdrop,
-	});
+	_onKeyDown = (ev) => {
+		if (ev.key === "Escape") closeNotesModal();
+	};
+	document.addEventListener("keydown", _onKeyDown);
 
 	try {
 		modal.focus();
-	} catch (e) {
-	console.warn('[notesModal] operation failed', e);
-    }
+	} catch (e) {}
 
 	renderListView(body);
 
@@ -139,36 +128,34 @@ export async function openNotesModal(opts = {}) {
 		try {
 			const target = _state.notes.find((n) => n.id === opts.noteId);
 			if (target) openEditor(body, target.type, target);
-		} catch (e) {
-	console.warn('[notesModal] operation failed', e);
-    }
+		} catch (e) {}
 	}
 }
 
-export async function closeNotesModal() {
+export function closeNotesModal() {
 	if (!_backdrop) return;
 
 	// Protection check
 	if (_state.checkUnsaved) {
 		if (_state.checkUnsaved()) {
-			const ok = await showConfirm(
-				"You have unsaved changes. Are you sure you want to discard them?",
-				"Discard changes?",
-			);
-			if (!ok) return;
+			if (
+				!confirm(
+					"You have unsaved changes. Are you sure you want to discard them?",
+				)
+			) {
+				return;
+			}
 		}
 		_state.checkUnsaved = null; // Clear checker
 	}
 
 	try {
 		document.body.removeChild(_backdrop);
-	} catch (e) {
-	console.warn('[notesModal] operation failed', e);
-    }
+	} catch (e) {}
 	_backdrop = null;
-	if (_a11yCleanup) {
-		_a11yCleanup(); // remove key handler + restore focus
-		_a11yCleanup = null;
+	if (_onKeyDown) {
+		document.removeEventListener("keydown", _onKeyDown);
+		_onKeyDown = null;
 	}
 	unloadCSS(CSS_ID);
 	document.dispatchEvent(new CustomEvent("notes:closed"));
@@ -295,9 +282,9 @@ function renderListView(container) {
 			delBtn.className = "btn btn-icon";
 			delBtn.title = "Delete";
 			attachIcon(delBtn, "assets/svgs-fontawesome/solid/trash-can.svg");
-			delBtn.addEventListener("click", async (e) => {
+			delBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
-				if (await showConfirm("Delete this note?", "Delete note")) {
+				if (confirm("Delete this note?")) {
 					_state.notes = _state.notes.filter((n) => n.id !== note.id);
 					saveState();
 					renderListView(container);
@@ -372,13 +359,9 @@ function openEditor(container, type, existingNote = null) {
 	// Prepend arrow manually or use icon
 	bSpan.innerHTML = "← Back";
 	backBtn.appendChild(bSpan);
-	backBtn.addEventListener("click", async () => {
+	backBtn.addEventListener("click", () => {
 		if (_state.checkUnsaved && _state.checkUnsaved()) {
-			const ok = await showConfirm(
-				"Unsaved changes will be lost. Continue?",
-				"Discard changes?",
-			);
-			if (!ok) return;
+			if (!confirm("Unsaved changes will be lost. Continue?")) return;
 		}
 		renderListView(container);
 	});

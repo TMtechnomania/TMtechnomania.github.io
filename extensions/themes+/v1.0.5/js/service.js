@@ -8,13 +8,6 @@ import {
 	downloadAndStoreResource,
 	runWithConcurrency,
 } from "./api.js";
-import {
-	MEDIA_UPDATE,
-	MEDIA_PRESENCE,
-	MEDIA_QUERY,
-	MEDIA_CONTROL,
-	ZEN_MODE_CONTROL,
-} from "./messageTypes.js";
 
 const app = chrome || browser;
 
@@ -22,21 +15,19 @@ async function syncManifest() {
 	try {
 		const manifest = await fetchJson(WALLPAPER_JSON_URL);
 		if (!manifest || typeof manifest.version !== "string") {
-			console.warn('Invalid manifest fetched');
+			// console.warn('Invalid manifest fetched');
 			return { ok: false, error: "Invalid manifest" };
 		}
 
 		let prevManifest = null;
 		try {
 			prevManifest = await getStorageLocal(STORAGE_KEY_DB);
-		} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+		} catch (e) {}
 
 		try {
 			await setStorageLocal({ [STORAGE_KEY_DB]: manifest });
 		} catch (e) {
-			console.error('Failed to save manifest', e);
+			// console.error('Failed to save manifest', e);
 			return { ok: false, error: "Failed to save manifest" };
 		}
 
@@ -57,9 +48,7 @@ async function syncManifest() {
 		let existingKeys = [];
 		try {
 			existingKeys = await getAllMediaKeys();
-		} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+		} catch (e) {}
 		const keysToDelete = [];
 		const newThumbKeys = new Set(allNew.map((e) => `${e.id}::thumb`));
 		for (const k of existingKeys) {
@@ -103,7 +92,7 @@ async function syncManifest() {
 					});
 				}
 			} catch (e) {
-				console.warn("Failed first image download", e);
+				// console.warn("Failed first image download", e);
 			}
 		}
 
@@ -158,13 +147,13 @@ async function syncManifest() {
 					});
 				}
 			} catch (e) {
-				console.warn("Failed first video download", e);
+				// console.warn("Failed first video download", e);
 			}
 		}
 
 		return { ok: true };
 	} catch (err) {
-		console.error('syncManifest failed', err);
+		// console.error('syncManifest failed', err);
 		return { ok: false, error: err.message };
 	}
 }
@@ -177,9 +166,7 @@ self.addEventListener("install", (event) => {
 			await syncManifest().catch(() => {});
 			try {
 				self.skipWaiting();
-			} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+			} catch (e) {}
 		})(),
 	);
 });
@@ -193,9 +180,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		const req = indexedDB.deleteDatabase("videoDB");
 		req.onsuccess = () => {};
 		req.onerror = () => {};
-	} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+	} catch (e) {}
 
 	// On install or update: fetch manifest first, THEN open user guide
 	if (details.reason === "install" || details.reason === "update") {
@@ -209,16 +194,12 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 					() => {},
 				);
 			}
-		} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+		} catch (e) {}
 
 		// 2. Now open user guide — manifest data is ready for display
 		try {
 			chrome.tabs.create({ url: "userguide.html" });
-		} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+		} catch (e) {}
 
 		// 3. Kick off thumbnail sync in the background (IDB-dependent, may fail silently)
 		syncManifest().catch(() => {});
@@ -272,7 +253,7 @@ async function handleMessage(data, sendResponse, sender) {
 	if (!data) return;
 
 	// Media Message Routing
-	if (data.type === MEDIA_UPDATE || data.type === MEDIA_PRESENCE) {
+	if (data.type === "MEDIA_UPDATE" || data.type === "MEDIA_PRESENCE") {
 		// From Content Script -> Service Worker
 		if (sender && sender.tab) {
 			const tabId = sender.tab.id;
@@ -316,11 +297,11 @@ async function handleMessage(data, sendResponse, sender) {
 						fromService: true,
 					};
 					chrome.runtime.sendMessage(broadcastData).catch((e) => {
-						console.warn('[Service] Failed to broadcast:', e);
+						// console.warn('[Service] Failed to broadcast:', e);
 					});
 				}
 			} else if (
-				data.type === MEDIA_UPDATE &&
+				data.type === "MEDIA_UPDATE" &&
 				newPriorityTabId === tabId
 			) {
 				// If priority didn't change but this is a MEDIA_UPDATE for the current priority tab,
@@ -334,7 +315,7 @@ async function handleMessage(data, sendResponse, sender) {
 						fromService: true,
 					};
 					chrome.runtime.sendMessage(broadcastData).catch((e) => {
-						console.warn('[Service] Failed to broadcast:', e);
+						// console.warn('[Service] Failed to broadcast:', e);
 					});
 				}
 			}
@@ -344,13 +325,13 @@ async function handleMessage(data, sendResponse, sender) {
 		return;
 	}
 
-	if (data.type === MEDIA_CONTROL) {
+	if (data.type === "MEDIA_CONTROL") {
 		if (data.action === "activate_tab") {
 			if (currentPriorityTabId) {
 				chrome.tabs
 					.update(currentPriorityTabId, { active: true })
 					.catch((e) => {
-						console.warn('[Service] Failed to activate tab:', e);
+						// console.warn('[Service] Failed to activate tab:', e);
 					});
 			}
 			return;
@@ -360,7 +341,7 @@ async function handleMessage(data, sendResponse, sender) {
 		if (currentPriorityTabId) {
 			// Send control message to the priority tab without switching to it
 			chrome.tabs.sendMessage(currentPriorityTabId, data).catch((e) => {
-				console.warn(`[Service] Failed to send control to tab ${currentPriorityTabId}`, e);
+				// console.warn(`[Service] Failed to send control to tab ${currentPriorityTabId}`, e);
 			});
 		} else {
 			// console.warn('[Service] No active media tab to send control to');
@@ -369,7 +350,7 @@ async function handleMessage(data, sendResponse, sender) {
 		return;
 	}
 
-	if (data.type === MEDIA_QUERY) {
+	if (data.type === "MEDIA_QUERY") {
 		// Broadcast query to all tabs to find active media
 		chrome.tabs.query({}, (tabs) => {
 			tabs.forEach((tab) => {
@@ -429,9 +410,7 @@ self.addEventListener("message", (ev) => {
 	const post = (msg) => {
 		try {
 			source && source.postMessage && source.postMessage(msg);
-		} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+		} catch (e) {}
 	};
 	if (!data || !data.action) return;
 	if (data.action === "getWallpaperDB") {
@@ -582,9 +561,7 @@ try {
 								snooze_alarms: snoozes,
 							});
 						}
-					} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+					} catch (e) {}
 				}
 
 				// Store firing state with alarm info
@@ -594,9 +571,7 @@ try {
 						alarm_id: alarmId,
 						alarm_label: alarmLabel,
 					});
-				} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+				} catch (e) {}
 
 				const clients = await self.clients.matchAll({
 					type: "window",
@@ -612,9 +587,7 @@ try {
 									label: alarmLabel,
 									isSnooze,
 								});
-						} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+						} catch (e) {}
 					});
 				} else {
 					// No extension tab open - show notification
@@ -632,18 +605,12 @@ try {
 								requireInteraction: true,
 							});
 						}
-					} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+					} catch (e) {}
 				}
-			} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+			} catch (e) {}
 		});
 	}
-} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+} catch (e) {}
 
 // Handle notification click - focus extension tab
 try {
@@ -667,14 +634,10 @@ try {
 					// Open new tab
 					await chrome.tabs.create({ url: "newtab.html" });
 				}
-			} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+			} catch (e) {}
 		});
 	}
-} catch (e) {
-	console.warn('[service] operation failed', e);
-    }
+} catch (e) {}
 
 // Watch for tab closure to clear media state
 chrome.tabs.onRemoved.addListener((tabId) => {
@@ -693,7 +656,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 				if (priorityTabInfo) {
 					chrome.runtime
 						.sendMessage({
-							type: MEDIA_UPDATE,
+							type: "MEDIA_UPDATE",
 							data: priorityTabInfo.data,
 							tabId: currentPriorityTabId,
 							fromService: true,
@@ -704,7 +667,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 				// No media tabs left, clear the media widget
 				chrome.runtime
 					.sendMessage({
-						type: MEDIA_UPDATE,
+						type: "MEDIA_UPDATE",
 						data: null,
 						fromService: true,
 					})
@@ -729,7 +692,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 				if (priorityTabInfo) {
 					chrome.runtime
 						.sendMessage({
-							type: MEDIA_UPDATE,
+							type: "MEDIA_UPDATE",
 							data: priorityTabInfo.data,
 							tabId: currentPriorityTabId,
 							fromService: true,
@@ -739,7 +702,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 			} else {
 				chrome.runtime
 					.sendMessage({
-						type: MEDIA_UPDATE,
+						type: "MEDIA_UPDATE",
 						data: null,
 						fromService: true,
 					})
@@ -763,6 +726,7 @@ async function forceFocus(tabId, retryCount = 0) {
 
 		// Stop if tab is gone
 		if (e.message && e.message.includes("No tab with id")) {
+			console.log("[Block Web] Tab gone, clearing lock");
 			focusLockTabId = null;
 			return;
 		}
@@ -777,6 +741,10 @@ async function forceFocus(tabId, retryCount = 0) {
 // Listen for tab switching to enforce lock
 chrome.tabs.onActivated.addListener((activeInfo) => {
 	if (focusLockTabId && activeInfo.tabId !== focusLockTabId) {
+		console.log(
+			"[Block Web] Tab switch detected. Forcing back to locked tab:",
+			focusLockTabId,
+		);
 		forceFocus(focusLockTabId);
 	}
 });
@@ -784,23 +752,30 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 // Clear lock if locked tab is closed
 chrome.tabs.onRemoved.addListener((tabId) => {
 	if (focusLockTabId === tabId) {
+		console.log("[Block Web] Locked tab closed, clearing lock");
 		focusLockTabId = null;
 	}
 });
 
 // Handle ZEN control messages
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
-	if (data.type === ZEN_MODE_CONTROL) {
+	if (data.type === "ZEN_MODE_CONTROL") {
 		if (data.action === "ENABLE_BLOCK") {
 			// Lock to the provided tab ID (explicit) or fallback to sender.tab
 			if (data.tabId) {
 				focusLockTabId = data.tabId;
+				console.log("[Block Web] ENABLED for tab ID:", focusLockTabId);
 			} else if (sender.tab) {
 				focusLockTabId = sender.tab.id;
+				console.log(
+					"[Block Web] ENABLED for tab ID (from sender):",
+					focusLockTabId,
+				);
 			} else {
 				console.warn("[Block Web] No tab ID available");
 			}
 		} else if (data.action === "DISABLE_BLOCK") {
+			console.log("[Block Web] DISABLED");
 			focusLockTabId = null;
 		}
 		if (sendResponse) sendResponse({ locked: focusLockTabId });

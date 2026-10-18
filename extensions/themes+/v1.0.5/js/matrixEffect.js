@@ -99,6 +99,7 @@ function animate(timeStamp) {
 }
 
 export function startMatrix(config) {
+	console.log("Starting Matrix Effect", config);
 	if (config) {
 		CFG = { ...CFG, ...config };
 	}

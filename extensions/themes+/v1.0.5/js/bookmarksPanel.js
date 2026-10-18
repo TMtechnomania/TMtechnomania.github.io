@@ -21,9 +21,7 @@ export async function toggleBookmarksPanel() {
 			() => {
 				try {
 					document.body.removeChild(existing);
-				} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+				} catch (e) {}
 				unloadCSS("bookmarks-css");
 			},
 			{ once: true },
@@ -33,14 +31,10 @@ export async function toggleBookmarksPanel() {
 			_bookmarkToggleElement.classList.remove("active");
 			try {
 				_bookmarkToggleElement.setAttribute("aria-expanded", "false");
-			} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+			} catch (e) {}
 			try {
 				_bookmarkToggleElement.focus();
-			} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+			} catch (e) {}
 		}
 		return;
 	}
@@ -60,7 +54,7 @@ export async function toggleBookmarksPanel() {
 				? "_self"
 				: "_blank";
 	} catch (e) {
-		console.warn('Failed to load searchbar config for bookmarks, using default _self', e);
+		// console.warn('Failed to load searchbar config for bookmarks, using default _self', e);
 	}
 
 	const panel = document.createElement("div");
@@ -142,9 +136,7 @@ export async function toggleBookmarksPanel() {
 		_bookmarkToggleElement.classList.add("active");
 		try {
 			_bookmarkToggleElement.setAttribute("aria-expanded", "true");
-		} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+		} catch (e) {}
 	}
 
 	let tree = [];
@@ -153,7 +145,7 @@ export async function toggleBookmarksPanel() {
 			chrome.bookmarks.getTree((res) => resolve(res || [])),
 		);
 	} catch (e) {
-		console.error('Failed to get bookmarks', e);
+		// console.error('Failed to get bookmarks', e);
 	}
 
 	const flat = [];
@@ -207,9 +199,7 @@ export async function toggleBookmarksPanel() {
 			ev.stopPropagation();
 			try {
 				navigator.clipboard.writeText(n.url);
-			} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+			} catch (e) {}
 		});
 
 		const shareBtn = document.createElement("button");
@@ -232,9 +222,7 @@ export async function toggleBookmarksPanel() {
 			} else {
 				try {
 					navigator.clipboard.writeText(n.url);
-				} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+				} catch (e) {}
 			}
 		});
 
@@ -415,9 +403,7 @@ export async function toggleBookmarksPanel() {
 				() => {
 					try {
 						document.body.removeChild(panel);
-					} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+					} catch (e) {}
 					unloadCSS("bookmarks-css");
 				},
 				{ once: true },
@@ -430,14 +416,10 @@ export async function toggleBookmarksPanel() {
 						"aria-expanded",
 						"false",
 					);
-				} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+				} catch (e) {}
 				try {
 					_bookmarkToggleElement.focus();
-				} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+				} catch (e) {}
 			}
 			return;
 		}
@@ -467,9 +449,7 @@ export async function toggleBookmarksPanel() {
 
 	try {
 		search.focus();
-	} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+	} catch (e) {}
 
 	function detachBookmarksAutoClose() {
 		try {
@@ -498,9 +478,7 @@ export async function toggleBookmarksPanel() {
 				}
 				_bookmarksAutoCloseListeners = null;
 			}
-		} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+		} catch (e) {}
 	}
 
 	(function attachBookmarksAutoClose() {
@@ -540,9 +518,7 @@ export async function toggleBookmarksPanel() {
 							() => {
 								try {
 									document.body.removeChild(panel);
-								} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+								} catch (e) {}
 								unloadCSS("bookmarks-css");
 							},
 							{ once: true },
@@ -554,20 +530,14 @@ export async function toggleBookmarksPanel() {
 									"aria-expanded",
 									"false",
 								);
-							} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+							} catch (e) {}
 							try {
 								_bookmarkToggleElement.focus();
-							} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+							} catch (e) {}
 						}
 						detachBookmarksAutoClose();
 					}
-				} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+				} catch (e) {}
 			}, 1000);
 
 			document.addEventListener("mousemove", onMouseMove);
@@ -589,9 +559,7 @@ export async function toggleBookmarksPanel() {
 				onPanelEnter,
 				onPanelLeave,
 			};
-		} catch (e) {
-	console.warn('[bookmarksPanel] operation failed', e);
-    }
+		} catch (e) {}
 	})();
 }
 

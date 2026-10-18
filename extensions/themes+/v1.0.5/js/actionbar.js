@@ -4,7 +4,6 @@ import {
 	DEFAULT_SHORTCUTS,
 	DEFAULT_SHORTCUT_ICON_FALLBACK,
 } from "./config.js";
-import { storageGetSync } from "./storageUtil.js";
 
 import { renderInlineIcon, getIconForUrl } from "./brandIconLoader.js";
 import {
@@ -15,34 +14,26 @@ import {
 	updateFamCamConfig,
 } from "./famcam.js";
 import { toggleAmbientMode } from "./ambientMode.js";
-import { hasPermissions } from "./permUtil.js";
-import { MEDIA_CONTROL } from "./messageTypes.js";
 // Imports removed as they are now handled via event delegation in newtab.js
 
 let updateMediaUI = null;
 let activeIntervals = [];
-// Guard so the global permissions.onAdded listener is only attached once,
-// even though initActionBar() re-runs on every settings change.
-let _geoPermListenerAdded = false;
 
 export function cleanupActionBar() {
 	activeIntervals.forEach(clearInterval);
 	activeIntervals = [];
 	try {
 		destroyFamCam();
-	} catch (e) {
-	console.warn('[actionbar] operation failed', e);
-    }
+	} catch (e) {}
 	try {
 		delete window.updateFamCamConfig;
-	} catch (e) {
-	console.warn('[actionbar] operation failed', e);
-    }
+	} catch (e) {}
 }
 
 export function updateMediaState(media, tabId = null) {
 	if (updateMediaUI) updateMediaUI(media, tabId);
-	else console.warn('[ActionBar] updateMediaUI not yet initialized');
+	else {
+	} // console.warn('updateMediaUI not yet initialized');
 }
 
 function createUiIcon(iconPath, className = "", fallback = null) {
@@ -58,7 +49,7 @@ export async function initActionBar(actionCfg = {}) {
 		cleanupActionBar();
 		const actionBar = document.getElementById("action-bar");
 		if (!actionBar) {
-			console.warn('Action bar element not found');
+			// console.warn('Action bar element not found');
 			return;
 		}
 
@@ -72,7 +63,7 @@ export async function initActionBar(actionCfg = {}) {
 
 		const actionContent = document.getElementById("action-content");
 		if (!actionContent) {
-			console.warn('Action content element not found');
+			// console.warn('Action content element not found');
 			return;
 		}
 
@@ -281,7 +272,7 @@ export async function initActionBar(actionCfg = {}) {
 
 			// Ask service worker to activate the current priority tab
 			chrome.runtime.sendMessage({
-				type: MEDIA_CONTROL,
+				type: "MEDIA_CONTROL",
 				action: "activate_tab",
 			});
 		});
@@ -290,7 +281,7 @@ export async function initActionBar(actionCfg = {}) {
 			e.stopPropagation();
 			const action =
 				currentMedia && currentMedia.isPlaying ? "pause" : "play";
-			chrome.runtime.sendMessage({ type: MEDIA_CONTROL, action });
+			chrome.runtime.sendMessage({ type: "MEDIA_CONTROL", action });
 			// Optimistic
 			if (currentMedia) {
 				currentMedia.isPlaying = !currentMedia.isPlaying;
@@ -301,7 +292,7 @@ export async function initActionBar(actionCfg = {}) {
 		mNextBtn.addEventListener("click", (e) => {
 			e.stopPropagation();
 			chrome.runtime.sendMessage({
-				type: MEDIA_CONTROL,
+				type: "MEDIA_CONTROL",
 				action: "next",
 			});
 		});
@@ -309,7 +300,7 @@ export async function initActionBar(actionCfg = {}) {
 		mPrevBtn.addEventListener("click", (e) => {
 			e.stopPropagation();
 			chrome.runtime.sendMessage({
-				type: MEDIA_CONTROL,
+				type: "MEDIA_CONTROL",
 				action: "prev",
 			});
 		});
@@ -395,9 +386,7 @@ export async function initActionBar(actionCfg = {}) {
 					document.dispatchEvent(
 						new CustomEvent(eventName, { detail: { id, title } }),
 					);
-				} catch (e) {
-	console.warn('[actionbar] operation failed', e);
-    }
+				} catch (e) {}
 			};
 
 			el.addEventListener("click", trigger);
@@ -666,8 +655,8 @@ export async function initActionBar(actionCfg = {}) {
 			// Fetch and display next alarm
 			async function updateAlarmDisplay() {
 				try {
-					// Fetch alarms from extension storage (where alarm modal stores them)
-					const raw = storageGetSync("alarms_list_v1");
+					// Fetch alarms from localStorage (where alarm modal stores them)
+					const raw = localStorage.getItem("alarms_list_v1");
 					const alarms = raw ? JSON.parse(raw) : [];
 					const alarmText = alarmGroup.querySelector(".alarm-text");
 
@@ -744,7 +733,7 @@ export async function initActionBar(actionCfg = {}) {
 						alarmText.textContent = "No alarms";
 					}
 				} catch (e) {
-					console.warn('[ActionBar] Failed to fetch alarms:', e);
+					// console.warn('[ActionBar] Failed to fetch alarms:', e);
 					alarmGroup.querySelector(".alarm-text").textContent =
 						"No alarms";
 				}
@@ -928,16 +917,6 @@ export async function initActionBar(actionCfg = {}) {
 							cfg.city,
 						)}&appid=${weatherKey}&units=${currentUnits}`;
 					} else {
-						// Geolocation is an optional permission in MV3. If the user
-						// hasn't granted it yet, point them to the city field instead
-						// of failing silently.
-						if (!(await hasPermissions(["geolocation"]))) {
-							wText.textContent = "Set city";
-							wText.title =
-								"Location access not enabled - enter a city in Settings, or allow location when prompted";
-							return;
-						}
-
 						// Geo
 						const pos = await new Promise((resolve, reject) => {
 							navigator.geolocation.getCurrentPosition(
@@ -961,7 +940,7 @@ export async function initActionBar(actionCfg = {}) {
 					chrome.storage.local.set({ weatherData: toStore });
 					renderWeatherData(data);
 				} catch (e) {
-					console.error('Weather fetch failed', e);
+					// console.error('Weather fetch failed', e);
 					wText.textContent = "Err";
 				}
 			};
@@ -979,14 +958,6 @@ export async function initActionBar(actionCfg = {}) {
 				}
 			};
 			chrome.storage.onChanged.addListener(storageListener);
-
-			// Re-fetch once the user grants the optional geolocation permission
-			if (!_geoPermListenerAdded) {
-				_geoPermListenerAdded = true;
-				chrome.permissions.onAdded.addListener((perms) => {
-					if (perms.permissions.includes("geolocation")) fetchWeather();
-				});
-			}
 
 			// Click to force refresh
 			weatherGroup.addEventListener("click", async () => {
@@ -1064,6 +1035,6 @@ export async function initActionBar(actionCfg = {}) {
 			if (btn) btn.classList.add("active");
 		}
 	} catch (e) {
-		console.error('Failed to initialize action bar', e);
+		// console.error('Failed to initialize action bar', e);
 	}
 }

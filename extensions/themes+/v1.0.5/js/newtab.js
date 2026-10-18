@@ -5,12 +5,6 @@ import {
 	applyTheme,
 } from "./config.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
-import { showAlert } from "./uiUtil.js";
-import {
-	MEDIA_UPDATE,
-	MEDIA_PRESENCE,
-	MEDIA_QUERY,
-} from "./messageTypes.js";
 import { renderWallpaper } from "./wallpaper.js";
 import { renderSearchbar, removeSearchbar } from "./searchbar.js";
 import { initActionBar, updateMediaState } from "./actionbar.js";
@@ -23,7 +17,6 @@ import {
 	requestBookmarksPermission,
 } from "./bookmarksPanel.js";
 import { initNotesWidget } from "./notesWidget.js";
-import { initStorageSync } from "./storageUtil.js";
 
 // --- Lazy-loaded modules (only fetched on first use) ---
 let _timerModule = null;
@@ -118,12 +111,12 @@ async function getStoredConfig() {
 
 					resolve(mergedConfig);
 				} catch (e) {
-					console.error("Failed to parse stored config:", e);
+					// console.error("Failed to parse stored config:", e);
 					resolve(DEFAULT_CONFIG);
 				}
 			});
 		} catch (e) {
-			console.error("Failed to call app.storage.local.get:", e);
+			// console.error("Failed to call app.storage.local.get:", e);
 			resolve(DEFAULT_CONFIG);
 		}
 	});
@@ -143,7 +136,7 @@ async function setLastWallpaperId(id) {
 			}
 		});
 	} catch (e) {
-		console.warn('Failed to save last_id', e);
+		// console.warn('Failed to save last_id', e);
 	}
 }
 
@@ -152,7 +145,7 @@ async function getManifest() {
 		try {
 			app.storage.local.get(STORAGE_KEY_DB, (res) => {
 				if (app.runtime.lastError) {
-					console.error(app.runtime.lastError.message);
+					// console.error(app.runtime.lastError.message);
 					resolve(null);
 					return;
 				}
@@ -161,7 +154,7 @@ async function getManifest() {
 				);
 			});
 		} catch (e) {
-			console.error("Failed to call app.storage.local.get for manifest:", e);
+			// console.error("Failed to call app.storage.local.get for manifest:", e);
 			resolve(null);
 		}
 	});
@@ -201,10 +194,6 @@ async function closeAllOverlays() {
 (async () => {
 	const config = await getStoredConfig();
 
-	// Migrate legacy localStorage data (notes/alarms/laps) into chrome.storage.local
-	// before any module reads it.
-	await initStorageSync();
-
 	try {
 		// Apply UI Scale
 		if (config.uiScale) {
@@ -217,7 +206,7 @@ async function closeAllOverlays() {
 		);
 		applyTheme(config.theme);
 	} catch (e) {
-		console.error('Failed to apply config', e);
+		// console.error('Failed to apply config', e);
 	}
 	const manifest = await getManifest();
 
@@ -229,7 +218,7 @@ async function closeAllOverlays() {
 	let renderedId = null;
 
 	if (!manifest || !(manifest.images || manifest.videos)) {
-		console.warn("Manifest not found or is empty, using defaults.");
+		// console.warn("Manifest not found or is empty, using defaults.");
 		renderedId = await renderWallpaper(
 			config.wallpaper || DEFAULT_CONFIG.wallpaper,
 			{},
@@ -252,19 +241,19 @@ async function closeAllOverlays() {
 			removeSearchbar();
 		}
 	} catch (e) {
-		console.error('Failed to render/remove searchbar', e);
+		// console.error('Failed to render/remove searchbar', e);
 	}
 
 	try {
 		await initActionBar(config.actionbar || DEFAULT_CONFIG.actionbar);
 	} catch (e) {
-		console.error('Failed to initialize action bar', e);
+		// console.error('Failed to initialize action bar', e);
 	}
 
 	try {
 		initClock(config);
 	} catch (e) {
-		console.error('Failed to initialize on-screen clock', e);
+		// console.error('Failed to initialize on-screen clock', e);
 	}
 
 	// Action Listeners
@@ -285,9 +274,7 @@ async function closeAllOverlays() {
 						toggleEl.classList.remove("active");
 						try {
 							toggleEl.setAttribute("aria-expanded", "false");
-						} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+						} catch (e) {}
 					}
 				} else {
 					// It was closed. closeAllOverlays ensured everything else is closed.
@@ -298,9 +285,7 @@ async function closeAllOverlays() {
 						toggleEl.classList.add("active");
 						try {
 							toggleEl.setAttribute("aria-expanded", "true");
-						} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+						} catch (e) {}
 					}
 				}
 			} catch (inner) {
@@ -308,7 +293,7 @@ async function closeAllOverlays() {
 			}
 		});
 	} catch (e) {
-		console.error('Failed to attach timer action listener', e);
+		// console.error('Failed to attach timer action listener', e);
 	}
 
 	try {
@@ -323,9 +308,7 @@ async function closeAllOverlays() {
 						toggleEl.classList.remove("active");
 						try {
 							toggleEl.setAttribute("aria-expanded", "false");
-						} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+						} catch (e) {}
 					}
 				} else {
 					const mod = await getAlarmModule();
@@ -334,9 +317,7 @@ async function closeAllOverlays() {
 						toggleEl.classList.add("active");
 						try {
 							toggleEl.setAttribute("aria-expanded", "true");
-						} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+						} catch (e) {}
 					}
 				}
 			} catch (inner) {
@@ -344,7 +325,7 @@ async function closeAllOverlays() {
 			}
 		});
 	} catch (e) {
-		console.error('Failed to attach alarm action listener', e);
+		// console.error('Failed to attach alarm action listener', e);
 	}
 
 	try {
@@ -401,7 +382,7 @@ async function closeAllOverlays() {
 			}
 		});
 	} catch (e) {
-		console.error('Failed to attach settings action listener', e);
+		// console.error('Failed to attach settings action listener', e);
 	}
 
 	try {
@@ -418,15 +399,13 @@ async function closeAllOverlays() {
 				if (toggleEl) toggleEl.classList.remove("active");
 			}
 		});
-	} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+	} catch (e) {}
 
 	// Media Listener for Action Bar
 	chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 		if (
-			(message.type === MEDIA_UPDATE ||
-				message.type === MEDIA_PRESENCE) &&
+			(message.type === "MEDIA_UPDATE" ||
+				message.type === "MEDIA_PRESENCE") &&
 			message.fromService
 		) {
 			// Pass tab ID if available
@@ -438,7 +417,7 @@ async function closeAllOverlays() {
 
 	// Request initial state after a short delay to ensure listener is ready
 	setTimeout(() => {
-		chrome.runtime.sendMessage({ type: MEDIA_QUERY }, (response) => {});
+		chrome.runtime.sendMessage({ type: "MEDIA_QUERY" }, (response) => {});
 	}, 100);
 
 	// Modal Close Listeners (to update toggle buttons)
@@ -450,22 +429,14 @@ async function closeAllOverlays() {
 					toggleEl.classList.remove("active");
 					try {
 						toggleEl.setAttribute("aria-expanded", "false");
-					} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+					} catch (e) {}
 					try {
 						toggleEl.focus();
-					} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+					} catch (e) {}
 				}
-			} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+			} catch (e) {}
 		});
-	} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+	} catch (e) {}
 
 	try {
 		document.addEventListener("alarm:closed", () => {
@@ -475,40 +446,28 @@ async function closeAllOverlays() {
 					toggleEl.classList.remove("active");
 					try {
 						toggleEl.setAttribute("aria-expanded", "false");
-					} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+					} catch (e) {}
 					try {
 						toggleEl.focus();
-					} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+					} catch (e) {}
 				}
-			} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+			} catch (e) {}
 		});
-	} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+	} catch (e) {}
 
 	try {
 		document.addEventListener("settings:closed", () => {
 			const toggleEl = document.getElementById("action-settings");
 			if (toggleEl) toggleEl.classList.remove("active");
 		});
-	} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+	} catch (e) {}
 
 	try {
 		document.addEventListener("notes:closed", () => {
 			const toggleEl = document.getElementById("action-notes");
 			if (toggleEl) toggleEl.classList.remove("active");
 		});
-	} catch (e) {
-	console.warn('[newtab] operation failed', e);
-    }
+	} catch (e) {}
 
 	// Setup Components
 	// setupFullscreenToggle(); // Moved to delegation below
@@ -538,7 +497,7 @@ async function closeAllOverlays() {
 				if (!has) {
 					const granted = await requestBookmarksPermission();
 					if (!granted) {
-						console.warn('Bookmarks permission not granted');
+						// console.warn('Bookmarks permission not granted');
 						return;
 					}
 				}
@@ -549,7 +508,7 @@ async function closeAllOverlays() {
 					await toggleBookmarksPanel();
 				}
 			} catch (err) {
-				console.error('Bookmark toggle failed', err);
+				// console.error('Bookmark toggle failed', err);
 			}
 			return;
 		}
@@ -565,7 +524,7 @@ async function closeAllOverlays() {
 
 				if (isF11Fullscreen) {
 					// In F11 mode, we can't exit programmatically
-					await showAlert("Please press F11 or ESC to exit fullscreen mode.", "Fullscreen");
+					alert("Please press F11 or ESC to exit fullscreen mode.");
 					return;
 				}
 
@@ -575,7 +534,7 @@ async function closeAllOverlays() {
 					await document.documentElement.requestFullscreen();
 				}
 			} catch (err) {
-				console.error('Failed to toggle fullscreen', err);
+				// console.error('Failed to toggle fullscreen', err);
 			}
 			return;
 		}

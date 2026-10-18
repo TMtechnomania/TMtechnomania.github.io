@@ -1,6 +1,5 @@
 import { renderInlineIcon } from "./brandIconLoader.js";
 import { loadCSS, unloadCSS } from "./cssLoader.js";
-import { ZEN_MODE_CONTROL } from "./messageTypes.js";
 
 let ambientConfig = {
 	active: false,
@@ -119,15 +118,11 @@ export async function toggleAmbientMode() {
 		document.body.classList.remove("zen-active");
 		try {
 			overlay.remove();
-		} catch (e) {
-	console.warn('[ambientMode] operation failed', e);
-    }
+		} catch (e) {}
 		unloadCSS(CSS_ID);
 		try {
 			ambientConfig.audio?.pause();
-		} catch (e) {
-	console.warn('[ambientMode] operation failed', e);
-    }
+		} catch (e) {}
 		ambientConfig.audio = null;
 		return;
 	}
@@ -264,7 +259,7 @@ async function toggleBlockFocus(enable) {
 		);
 
 		chrome.runtime.sendMessage({
-			type: ZEN_MODE_CONTROL,
+			type: "ZEN_MODE_CONTROL",
 			action: enable ? "ENABLE_BLOCK" : "DISABLE_BLOCK",
 			tabId: currentTab.id,
 		});

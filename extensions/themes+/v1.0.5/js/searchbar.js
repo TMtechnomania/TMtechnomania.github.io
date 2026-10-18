@@ -1,8 +1,6 @@
 import { loadCSS, unloadCSS } from "./cssLoader.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
 import { STORAGE_KEY_SETTINGS } from "./config.js";
-import { hasPermissions, requestPermissions } from "./permUtil.js";
-import { escapeRegExp } from "./uiUtil.js";
 
 const ENGINE_MAP = {
 	default: {
@@ -122,28 +120,22 @@ function applyEngineButtonIcon(
 }
 
 async function fetchBookmarkSuggestions(query, limit = 5) {
-	// 'bookmarks' is an optional permission; degrade gracefully when not granted.
-	if (!chrome.bookmarks || !chrome.bookmarks.search) return [];
-	try {
-		return await new Promise((resolve) => {
-			chrome.bookmarks.search(query, (results) => {
-				if (chrome.runtime.lastError) return resolve([]);
-				const suggestions = results
-					.filter((b) => b.url) // Only items with URL
-					.slice(0, limit)
-					.map((b) => ({
-						text: b.title || b.url,
-						url: b.url,
-						type: "bookmark",
-						icon: ICON_MAP.bookmark,
-					}));
-				resolve(suggestions);
-			});
+	return new Promise((resolve) => {
+		if (!chrome.bookmarks) return resolve([]);
+		chrome.bookmarks.search(query, (results) => {
+			if (chrome.runtime.lastError) return resolve([]);
+			const suggestions = results
+				.filter((b) => b.url) // Only items with URL
+				.slice(0, limit)
+				.map((b) => ({
+					text: b.title || b.url,
+					url: b.url,
+					type: "bookmark",
+					icon: ICON_MAP.bookmark,
+				}));
+			resolve(suggestions);
 		});
-	} catch (e) {
-		console.warn('[Searchbar] bookmarks search unavailable', e);
-		return [];
-	}
+	});
 }
 
 async function getSuggestions(engineKey, query, limit) {
@@ -178,9 +170,7 @@ export async function renderSearchbar(searchCfg = {}) {
 				const info = await browser.search.get();
 				if (info && info.name) defaultName = info.name;
 			}
-		} catch (e) {
-	console.warn('[searchbar] operation failed', e);
-    }
+		} catch (e) {}
 
 		const duplicateKey = Object.keys(ENGINE_MAP).find(
 			(k) =>
@@ -329,9 +319,7 @@ export async function renderSearchbar(searchCfg = {}) {
 						);
 						try {
 							input.placeholder = placeholderFor(k);
-						} catch (e) {
-	console.warn('[searchbar] operation failed', e);
-    }
+						} catch (e) {}
 					}
 					populateChips(k);
 					wrapper.classList.remove("chips-open");
@@ -502,51 +490,18 @@ export async function renderSearchbar(searchCfg = {}) {
 					// Text wrapper (span)
 					const textSpan = document.createElement("span");
 					textSpan.className = "suggestion-text"; // Keep custom class for internal structure
-					// Highlight the match using DOM nodes only - suggestion text can
-					// contain HTML (stored XSS) and val can contain regex metachars.
-					let regex = null;
-					try {
-						regex = new RegExp(escapeRegExp(val), "gi");
-					} catch (_) {
-						regex = null; // unmatchable pattern - show plain text
-					}
-					textSpan.textContent = "";
-					if (regex && val) {
-						let last = 0;
-						let m;
-						while ((m = regex.exec(s.text)) !== null) {
-							if (m.index > last) {
-								textSpan.appendChild(
-									document.createTextNode(s.text.slice(last, m.index)),
-								);
-							}
-							const hl = document.createElement("span");
-							hl.className = "match";
-							hl.textContent = m[0];
-							textSpan.appendChild(hl);
-							last = m.index + m[0].length;
-							if (m[0] === "") regex.lastIndex++; // guard empty match
-						}
-						if (last < s.text.length) {
-							textSpan.appendChild(
-								document.createTextNode(s.text.slice(last)),
-							);
-						}
-					} else {
-						textSpan.textContent = s.text;
-					}
+					// Highlight match
+					const regex = new RegExp(`(${val})`, "gi");
+					textSpan.innerHTML = s.text.replace(
+						regex,
+						'<span class="match">$1</span>',
+					);
 
 					item.appendChild(iconSpan);
 					item.appendChild(textSpan);
 
 					item.addEventListener("click", () => {
-						// Only ever open http(s) URLs from suggestions - never
-						// javascript:/data: or other schemes.
-						const safeUrl =
-							typeof s.url === "string" && /^https?:\/\//i.test(s.url)
-							? s.url
-							: null;
-						if (safeUrl) {
+						if (s.url) {
 							window.open(
 								s.url,
 								(
@@ -579,21 +534,9 @@ export async function renderSearchbar(searchCfg = {}) {
 			const SpeechRecognition =
 				window.SpeechRecognition || window.webkitSpeechRecognition;
 			if (!SpeechRecognition) {
-				// Keep the icon node intact - surface the problem via tooltip only.
-				voiceBtn.title = "Voice search is not supported in this browser";
+				voiceBtn.textContent = "🎤";
 				return;
 			}
-
-			// audio-capture is an optional permission in MV3; ask on first use.
-			if (!(await hasPermissions(["audio-capture"]))) {
-				const ok = await requestPermissions(["audio-capture"]);
-				if (!ok) {
-					voiceBtn.title =
-						"Microphone access denied - allow it to use voice search";
-					return;
-				}
-			}
-
 			const recog = new SpeechRecognition();
 			recog.lang = "en-US";
 			recog.interimResults = false;
@@ -601,9 +544,7 @@ export async function renderSearchbar(searchCfg = {}) {
 			try {
 				voiceBtn.classList.add("listening");
 				recog.start();
-			} catch (e) {
-	console.warn('[searchbar] operation failed', e);
-    }
+			} catch (e) {}
 			recog.onresult = (e) => {
 				const t =
 					e.results &&
@@ -685,7 +626,7 @@ export async function renderSearchbar(searchCfg = {}) {
 
 		document.body.appendChild(wrapper);
 	} catch (e) {
-		console.error('[Searchbar] failed to render', e);
+		// console.error('Failed to render searchbar', e);
 	}
 }
 
@@ -694,7 +635,5 @@ export function removeSearchbar(keepCSS = false) {
 		const el = document.getElementById("searchbar");
 		if (el) el.remove();
 		if (!keepCSS) unloadCSS("searchbar-css");
-	} catch (e) {
-	console.warn('[searchbar] operation failed', e);
-    }
+	} catch (e) {}
 }

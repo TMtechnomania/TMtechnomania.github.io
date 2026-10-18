@@ -725,16 +725,3 @@ input:checked+.toggle-slider:before {
 	opacity: 0.7;
 	color: var(--text-off);
 }
-
-/* Storage & Upload Limits Meter Card */
-.storage-stats-card {
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="dark"] .storage-stats-card {
-	border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-.storage-stats-card .progress-fill {
-	transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}

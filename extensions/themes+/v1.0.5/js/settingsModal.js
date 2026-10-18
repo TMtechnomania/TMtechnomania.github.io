@@ -21,18 +21,14 @@ import {
 	deleteUserWallpaper,
 	getAllUserWallpapers,
 	getUserWallpaperList,
-	getUserWallpaperById,
-	getStorageBreakdown,
 } from "./db.js";
 import { initActionBar } from "./actionbar.js";
-import { escapeHtml, showAlert, setupModalA11y } from "./uiUtil.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
 import { openShortcutModal } from "./shortcutsModal.js";
 import { renderWallpaper, clearMediaKeysCache } from "./wallpaper.js";
 import { loadFont } from "./clockWidget.js";
 
 let _settingsModalOpen = false;
-let _settingsA11yCleanup = null; // focus-trap/Escape cleanup from setupModalA11y
 
 export function isSettingsModalOpen() {
 	return _settingsModalOpen;
@@ -47,10 +43,6 @@ export async function toggleSettingsModal() {
 }
 
 export function closeSettingsModalIfOpen() {
-	if (_settingsA11yCleanup) {
-		_settingsA11yCleanup(); // remove key handler + restore focus
-		_settingsA11yCleanup = null;
-	}
 	const el = document.getElementById("settings-modal");
 	if (el) {
 		// Add slideDown animation before removal
@@ -60,9 +52,7 @@ export function closeSettingsModalIfOpen() {
 			() => {
 				try {
 					document.body.removeChild(el);
-				} catch (e) {
-	console.warn('[settingsModal] operation failed', e);
-    }
+				} catch (e) {}
 				unloadCSS("settings-css");
 				cleanupWallpaperGrid();
 				_settingsModalOpen = false;
@@ -170,7 +160,6 @@ async function openSettingsModal() {
 
 	const closeBtn = document.createElement("button");
 	closeBtn.className = "btn btn-icon";
-	closeBtn.setAttribute("aria-label", "Close settings");
 	const closeIcon = document.createElement("span");
 	renderInlineIcon(closeIcon, "assets/svgs-fontawesome/solid/xmark.svg");
 	closeBtn.appendChild(closeIcon);
@@ -246,15 +235,7 @@ async function openSettingsModal() {
 				.querySelectorAll(".settings-section")
 				.forEach((s) => s.classList.remove("active"));
 			const target = content.querySelector(`#settings-section-${tab.id}`);
-			if (target) {
-				target.classList.add("active");
-				if (tab.id === "wallpaper") {
-					const card = target.querySelector(".storage-stats-card");
-					if (card && typeof refreshStorageMeter === "function") {
-						refreshStorageMeter(card);
-					}
-				}
-			}
+			if (target) target.classList.add("active");
 		});
 		sidebar.appendChild(btn);
 	});
@@ -277,11 +258,6 @@ async function openSettingsModal() {
 
 	document.body.appendChild(modal);
 	_settingsModalOpen = true;
-
-	// Accessibility: initial focus, Tab trap and Escape-to-close.
-	_settingsA11yCleanup = setupModalA11y(modal, {
-		onClose: closeSettingsModalIfOpen,
-	});
 
 	// Close on click outside
 	modal.addEventListener("click", (e) => {
@@ -1233,7 +1209,7 @@ function renderSectionContent(container, tabId, settings) {
 		addInput(
 			weatherGroup,
 			"City (Optional)",
-			"Leave blank to use your location (Chrome asks for location access once).",
+			"Leave blank to use auto-geolocation.",
 			settings.actionbar?.weather?.city || "",
 			async (val) => {
 				if (!settings.actionbar) settings.actionbar = {};
@@ -1532,7 +1508,7 @@ function renderSectionContent(container, tabId, settings) {
 		headerGroup.innerHTML = `
             <img src="icons/icon128.png" alt="Themes+ Logo" style="width: var(--dis-8); height: var(--dis-8);">
             <h2 style="font-size: var(--dis-3); font-weight: 700; color: var(--text-base);">Themes+</h2>
-            <div class="setting-desc" style="font-weight: 500;">v${chrome.runtime?.getManifest?.()?.version || "1.0.6"}</div>
+            <div class="setting-desc" style="font-weight: 500;">v1.0.4</div>
             <p class="setting-desc" style="max-width: 400px; margin-top: var(--dis-1);">
                 A beautiful, customizable dashboard for your new tab. <br>
                 Built for performance, privacy, and productivity.
@@ -2532,66 +2508,19 @@ function applyFont(fontCfg) {
 			`${family}, ${fallback}`,
 		);
 	} catch (e) {
-		console.error('[Settings] applyFont failed', e);
+		// console.error('applyFont error', e);
 	}
 }
 
 // --- Wallpaper Grid Helpers ---
 
 let gridObjectUrls = [];
-let _storagePollInterval = null;
 
 function cleanupWallpaperGrid() {
-	if (_storagePollInterval) {
-		clearInterval(_storagePollInterval);
-		_storagePollInterval = null;
-	}
 	if (gridObjectUrls.length > 0) {
 		// console.debug(`[Settings] Cleaning up ${gridObjectUrls.length} blob URLs.`);
 		gridObjectUrls.forEach((url) => URL.revokeObjectURL(url));
 		gridObjectUrls = [];
-	}
-}
-
-function formatStorageBytes(bytes) {
-	if (!bytes || bytes <= 0) return "0 B";
-	const k = 1024;
-	const sizes = ["B", "KB", "MB", "GB"];
-	const i = Math.floor(Math.log(bytes) / Math.log(k));
-	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-}
-
-async function refreshStorageMeter(statsCard) {
-	if (!statsCard || !statsCard.isConnected) return;
-	try {
-		const freshStats = await getStorageBreakdown();
-		const freshImgCount = freshStats.userImagesCount || 0;
-		const freshVidCount = freshStats.userVideosCount || 0;
-		const freshImgPct = Math.min(100, Math.round((freshImgCount / 50) * 100));
-		const freshVidPct = Math.min(100, Math.round((freshVidCount / 25) * 100));
-
-		const totalEl = statsCard.querySelector(".storage-total-val");
-		if (totalEl) totalEl.textContent = formatStorageBytes(freshStats.totalStorageUsedBytes);
-
-		const imgCountEl = statsCard.querySelector(".storage-img-count");
-		if (imgCountEl) imgCountEl.textContent = `${freshImgCount} / 50`;
-
-		const imgBarEl = statsCard.querySelector(".storage-img-bar");
-		if (imgBarEl) imgBarEl.style.width = `${freshImgPct}%`;
-
-		const vidCountEl = statsCard.querySelector(".storage-vid-count");
-		if (vidCountEl) vidCountEl.textContent = `${freshVidCount} / 25`;
-
-		const vidBarEl = statsCard.querySelector(".storage-vid-bar");
-		if (vidBarEl) vidBarEl.style.width = `${freshVidPct}%`;
-
-		const userUploadsEl = statsCard.querySelector(".storage-user-val");
-		if (userUploadsEl) userUploadsEl.textContent = formatStorageBytes(freshStats.userWallpapersBytes);
-
-		const extMediaEl = statsCard.querySelector(".storage-ext-val");
-		if (extMediaEl) extMediaEl.textContent = formatStorageBytes(freshStats.extensionMediaBytes);
-	} catch (e) {
-		console.warn("[Settings] real-time storage update failed", e);
 	}
 }
 
@@ -2622,82 +2551,6 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 	const userWallpapers = allUserWalls.filter((w) => w.type === currentType);
 	const hasUserContent = userWallpapers.length > 0;
 
-	// --- Storage & Upload Limits Meter (Top) ---
-	const storageStats = await getStorageBreakdown();
-
-	const statsCard = document.createElement("div");
-	statsCard.className = "storage-stats-card";
-	statsCard.style.gridColumn = "1 / -1";
-	statsCard.style.marginBottom = "1rem";
-	statsCard.style.padding = "1rem";
-	statsCard.style.background = "var(--color-off)";
-	statsCard.style.borderRadius = "var(--radius-child)";
-	statsCard.style.border = "1px solid rgba(128, 128, 128, 0.15)";
-
-	const imgCount = storageStats.userImagesCount || 0;
-	const vidCount = storageStats.userVideosCount || 0;
-	const imgMax = 50;
-	const vidMax = 25;
-	const imgPercent = Math.min(100, Math.round((imgCount / imgMax) * 100));
-	const vidPercent = Math.min(100, Math.round((vidCount / vidMax) * 100));
-
-	statsCard.innerHTML = `
-		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-			<div style="font-weight: 600; font-size: 0.95rem; color: var(--text-base);">Storage & Upload Capacity</div>
-			<div style="font-size: 0.8rem; color: var(--text-off);">Total Used: <strong class="storage-total-val" style="color: var(--text-accent);">${formatStorageBytes(storageStats.totalStorageUsedBytes)}</strong></div>
-		</div>
-		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 0.75rem;">
-			<div style="background: var(--color-base); padding: 0.75rem; border-radius: var(--radius-child); border: 1px solid rgba(128, 128, 128, 0.1);">
-				<div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
-					<span style="color: var(--text-base); font-weight: 500;">Images Capacity</span>
-					<span class="storage-img-count" style="color: var(--text-accent); font-weight: 600;">${imgCount} / ${imgMax}</span>
-				</div>
-				<div style="height: 6px; background: var(--color-off); border-radius: 3px; overflow: hidden;">
-					<div class="storage-img-bar" style="height: 100%; width: ${imgPercent}%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s ease;"></div>
-				</div>
-			</div>
-			<div style="background: var(--color-base); padding: 0.75rem; border-radius: var(--radius-child); border: 1px solid rgba(128, 128, 128, 0.1);">
-				<div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
-					<span style="color: var(--text-base); font-weight: 500;">Videos Capacity</span>
-					<span class="storage-vid-count" style="color: var(--text-accent); font-weight: 600;">${vidCount} / ${vidMax}</span>
-				</div>
-				<div style="height: 6px; background: var(--color-off); border-radius: 3px; overflow: hidden;">
-					<div class="storage-vid-bar" style="height: 100%; width: ${vidPercent}%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s ease;"></div>
-				</div>
-			</div>
-		</div>
-		<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8rem; color: var(--text-off); padding-top: 0.5rem; border-top: 1px solid rgba(128, 128, 128, 0.1);">
-			<div>User Uploads: <span class="storage-user-val" style="font-weight: 500; color: var(--text-base);">${formatStorageBytes(storageStats.userWallpapersBytes)}</span></div>
-			<div>Extension Media: <span class="storage-ext-val" style="font-weight: 500; color: var(--text-base);">${formatStorageBytes(storageStats.extensionMediaBytes)}</span></div>
-			<div>Limits: <span style="font-weight: 500; color: var(--text-base);">10MB / Image, 100MB / Video</span></div>
-		</div>
-	`;
-	container.appendChild(statsCard);
-
-	// Real-time polling every 2s while wallpaper tab is rendering/visible
-	if (_storagePollInterval) {
-		clearInterval(_storagePollInterval);
-		_storagePollInterval = null;
-	}
-
-	_storagePollInterval = setInterval(async () => {
-		const section = statsCard.closest(".settings-section");
-		if (!statsCard.isConnected || !document.getElementById("settings-modal")) {
-			if (_storagePollInterval) {
-				clearInterval(_storagePollInterval);
-				_storagePollInterval = null;
-			}
-			return;
-		}
-
-		// Skip ticking if user is viewing a different settings section
-		if (section && !section.classList.contains("active")) {
-			return;
-		}
-
-		await refreshStorageMeter(statsCard);
-	}, 2000);
-
 	// --- Actions Container (Top) ---
 	const actionsContainer = document.createElement("div");
 	actionsContainer.className = "grid-actions";
@@ -2712,15 +2565,27 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 		"assets/svgs-fontawesome/solid/upload.svg",
 	);
 
-	// Hidden File Input (supports multiple batch uploads)
+	// Hidden File Input
 	const fileInput = document.createElement("input");
 	fileInput.type = "file";
 	fileInput.accept = "image/*,video/*";
-	fileInput.multiple = true;
 	fileInput.style.display = "none";
 	fileInput.onchange = async (e) => {
-		const files = Array.from(e.target.files || []);
-		if (!files.length) return;
+		const file = e.target.files[0];
+		if (!file) return;
+
+		// Enforce Limits
+		const isVideo = file.type.startsWith("video");
+		const limitBytes = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB or 10MB
+		if (file.size > limitBytes) {
+			alert(
+				`File too large. Maximum size is ${
+					isVideo ? "100MB" : "10MB"
+				}.`,
+			);
+			fileInput.value = "";
+			return;
+		}
 
 		uploadBtn.disabled = true;
 		uploadBtn.innerHTML = `<span></span> Processing...`;
@@ -2731,66 +2596,52 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 		uploadBtn.querySelector("span").classList.add("animate-spin");
 
 		try {
-			const freshWalls = await getUserWallpaperList();
-			let curImgCount = freshWalls.filter((w) => w.type === "img").length;
-			let curVidCount = freshWalls.filter((w) => w.type === "video").length;
+			const isVideo = file.type.startsWith("video");
+			const type = isVideo ? "video" : "img";
 
-			for (let i = 0; i < files.length; i++) {
-				const file = files[i];
-				const isVideo = file.type.startsWith("video");
-				const type = isVideo ? "video" : "img";
-				const limitBytes = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
-				const maxCount = isVideo ? 25 : 50;
-				const curCount = isVideo ? curVidCount : curImgCount;
+			// Check Count Limit
+			const currentCount = allUserWalls.filter(
+				(w) => w.type === type,
+			).length;
+			const maxCount = isVideo ? 10 : 20;
 
-				if (file.size > limitBytes) {
-					await showAlert(
-						`"${file.name}" is too large. Maximum size is ${
-							isVideo ? "100MB" : "10MB"
-						}.`,
-						"File Skipped",
-					);
-					continue;
-				}
-
-				if (curCount >= maxCount) {
-					await showAlert(
-						`Upload limit reached (${maxCount} ${type} wallpapers). Remaining uploads were skipped.`,
-						"Limit Reached",
-					);
-					break;
-				}
-
-				if (files.length > 1) {
-					uploadBtn.innerHTML = `<span></span> Uploading (${i + 1}/${files.length})...`;
-					renderInlineIcon(
-						uploadBtn.querySelector("span"),
-						"assets/svgs-fontawesome/solid/spinner.svg",
-					);
-					uploadBtn.querySelector("span").classList.add("animate-spin");
-				}
-
-				const thumbBlob = await generateThumbnail(file);
-				await saveUserWallpaper(file, type, thumbBlob);
-				if (isVideo) curVidCount++;
-				else curImgCount++;
+			if (currentCount >= maxCount) {
+				alert(
+					`Upload limit reached. You can only have ${maxCount} ${type} wallpapers.`,
+				);
+				fileInput.value = "";
+				return;
 			}
+
+			let thumbBlob = null;
+
+			if (isVideo) {
+				// thumbBlob handled below for both
+			}
+
+			// Generate thumbnail for both images and videos
+			thumbBlob = await generateThumbnail(file);
+
+			await saveUserWallpaper(file, type, thumbBlob);
+
+			// If type mismatch, we do NOT switch automatically as per user request.
+			// if (settings.wallpaper.type !== type) { ... }
 
 			// Refresh grid
 			clearMediaKeysCache();
 			await renderWallpaperGrid(container, settings);
 		} catch (err) {
-			console.error("[Settings] wallpaper upload failed", err);
-			await showAlert("Failed to upload wallpaper(s).", "Upload failed");
+			// console.error('Upload failed', err);
+			alert("Failed to upload wallpaper.");
 		} finally {
-			fileInput.value = "";
+			// Reset logic handled by re-render
 		}
 	};
-	container.appendChild(fileInput);
+	container.appendChild(fileInput); // Append to container so it's in DOM
 	uploadBtn.onclick = () => fileInput.click();
 	actionsContainer.appendChild(uploadBtn);
 
-	// Refresh Button (Existing, optimized to prevent OOM)
+	// Refresh Button (Existing)
 	const refreshBtn = document.createElement("button");
 	refreshBtn.className = "btn btn-icon-text action-btn refresh-all";
 	refreshBtn.innerHTML = `<span></span><span class="text">Refresh</span>`;
@@ -2807,7 +2658,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 		);
 		refreshBtn.querySelector("span").classList.add("animate-spin");
 		try {
-			// 1. Regenerate User Thumbnails sequentially without memory spike
+			// 1. Regenerate User Thumbnails
 			refreshBtn.innerHTML = `<span></span> Regenerating Inputs...`;
 			renderInlineIcon(
 				refreshBtn.querySelector("span"),
@@ -2815,12 +2666,14 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 			);
 			refreshBtn.querySelector("span").classList.add("animate-spin");
 
-			const userWallsList = await getUserWallpaperList();
-			for (const item of userWallsList) {
-				const fullWall = await getUserWallpaperById(item.id);
-				if (fullWall?.blob) {
-					const newThumb = await generateThumbnail(fullWall.blob);
-					await saveUserWallpaper(fullWall.blob, fullWall.type, newThumb, fullWall.id);
+			// Check if getAllUserWallpapers is imported/available in scope? Yes.
+			// We need to fetch fresh list
+			const userWalls = await getAllUserWallpapers();
+			for (const w of userWalls) {
+				if (w.blob) {
+					const newThumb = await generateThumbnail(w.blob);
+					// Update existing entry (using the newly added 4th param for ID)
+					await saveUserWallpaper(w.blob, w.type, newThumb, w.id);
 				}
 			}
 
@@ -2844,7 +2697,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 				);
 			});
 		} catch (e) {
-			console.error("[Settings] renderWallpaperGrid failed", e);
+			// console.error(e);
 			await renderWallpaperGrid(container, settings);
 		}
 	};
@@ -2954,30 +2807,20 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 			tile.className = `wallpaper-tile ${isActive ? "active" : ""}`;
 
 			// Determine source for grid
-			let displayUrl = "";
+			let displayUrl;
 			let isThumb = false;
 
 			if (wall.thumbBlob) {
 				displayUrl = URL.createObjectURL(wall.thumbBlob);
 				isThumb = true;
 			} else {
-				// Fallback: fetch blob on-demand for this specific item if thumb missing
-				const fullWall = await getUserWallpaperById(wall.id);
-				if (fullWall?.blob) {
-					displayUrl = URL.createObjectURL(fullWall.blob);
-				}
+				displayUrl = URL.createObjectURL(wall.blob);
 			}
-			if (displayUrl) {
-				gridObjectUrls.push(displayUrl);
-			}
+			gridObjectUrls.push(displayUrl);
 
-			// Render as IMG always to avoid page overload
-			if (!displayUrl) {
-				const placeholder = document.createElement("div");
-				placeholder.className = "tile-placeholder";
-				placeholder.textContent = wall.type === "video" ? "Video" : "Image";
-				tile.appendChild(placeholder);
-			} else if (wall.type === "video" && !wall.thumbBlob) {
+			// Render as IMG always to "avoid page overload"
+			// If video has NO thumb (legacy?), fallback to video tag.
+			if (wall.type === "video" && !wall.thumbBlob) {
 				const vid = document.createElement("video");
 				vid.src = displayUrl;
 				vid.muted = true;
@@ -3384,13 +3227,8 @@ async function generateThumbnail(file) {
 	return new Promise((resolve) => {
 		const fileUrl = URL.createObjectURL(file);
 		const MAX_DIM = 320;
-		const timer = setTimeout(() => {
-			URL.revokeObjectURL(fileUrl);
-			resolve(null);
-		}, 8000);
 
 		const processCanvas = (source, w, h) => {
-			clearTimeout(timer);
 			let width = w;
 			let height = h;
 
@@ -3441,10 +3279,11 @@ async function generateThumbnail(file) {
 				}
 				video.currentTime = time;
 			};
+			// Robust seek handling: if 1.0 is > duration, it might fail or clamp.
+			// Usually 1.0 is safe for wallpapers. If fail, seek 0.
 			video.onseeked = () =>
 				processCanvas(video, video.videoWidth, video.videoHeight);
 			video.onerror = () => {
-				clearTimeout(timer);
 				URL.revokeObjectURL(fileUrl);
 				resolve(null);
 			};
@@ -3453,7 +3292,6 @@ async function generateThumbnail(file) {
 			img.onload = () =>
 				processCanvas(img, img.naturalWidth, img.naturalHeight);
 			img.onerror = () => {
-				clearTimeout(timer);
 				URL.revokeObjectURL(fileUrl);
 				resolve(null);
 			};
@@ -3484,9 +3322,7 @@ async function createWallpaperTile(
 			thumbUrl = URL.createObjectURL(entry.blob);
 			gridObjectUrls.push(thumbUrl);
 		}
-	} catch (e) {
-	console.warn('[settingsModal] operation failed', e);
-    }
+	} catch (e) {}
 
 	if (!thumbUrl && item.thumb) {
 		thumbUrl = resolveAssetUrl(item.thumb);
@@ -3741,9 +3577,7 @@ function renderShortcutsList(container, settings) {
 			// Text
 			const text = document.createElement("div");
 			text.className = "shortcut-list-info";
-			// Escape user-controllable values (titles/URLs can come from
-			// visited pages) before interpolating into markup.
-			text.innerHTML = `<div class="shortcut-title">${escapeHtml(item.title)}</div><div class="shortcut-url">${escapeHtml(item.url)}</div>`;
+			text.innerHTML = `<div class="shortcut-title">${item.title}</div><div class="shortcut-url">${item.url}</div>`;
 
 			itemRow.appendChild(icon);
 			itemRow.appendChild(text);

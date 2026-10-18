@@ -1,10 +1,4 @@
 import { renderInlineIcon } from './brandIconLoader.js';
-import {
-    MEDIA_UPDATE,
-    MEDIA_PRESENCE,
-    MEDIA_QUERY,
-    MEDIA_CONTROL
-} from './messageTypes.js';
 
 export function initMediaWidget() {
     // Inject CSS
@@ -38,6 +32,7 @@ export function initMediaWidget() {
 
     // State
     let currentMedia = null;
+    let hideTimer = null;
 
     function updateUI(media) {
         if (!media) {
@@ -63,7 +58,7 @@ export function initMediaWidget() {
     widget.addEventListener('click', (e) => {
         // e.stopPropagation(); // Should we stop prop? Maybe not.
         chrome.runtime.sendMessage({ 
-            type: MEDIA_CONTROL, 
+            type: 'MEDIA_CONTROL', 
             action: currentMedia && currentMedia.isPlaying ? 'pause' : 'play' 
         });
         
@@ -76,16 +71,26 @@ export function initMediaWidget() {
 
     // Listen for updates
     chrome.runtime.onMessage.addListener((message) => {
-        if (message.type === MEDIA_UPDATE || message.type === MEDIA_PRESENCE) {
+        if (message.type === 'MEDIA_UPDATE' || message.type === 'MEDIA_PRESENCE') {
             updateUI(message.data);
-            // No silence-based auto-hide: the service worker explicitly
-            // broadcasts MEDIA_UPDATE with data:null when a media tab is
-            // closed or navigates away, which deactivates the widget.
+            
+            // Auto hide if paused for long? Maybe not, user might want to resume.
+            // But if we haven't heard from it in a while...
+            // presence is sent every 3s.
+            if (hideTimer) clearTimeout(hideTimer);
+            hideTimer = setTimeout(() => {
+                // If no updates/presence for 10s, maybe user closed tab?
+                // Or video ended.
+                // Let's not auto-hide too aggressively. 
+                // widget.classList.remove('active'); 
+            }, 10000);
         }
     });
 
-    // Initial query (in case media is already playing): service.js routes
-    // MEDIA_QUERY to all tabs; content scripts answer with a fresh
-    // MEDIA_UPDATE, so the widget no longer shows "No Media" for ~3s.
-    chrome.runtime.sendMessage({ type: MEDIA_QUERY }).catch(() => {});
+    // Initial Query (in case media is already playing)
+    // We need to send this to content scripts. service.js should route it?
+    // service.js doesn't have MEDIA_QUERY routing in our update. 
+    // But content scripts listen to it.
+    // We can try broadcasting.
+    // chrome.runtime.sendMessage({ type: 'MEDIA_QUERY' });
 }
