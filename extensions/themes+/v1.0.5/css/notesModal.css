@@ -161,6 +161,12 @@
 	outline: none;
 }
 
+.note-input-content ul,
+.note-input-content ol {
+	padding-left: var(--dis-4);
+	margin: var(--dis-xs) 0;
+}
+
 .note-input-content:focus,
 .note-input-content:hover {
 	background: transparent;
