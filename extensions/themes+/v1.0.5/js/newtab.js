@@ -216,6 +216,14 @@ async function closeAllOverlays() {
 			document.body.removeChild(widgetPanel);
 		} catch (e) {}
 	}
+	const toolsToggle = document.getElementById("action-tools");
+	if (toolsToggle) {
+		toolsToggle.classList.remove("active");
+		try {
+			toolsToggle.setAttribute("aria-expanded", "false");
+		} catch (e) {}
+	}
+	// Close floating tool panels? keep them, but update ribbon active states later
 }
 
 (async () => {

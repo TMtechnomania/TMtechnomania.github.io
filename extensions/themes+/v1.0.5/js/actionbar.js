@@ -6,7 +6,6 @@ import {
 } from "./config.js";
 
 import { renderInlineIcon, getIconForUrl } from "./brandIconLoader.js";
-import { toggleToolsRibbon, setToolsToggleElement } from "./toolsRibbon.js";
 import {
 	initFamCam,
 	destroyFamCam,
@@ -92,8 +91,7 @@ export async function initActionBar(actionCfg = {}) {
 			);
 			actionKey.addEventListener("click", (e) => {
 				e.stopPropagation();
-				setToolsToggleElement(actionKey);
-				toggleToolsRibbon();
+				document.dispatchEvent(new CustomEvent("action:tools"));
 			});
 		iconGroup.appendChild(actionKey);
 
