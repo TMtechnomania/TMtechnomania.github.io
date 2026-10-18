@@ -398,6 +398,7 @@ function openEditor(container, type, existingNote = null) {
 		const toolbar = document.createElement("div");
 		toolbar.className = "note-format-toolbar";
 		const fmtButtons = [];
+		let applyingFmt = false;
 		const addFmt = (label, cmd, val = null) => {
 			const btn = document.createElement("button");
 			btn.type = "button";
@@ -405,11 +406,15 @@ function openEditor(container, type, existingNote = null) {
 			btn.textContent = label;
 			btn.addEventListener("mousedown", (e) => e.preventDefault());
 			btn.addEventListener("click", () => {
+				applyingFmt = true;
 				document.execCommand(cmd, false, val);
 				editor.focus();
 				note.content = editor.innerHTML;
 				btn.classList.toggle("active");
-				setTimeout(updateFmtState, 0);
+				setTimeout(() => {
+					applyingFmt = false;
+					updateFmtState();
+				}, 0);
 			});
 			fmtButtons.push({ btn, cmd, val });
 			return btn;
@@ -443,12 +448,16 @@ function openEditor(container, type, existingNote = null) {
 		};
 		editor.addEventListener("input", () => {
 			note.content = editor.innerHTML;
-			updateFmtState();
+			if (!applyingFmt) updateFmtState();
 		});
-		editor.addEventListener("keyup", updateFmtState);
-		editor.addEventListener("mouseup", updateFmtState);
+		editor.addEventListener("keyup", () => {
+			if (!applyingFmt) updateFmtState();
+		});
+		editor.addEventListener("mouseup", () => {
+			if (!applyingFmt) updateFmtState();
+		});
 		document.addEventListener("selectionchange", () => {
-			if (document.activeElement === editor) updateFmtState();
+			if (document.activeElement === editor && !applyingFmt) updateFmtState();
 		});
 		contentWrapper.appendChild(editor);
 		updateFmtState();
