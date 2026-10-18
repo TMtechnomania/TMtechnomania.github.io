@@ -169,7 +169,7 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: calc(22.5rem * var(--ui-scale)) !important;
+	width: calc(16rem * var(--ui-scale)) !important;
 	max-width: 90vw;
 	max-height: 80vh;
 	z-index: var(--z-panel);
