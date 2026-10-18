@@ -407,8 +407,8 @@ function openEditor(container, type, existingNote = null) {
 			btn.addEventListener("mousedown", (e) => e.preventDefault());
 			btn.addEventListener("click", () => {
 				applyingFmt = true;
-				document.execCommand(cmd, false, val);
 				editor.focus();
+				document.execCommand(cmd, false, val);
 				note.content = editor.innerHTML;
 				btn.classList.toggle("active");
 				setTimeout(() => {
