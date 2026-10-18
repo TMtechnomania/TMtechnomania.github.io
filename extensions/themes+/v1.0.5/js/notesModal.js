@@ -408,7 +408,8 @@ function openEditor(container, type, existingNote = null) {
 				document.execCommand(cmd, false, val);
 				editor.focus();
 				note.content = editor.innerHTML;
-				requestAnimationFrame(updateFmtState);
+				btn.classList.toggle("active");
+				setTimeout(updateFmtState, 0);
 			});
 			fmtButtons.push({ btn, cmd, val });
 			return btn;
