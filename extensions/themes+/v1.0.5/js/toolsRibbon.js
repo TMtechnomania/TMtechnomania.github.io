@@ -49,7 +49,7 @@ export async function toggleToolsRibbon() {
 				_toolsToggleElement.setAttribute("aria-expanded", "false");
 			} catch (e) {}
 		}
-		if (_floatPanels.size === 0) unloadCSS("tools-ribbon-css");
+		if (_floatPanels.size === 0 && !document.getElementById("tools-ribbon")) unloadCSS("tools-ribbon-css");
 		return;
 	}
 
@@ -221,7 +221,7 @@ function closeToolFloat(toolId) {
 		panel.remove();
 	} catch (e) {}
 	_floatPanels.delete(toolId);
-	if (_floatPanels.size === 0) unloadCSS("tools-ribbon-css");
+	if (_floatPanels.size === 0 && !document.getElementById("tools-ribbon")) unloadCSS("tools-ribbon-css");
 	saveFloatState();
 }
 
@@ -241,7 +241,7 @@ function _scheduleToolsRibbonAutoClose() {
 				_toolsToggleElement.setAttribute("aria-expanded", "false");
 			} catch (e) {}
 		}
-		if (_floatPanels.size === 0) unloadCSS("tools-ribbon-css");
+		if (_floatPanels.size === 0 && !document.getElementById("tools-ribbon")) unloadCSS("tools-ribbon-css");
 	}, TOOLS_RIBBON_AUTO_CLOSE_MS);
 }
 
@@ -269,7 +269,7 @@ function attachToolsListeners() {
 					_toolsToggleElement.setAttribute("aria-expanded", "false");
 				} catch (e) {}
 			}
-			if (_floatPanels.size === 0) unloadCSS("tools-ribbon-css");
+			if (_floatPanels.size === 0 && !document.getElementById("tools-ribbon")) unloadCSS("tools-ribbon-css");
 		}
 	}
 	document.addEventListener("keydown", onKeyDown);
