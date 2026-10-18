@@ -132,6 +132,19 @@
 	box-shadow: none;
 }
 
+.note-format-toolbar {
+	display: flex;
+	gap: var(--dis-xs);
+	padding: var(--dis-xs) 0;
+	border-bottom: 1px solid var(--color-off);
+	margin-bottom: var(--dis-xs);
+}
+
+.note-format-toolbar .btn {
+	min-width: var(--dis-4);
+	padding: var(--dis-xs) var(--dis-1);
+}
+
 .note-input-content {
 	flex: 1;
 	min-height: var(--dis-30);
@@ -140,6 +153,7 @@
 	padding: 0;
 	border-radius: 0;
 	box-shadow: none;
+	outline: none;
 }
 
 .note-input-content:focus,

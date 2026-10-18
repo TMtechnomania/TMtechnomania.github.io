@@ -137,8 +137,8 @@ function renderWidgets() {
 		content.className = "note-widget-content";
 
 		if (note.type === "note") {
-			content.textContent = note.content;
-		} else {
+					content.textContent = (note.content || "").replace(/<[^>]*>/g, "") || "No content";
+				} else {
 			// Checklist
 			(note.items || []).forEach((item, idx) => {
 				const row = document.createElement("div");

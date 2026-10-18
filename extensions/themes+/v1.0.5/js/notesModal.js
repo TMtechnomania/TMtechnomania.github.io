@@ -232,7 +232,9 @@ function renderListView(container) {
 			const preview = document.createElement("div");
 			preview.className = "note-preview";
 			if (note.type === "note") {
-				preview.textContent = note.content || "No content";
+				const tmp = document.createElement("div");
+				tmp.innerHTML = note.content || "";
+				preview.textContent = tmp.textContent || "No content";
 			} else {
 				const checked = note.items
 					? note.items.filter((i) => i.checked).length
@@ -393,12 +395,37 @@ function openEditor(container, type, existingNote = null) {
 
 	// Content
 	if (type === "note") {
-		const text = document.createElement("textarea");
-		text.className = "textarea note-input-content";
-		text.placeholder = "Type your note here...";
-		text.value = note.content || "";
-		text.addEventListener("input", (e) => (note.content = e.target.value));
-		contentWrapper.appendChild(text);
+		const toolbar = document.createElement("div");
+		toolbar.className = "note-format-toolbar";
+		const addFmt = (label, cmd, val = null) => {
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = "btn btn-small btn-text";
+			btn.textContent = label;
+			btn.addEventListener("mousedown", (e) => e.preventDefault());
+			btn.addEventListener("click", () => {
+				document.execCommand(cmd, false, val);
+				editor.focus();
+				note.content = editor.innerHTML;
+			});
+			return btn;
+		};
+		toolbar.appendChild(addFmt("B", "bold"));
+		toolbar.appendChild(addFmt("I", "italic"));
+		toolbar.appendChild(addFmt("U", "underline"));
+		toolbar.appendChild(addFmt("•", "insertUnorderedList"));
+		toolbar.appendChild(addFmt("1.", "insertOrderedList"));
+		toolbar.appendChild(addFmt("H", "formatBlock", "h3"));
+		contentWrapper.appendChild(toolbar);
+
+		const editor = document.createElement("div");
+		editor.className = "textarea note-input-content";
+		editor.contentEditable = "true";
+		editor.innerHTML = note.content || "";
+		editor.addEventListener("input", () => {
+			note.content = editor.innerHTML;
+		});
+		contentWrapper.appendChild(editor);
 	} else {
 		// Checklist
 		const checkContainer = document.createElement("div");
