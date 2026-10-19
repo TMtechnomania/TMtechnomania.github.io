@@ -18,6 +18,7 @@ import {
 	requestBookmarksPermission,
 } from "./bookmarksPanel.js";
 import { initNotesWidget } from "./notesWidget.js";
+import { onSettingsChanged, normalizeSettings, markSettingsWrite } from "./settingsSync.js";
 
 // --- Lazy-loaded modules (only fetched on first use) ---
 let _timerModule = null;
@@ -100,16 +101,7 @@ async function getStoredConfig() {
 
 					const stored = res?.[STORAGE_KEY_SETTINGS] ?? {};
 
-					const mergedConfig = {
-						...DEFAULT_CONFIG,
-						...stored,
-						wallpaper: {
-							...DEFAULT_CONFIG.wallpaper,
-							...(stored.wallpaper || {}),
-						},
-					};
-
-					resolve(mergedConfig);
+					resolve(normalizeSettings(stored));
 				} catch (e) {
 					// console.error("Failed to parse stored config:", e);
 					resolve(DEFAULT_CONFIG);
@@ -132,6 +124,9 @@ async function setLastWallpaperId(id) {
 			// Actually sequence logic relies on last_id being the one *just displayed*.
 			if (current.wallpaper.last_id !== id) {
 				current.wallpaper.last_id = id;
+				// A rotation bookkeeping write, not a user setting change: mark it
+				// so this tab does not re-render its own wallpaper from the echo.
+				markSettingsWrite(current);
 				app.storage.local.set({ [STORAGE_KEY_SETTINGS]: current });
 			}
 		});
@@ -217,7 +212,7 @@ async function closeAllOverlays() {
 }
 
 (async () => {
-	const config = await getStoredConfig();
+	let config = await getStoredConfig();
 
 	try {
 			// UI size preference (multiplies the fluid root font-size)
@@ -497,16 +492,65 @@ async function closeAllOverlays() {
 		});
 	} catch (e) {}
 
-	// Auto-apply settings changes from other tabs without manual reload
-try {
-	chrome.storage.onChanged.addListener((changes, area) => {
-		if (area !== "local") return;
-		if (!changes[STORAGE_KEY_SETTINGS]) return;
-		// Ignore changes made in this tab (settings modal open)
-		if (document.getElementById("settings-modal")) return;
-		window.location.reload();
-	});
-} catch (e) {}
+	// Live settings sync across tabs.
+	// Instead of reloading the page when another tab saves settings, apply
+	// just the parts that changed. The open settings modal refreshes its own
+	// controls through the same event (see js/settingsModal.js).
+	onSettingsChanged(
+		async (next) => {
+			const prev = config;
+			config = next;
+			const changed = (key) =>
+				JSON.stringify(prev?.[key]) !== JSON.stringify(next[key]);
+			// Wallpaper rotation bookkeeping (last_id) is per-tab: ignore it so
+			// another tab advancing its slideshow does not re-render ours.
+			const wallpaperChanged = (() => {
+				const strip = (cfg) => {
+					if (!cfg) return "";
+					const { last_id, ...rest } = cfg;
+					return JSON.stringify(rest);
+				};
+				return strip(prev?.wallpaper) !== strip(next.wallpaper);
+			})();
+
+			try {
+				if (changed("theme")) applyTheme(next.theme);
+				if (changed("font"))
+					applyFontConfig(next.font || DEFAULT_CONFIG.font);
+				if (changed("uiScale")) applyUiScale(next.uiScale);
+				if (changed("onScreenClock") || changed("greeting")) {
+					updateClockSettings(next);
+				}
+			} catch (e) {}
+
+			try {
+				if (changed("searchbar")) {
+					if (next.searchbar && next.searchbar.enabled) {
+						await renderSearchbar(next.searchbar);
+					} else {
+						removeSearchbar();
+					}
+				}
+			} catch (e) {}
+
+			try {
+				if (changed("actionbar") || changed("shortcuts")) {
+					await initActionBar(next.actionbar || DEFAULT_CONFIG.actionbar);
+				}
+			} catch (e) {}
+
+			try {
+				if (wallpaperChanged) {
+					const renderedId = await renderWallpaper(
+						next.wallpaper || DEFAULT_CONFIG.wallpaper,
+						manifest,
+					);
+					if (renderedId) await setLastWallpaperId(renderedId);
+				}
+			} catch (e) {}
+		},
+		{ includeSelf: false },
+	);
 	// setupFullscreenToggle(); // Moved to delegation below
 
 	// Setup Action Bar Actions Delegation (Handles dynamic recreation of action bar)

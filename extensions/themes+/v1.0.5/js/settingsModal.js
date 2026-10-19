@@ -6,6 +6,12 @@ import {
 	DEFAULT_SHORTCUTS,
 	DUOTONE_THEMES,
 } from "./config.js";
+import {
+	markSettingsWrite,
+	normalizeSettings,
+	onSettingsChanged,
+	mergeSettingsInPlace,
+} from "./settingsSync.js";
 import { toggleRain } from "./rainEffect.js";
 import {
 	renderSearchbar,
@@ -209,6 +215,8 @@ async function openSettingsModal() {
 	];
 
 	let activeTabId = "general";
+	// Sections whose controls may be stale after a change from another tab.
+	const staleSections = new Set();
 
 	tabs.forEach((tab) => {
 		const btn = document.createElement("button");
@@ -235,7 +243,15 @@ async function openSettingsModal() {
 				.querySelectorAll(".settings-section")
 				.forEach((s) => s.classList.remove("active"));
 			const target = content.querySelector(`#settings-section-${tab.id}`);
-			if (target) target.classList.add("active");
+			if (target) {
+				target.classList.add("active");
+				// Rebuild on first view if another tab changed settings while
+				// this section was hidden, so it never shows stale values.
+				if (staleSections.has(tab.id)) {
+					renderSettingsSection(target, currentSettings);
+					staleSections.delete(tab.id);
+				}
+			}
 		});
 		sidebar.appendChild(btn);
 	});
@@ -259,40 +275,64 @@ async function openSettingsModal() {
 	document.body.appendChild(modal);
 	_settingsModalOpen = true;
 
+	// Cross-tab sync: when another tab changes settings, merge the new values
+	// into the object every control closure holds and repaint the visible
+	// section, so an open modal never keeps showing stale values.
+	const stopRemoteSync = onSettingsChanged((next) => {
+		mergeSettingsInPlace(currentSettings, next);
+		tabs.forEach((tab) => staleSections.add(tab.id));
+		const active = content.querySelector(".settings-section.active");
+		if (active) {
+			renderSettingsSection(active, currentSettings);
+			staleSections.delete(active.id.replace("settings-section-", ""));
+		}
+	});
+	document.addEventListener("settings:closed", () => stopRemoteSync(), {
+		once: true,
+	});
+
 	// Close on click outside
 	modal.addEventListener("click", (e) => {
 		if (e.target === modal) closeSettingsModalIfOpen();
 	});
 }
 
+/**
+ * Rebuild one settings section from the given settings, preserving the
+ * content scroll position. Used when settings changed in another tab.
+ */
+function renderSettingsSection(section, settings) {
+	if (!section) return;
+	const tabId = String(section.id || "").replace("settings-section-", "");
+	if (!tabId) return;
+
+	const scroller = section.closest(".settings-content");
+	const scrollTop = scroller ? scroller.scrollTop : 0;
+
+	cleanupWallpaperGrid();
+	// Clearing only (empty string) - no untrusted markup is injected here.
+	section.innerHTML = "";
+	try {
+		renderSectionContent(section, tabId, settings);
+	} catch (e) {
+		console.warn("[Settings] failed to refresh section", tabId, e);
+	}
+
+	if (scroller) scroller.scrollTop = scrollTop;
+}
+
 async function getSettings() {
 	return new Promise((resolve) => {
 		chrome.storage.local.get(STORAGE_KEY_SETTINGS, (res) => {
-			const stored = res?.[STORAGE_KEY_SETTINGS] || {};
-			// Deep merge with default config to ensure all keys exist
-			const merged = {
-				...DEFAULT_CONFIG,
-				...stored,
-				wallpaper: {
-					...DEFAULT_CONFIG.wallpaper,
-					...(stored.wallpaper || {}),
-				},
-				searchbar: {
-					...DEFAULT_CONFIG.searchbar,
-					...(stored.searchbar || {}),
-				},
-				actionbar: {
-					...DEFAULT_CONFIG.actionbar,
-					...(stored.actionbar || {}),
-				},
-				font: { ...DEFAULT_CONFIG.font, ...(stored.font || {}) },
-			};
-			resolve(merged);
+			resolve(normalizeSettings(res?.[STORAGE_KEY_SETTINGS]));
 		});
 	});
 }
 
 async function saveSettings(newSettings) {
+	// Remember the payload: this tab will get its own storage event back and
+	// must not treat it as a remote change (it already applied the change).
+	markSettingsWrite(newSettings);
 	return new Promise((resolve) => {
 		chrome.storage.local.set(
 			{ [STORAGE_KEY_SETTINGS]: newSettings },

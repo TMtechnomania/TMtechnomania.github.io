@@ -4,6 +4,7 @@ import {
 	DEFAULT_SHORTCUTS,
 	DEFAULT_SHORTCUT_ICON_FALLBACK,
 } from "./config.js";
+import { markSettingsWrite } from "./settingsSync.js";
 
 import { renderInlineIcon, getIconForUrl } from "./brandIconLoader.js";
 import {
@@ -569,6 +570,9 @@ export async function initActionBar(actionCfg = {}) {
 					settings.actionbar.famcam.flash = {};
 
 				settings.actionbar.famcam.flash.brightness = val;
+				// Mark before writing: this tab already applied the change and
+				// must not rebuild its own action bar from the storage echo.
+				markSettingsWrite(settings);
 				chrome.storage.local.set({ [STORAGE_KEY_SETTINGS]: settings });
 
 				// Notify other components (like settings modal if open)

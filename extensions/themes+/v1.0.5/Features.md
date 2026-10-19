@@ -19,6 +19,7 @@
     -   System / Light / Dark modes.
     -   Custom fonts (Google Fonts integration).
     -   UI Scaling (80% - 120%).
+    -   Settings sync: a change in one new-tab page applies live to every other open new-tab page (no reload), and an open Settings panel refreshes its controls instead of showing stale values.
 
 ### Productivity Tools
 
