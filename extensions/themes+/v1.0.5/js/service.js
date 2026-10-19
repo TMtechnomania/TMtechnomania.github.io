@@ -744,13 +744,9 @@ function _broadcastSyncStatus() {
 	if (newTabInstances.length < 2) return;
 	const latestTabId = newTabInstances[newTabInstances.length - 1].tabId;
 
-	if (_syncState) {
-		// In sync — tell latest tab to hide button
-		chrome.tabs.sendMessage(latestTabId, { type: "WALLPAPER_SYNC_STATUS", needSync: false }).catch(() => {});
-	} else {
-		// Out of sync — tell latest tab to show button
-		chrome.tabs.sendMessage(latestTabId, { type: "WALLPAPER_SYNC_STATUS", needSync: true }).catch(() => {});
-	}
+	// Keep the sync button visible whenever the same video wallpaper
+	// is playing on 2 or more tabs.
+	chrome.tabs.sendMessage(latestTabId, { type: "WALLPAPER_SYNC_STATUS", needSync: true }).catch(() => {});
 }
 
 function _checkSync() {
@@ -793,7 +789,7 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 	}
 	if (msg.type === "WALLPAPER_SYNC_QUERY") {
 		// Return current sync state
-		return { needSync: !_syncState };
+		return { needSync: newTabInstances.length >= 2 };
 	}
 	return false;
 });
@@ -818,6 +814,7 @@ function _rebuildNewTabInstances() {
 		if (chrome.runtime.lastError) return;
 		const wasEmpty = newTabInstances.length === 0;
 		newTabInstances = tabs.map((t) => ({ tabId: t.id, autoMuted: false }));
+		_broadcastSyncStatus();
 		// Mute all but the latest on rebuild (SW restart recovery)
 		if (newTabInstances.length > 1) {
 			const latest = newTabInstances[newTabInstances.length - 1];
@@ -836,6 +833,7 @@ function _rebuildNewTabInstances() {
 function _registerNewTab(tabId) {
 	newTabInstances = newTabInstances.filter((i) => i.tabId !== tabId);
 	newTabInstances.push({ tabId, autoMuted: false });
+	_broadcastSyncStatus();
 	// Mute all previous instances
 	if (newTabInstances.length > 1) {
 		for (let i = 0; i < newTabInstances.length - 1; i++) {
