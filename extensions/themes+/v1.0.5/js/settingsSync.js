@@ -43,28 +43,24 @@ const selfWrites = [];
 
 /** Call immediately before writing settings to storage from this tab. */
 export function markSettingsWrite(settings) {
-	let json = null;
+	let snapshot = null;
 	try {
-		json = JSON.stringify(settings);
+		snapshot = JSON.parse(JSON.stringify(settings));
 	} catch (e) {
 		return;
 	}
-	selfWrites.push({ json, at: Date.now() });
+	selfWrites.push({ snapshot, at: Date.now() });
 	while (selfWrites.length > SELF_WRITE_HISTORY) selfWrites.shift();
 }
 
 function isSelfWrite(value) {
-	let json = null;
-	try {
-		json = JSON.stringify(value);
-	} catch (e) {
-		return false;
-	}
 	const now = Date.now();
 	while (selfWrites.length && now - selfWrites[0].at > SELF_WRITE_TTL) {
 		selfWrites.shift();
 	}
-	return selfWrites.some((entry) => entry.json === json);
+	// Content comparison, not JSON identity: key order and properties dropped
+	// by storage must not make our own write look like a change from elsewhere.
+	return selfWrites.some((entry) => sameSettings(entry.snapshot, value));
 }
 
 /**

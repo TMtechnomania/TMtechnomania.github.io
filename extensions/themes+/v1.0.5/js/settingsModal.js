@@ -2942,13 +2942,20 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 			// Click -> Select
 			tile.addEventListener("click", (e) => {
 				if (e.target.closest(".delete-overlay")) return;
+				// Update selection in place. Re-rendering the whole grid here
+				// blanked and rebuilt every tile (the visible "glitch").
+				container
+					.querySelectorAll(".option-tile")
+					.forEach((t) => t.classList.remove("active"));
+				container
+					.querySelectorAll(".wallpaper-tile")
+					.forEach((t) => t.classList.toggle("active", t === tile));
 				settings.wallpaper.collection = "user";
 				settings.wallpaper.mode = "specific";
 				settings.wallpaper.specific = wall.id;
 				syncTypeBucket(settings); // Sync to type bucket
 				saveSettings(settings);
 				refreshWallpaper(settings);
-				renderWallpaperGrid(container, settings);
 			});
 
 			// Delete Overlay

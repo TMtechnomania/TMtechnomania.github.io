@@ -11,6 +11,10 @@ import { startMatrix, stopMatrix } from "./matrixEffect.js";
 
 let lastObjectUrl = null;
 let lastThumbUrl = null;
+// Identity of the wallpaper currently mounted, used to skip duplicate renders.
+// A second render of the same config used to revoke the blob URL of a video
+// that was still loading (FFmpegDemuxer "data source error").
+let _lastRenderKey = null;
 
 function clearPreviousWallpaper() {
 	stopMatrix(); // Stop Matrix if running
@@ -80,15 +84,30 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 			},
 			{ once: true },
 		);
-		// Handle video stall/error
-		el.addEventListener("error", (e) => {
-			const error = el.error;
-			console.error(
-				"[Wallpaper] Video load error:",
-				error ? `${error.code}: ${error.message}` : "Unknown error",
-			);
-			el.remove();
-		});
+		// Handle video stall/error: never leave a blank background behind
+		el.addEventListener(
+			"error",
+			() => {
+				const error = el.error;
+				console.warn(
+					"[Wallpaper] Video unavailable, falling back to poster:",
+					error ? `${error.code}` : "unknown",
+				);
+				_lastRenderKey = null;
+				if (el.poster) {
+					const img = document.createElement("img");
+					img.id = "wallpaper";
+					img.alt = "";
+					img.style.cssText = el.style.cssText;
+					img.style.objectFit = "cover";
+					img.src = el.poster;
+					el.replaceWith(img);
+				} else {
+					el.remove();
+				}
+			},
+			{ once: true },
+		);
 
 		// FIX: Disable remote playback and user control
 		el.disableRemotePlayback = true;
@@ -115,7 +134,8 @@ function setWallpaperElement(type, url, styleCfg = {}, thumbUrl = null) {
 		}
 	} else {
 		el.onerror = () => {
-			console.error("[Wallpaper] Image load error for:", url);
+			console.warn("[Wallpaper] Image load error for:", url);
+			_lastRenderKey = null;
 			el.remove();
 		};
 	}
@@ -393,6 +413,15 @@ async function tryLoadFromBlob(entry, type, styleCfg = {}) {
 	return false;
 }
 
+function buildRenderKey(cfg, entryId) {
+	try {
+		const { last_id, ...rest } = cfg || {};
+		return `${cfg?.type || "img"}|${entryId}|${JSON.stringify(rest)}`;
+	} catch (e) {
+		return null;
+	}
+}
+
 export async function renderWallpaper(config, manifest) {
 	const cfg = normalizeWallpaperConfig(config || {});
 	console.log("[Wallpaper] Rendering with config:", cfg);
@@ -409,6 +438,7 @@ export async function renderWallpaper(config, manifest) {
 	// Handle Matrix Mode
 	if (cfg.type === "matrix") {
 		clearPreviousWallpaper();
+		_lastRenderKey = null;
 		document.body.style.backgroundImage = "";
 		document.body.style.backgroundColor = "black";
 
@@ -422,6 +452,7 @@ export async function renderWallpaper(config, manifest) {
 	// Handle Mono Mode
 	if (cfg.type === "mono") {
 		clearPreviousWallpaper();
+		_lastRenderKey = null;
 		document.body.style.backgroundImage = "";
 		document.body.style.backgroundColor = "var(--color-off)";
 		return null;
@@ -430,6 +461,7 @@ export async function renderWallpaper(config, manifest) {
 	// Handle Duotone Mode
 	if (cfg.type === "duotone") {
 		clearPreviousWallpaper();
+		_lastRenderKey = null;
 		// Use defaults if missing
 		const dSettings =
 			cfg.duotoneSettings || DEFAULT_CONFIG.wallpaper.duotoneSettings;
@@ -527,8 +559,16 @@ export async function renderWallpaper(config, manifest) {
 	}
 
 	// Load the wallpaper
+	const renderKey = buildRenderKey(cfg, entry.id);
+	// Same wallpaper, same settings, already mounted: skip. Rebuilding would
+	// revoke the blob URL of a video that may still be buffering.
+	if (renderKey && renderKey === _lastRenderKey && document.getElementById("wallpaper")) {
+		return entry.id;
+	}
+
 	const success = await tryLoadFromBlob(entry, cfg.type, cfg);
 	if (success) {
+		_lastRenderKey = renderKey;
 		return entry.id;
 	}
 
@@ -537,6 +577,7 @@ export async function renderWallpaper(config, manifest) {
 	if (retryEntry) {
 		const retrySuccess = await tryLoadFromBlob(retryEntry, cfg.type, cfg);
 		if (retrySuccess) {
+			_lastRenderKey = buildRenderKey(cfg, retryEntry.id);
 			return retryEntry.id;
 		}
 	}
