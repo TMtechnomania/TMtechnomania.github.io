@@ -18,7 +18,12 @@ import {
 	requestBookmarksPermission,
 } from "./bookmarksPanel.js";
 import { initNotesWidget } from "./notesWidget.js";
-import { onSettingsChanged, normalizeSettings, markSettingsWrite } from "./settingsSync.js";
+import {
+	onSettingsChanged,
+	normalizeSettings,
+	markSettingsWrite,
+	sameSettings,
+} from "./settingsSync.js";
 
 // --- Lazy-loaded modules (only fetched on first use) ---
 let _timerModule = null;
@@ -500,17 +505,16 @@ async function closeAllOverlays() {
 		async (next) => {
 			const prev = config;
 			config = next;
-			const changed = (key) =>
-				JSON.stringify(prev?.[key]) !== JSON.stringify(next[key]);
+			const changed = (key) => !sameSettings(prev?.[key], next[key]);
 			// Wallpaper rotation bookkeeping (last_id) is per-tab: ignore it so
 			// another tab advancing its slideshow does not re-render ours.
 			const wallpaperChanged = (() => {
-				const strip = (cfg) => {
-					if (!cfg) return "";
+				const withoutLastId = (cfg) => {
+					if (!cfg || typeof cfg !== "object") return cfg;
 					const { last_id, ...rest } = cfg;
-					return JSON.stringify(rest);
+					return rest;
 				};
-				return strip(prev?.wallpaper) !== strip(next.wallpaper);
+				return !sameSettings(withoutLastId(prev?.wallpaper), withoutLastId(next.wallpaper));
 			})();
 
 			try {

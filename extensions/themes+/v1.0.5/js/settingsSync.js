@@ -114,3 +114,33 @@ export function mergeSettingsInPlace(target, source) {
 	}
 	return target;
 }
+
+/**
+ * Order-insensitive deep comparison of two settings objects.
+ * Properties holding `undefined` are ignored on both sides: storage drops them
+ * on write, so a plain JSON comparison would report a difference where there
+ * is none (which is exactly what caused the panel to rebuild on its own save).
+ */
+export function sameSettings(a, b) {
+	if (a === b) return true;
+	if (a === null || b === null || typeof a !== "object" || typeof b !== "object") {
+		return a === b;
+	}
+	if (Array.isArray(a) || Array.isArray(b)) {
+		if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+			return false;
+		}
+		return a.every((value, index) => sameSettings(value, b[index]));
+	}
+	const keysA = Object.keys(a).filter((key) => a[key] !== undefined);
+	const keysB = Object.keys(b).filter((key) => b[key] !== undefined);
+	if (keysA.length !== keysB.length) return false;
+	return keysA.every(
+		(key) => key in b && sameSettings(a[key], b[key]),
+	);
+}
+
+/** True when `next` actually carries a value this context does not have. */
+export function hasSettingsDelta(current, next) {
+	return !sameSettings(current, next);
+}

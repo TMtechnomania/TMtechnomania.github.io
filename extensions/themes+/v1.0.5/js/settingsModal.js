@@ -11,6 +11,8 @@ import {
 	normalizeSettings,
 	onSettingsChanged,
 	mergeSettingsInPlace,
+	sameSettings,
+	hasSettingsDelta,
 } from "./settingsSync.js";
 import { toggleRain } from "./rainEffect.js";
 import {
@@ -35,6 +37,9 @@ import { renderWallpaper, clearMediaKeysCache } from "./wallpaper.js";
 import { loadFont } from "./clockWidget.js";
 
 let _settingsModalOpen = false;
+// Last settings payload this tab wrote, used to recognise the storage echo of
+// our own save (content-based, so key order / dropped undefineds can't fool it).
+let lastPersistedSettings = null;
 
 export function isSettingsModalOpen() {
 	return _settingsModalOpen;
@@ -279,13 +284,48 @@ async function openSettingsModal() {
 	// into the object every control closure holds and repaint the visible
 	// section, so an open modal never keeps showing stale values.
 	const stopRemoteSync = onSettingsChanged((next) => {
+		// Never rebuild for our own save echoed back, or for values this panel
+		// already shows - rebuilding here is what made it jump back to the top.
+		if (
+			!hasSettingsDelta(currentSettings, next) ||
+			(lastPersistedSettings && sameSettings(lastPersistedSettings, next))
+		) {
+			return;
+		}
+
+		const active = content.querySelector(".settings-section.active");
+		const focused = document.activeElement;
+		const editing =
+			!!active &&
+			!!focused &&
+			active.contains(focused) &&
+			/^(INPUT|TEXTAREA|SELECT)$/.test(focused.tagName);
+
 		mergeSettingsInPlace(currentSettings, next);
 		tabs.forEach((tab) => staleSections.add(tab.id));
-		const active = content.querySelector(".settings-section.active");
-		if (active) {
-			renderSettingsSection(active, currentSettings);
-			staleSections.delete(active.id.replace("settings-section-", ""));
+		if (!active) return;
+
+		const tabId = active.id.replace("settings-section-", "");
+		if (editing) {
+			// Do not yank the control under the user's cursor: refresh once
+			// focus leaves it instead.
+			active.addEventListener(
+				"focusout",
+				() => {
+					setTimeout(() => {
+						const still = document.activeElement;
+						if (still && active.contains(still)) return;
+						renderSettingsSection(active, currentSettings);
+						staleSections.delete(tabId);
+					}, 0);
+				},
+				{ once: true },
+			);
+			return;
 		}
+
+		renderSettingsSection(active, currentSettings);
+		staleSections.delete(tabId);
 	});
 	document.addEventListener("settings:closed", () => stopRemoteSync(), {
 		once: true,
@@ -317,6 +357,9 @@ function renderSettingsSection(section, settings) {
 	} catch (e) {
 		console.warn("[Settings] failed to refresh section", tabId, e);
 	}
+	// A programmatic refresh should not replay the section's fade-in: that is
+	// what made a synced update read as "the panel reloaded".
+	section.style.animation = "none";
 
 	if (scroller) scroller.scrollTop = scrollTop;
 }
@@ -333,6 +376,11 @@ async function saveSettings(newSettings) {
 	// Remember the payload: this tab will get its own storage event back and
 	// must not treat it as a remote change (it already applied the change).
 	markSettingsWrite(newSettings);
+	try {
+		lastPersistedSettings = JSON.parse(JSON.stringify(newSettings));
+	} catch (e) {
+		lastPersistedSettings = null;
+	}
 	return new Promise((resolve) => {
 		chrome.storage.local.set(
 			{ [STORAGE_KEY_SETTINGS]: newSettings },
