@@ -12,7 +12,7 @@
 	gap: var(--dis-4);
 	height: auto;
 	min-width: calc(40rem * var(--ui-scale));
-	width: 30vw;
+	width: calc(36rem * var(--ui-scale));
 	z-index: var(--z-widget);
 }
 

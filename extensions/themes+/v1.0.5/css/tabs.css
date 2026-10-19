@@ -3,7 +3,7 @@
 	bottom: var(--width-1);
 	left: 0;
 	width: 100%;
-	max-height: 50vh;
+	max-height: calc(33.75rem * var(--ui-scale));
 	overflow-y: auto;
 	z-index: var(--z-panel);
 	background: transparent;

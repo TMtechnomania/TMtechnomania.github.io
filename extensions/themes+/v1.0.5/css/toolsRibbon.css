@@ -9,7 +9,7 @@
 	bottom: var(--width-1);
 	left: 0;
 	width: 100%;
-	max-height: 50vh;
+	max-height: calc(33.75rem * var(--ui-scale));
 	overflow-y: auto;
 	z-index: var(--z-panel);
 	background: transparent;
@@ -157,7 +157,7 @@
 	}
 
 	.tools-ribbon-widget {
-		max-width: 90vw;
+		max-width: calc(108rem * var(--ui-scale));
 	}
 }
 
@@ -170,8 +170,8 @@
 	top: 0;
 	left: 0;
 	width: calc(16rem * var(--ui-scale)) !important;
-	max-width: 90vw;
-	max-height: 80vh;
+	max-width: calc(108rem * var(--ui-scale));
+	max-height: calc(54rem * var(--ui-scale));
 	z-index: var(--z-panel);
 	overflow: auto;
 }

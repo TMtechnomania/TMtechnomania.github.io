@@ -197,8 +197,20 @@ chrome.runtime.onMessage.addListener((message) => {
 	} else if (message.type === "WALLPAPER_SYNC") {
 		const video = _getWallpaperVideo();
 		if (video) {
+			video.pause();
 			video.currentTime = 0;
-			video.play().catch(() => {});
+			const p = video.play();
+			if (p && typeof p.catch === "function") {
+				p.catch(() => {
+					video.addEventListener(
+						"canplay",
+						() => {
+							video.play().catch(() => {});
+						},
+						{ once: true },
+					);
+				});
+			}
 		}
 	}
 	return false;

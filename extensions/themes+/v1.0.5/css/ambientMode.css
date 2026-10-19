@@ -3,8 +3,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: calc(120rem * var(--ui-scale));
+    height: calc(67.5rem * var(--ui-scale));
     background: rgba(0, 0, 0, 0.4);
     /* Hardcoded alpha for overlay */
     backdrop-filter: blur(15px);

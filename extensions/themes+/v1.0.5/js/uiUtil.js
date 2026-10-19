@@ -36,7 +36,7 @@ function ensureDialogStyles() {
 	style.id = DIALOG_STYLE_ID;
 	style.textContent = `
 .tp-dialog-backdrop{position:fixed;inset:0;z-index:2147483646;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;}
-.tp-dialog{background:var(--color-base,#1c1c22);color:var(--text-base,#f2f2f5);border:1px solid var(--color-off,rgba(255,255,255,.08));border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.5);min-width:320px;max-width:min(480px,90vw);padding:20px;}
+.tp-dialog{background:var(--color-base,#1c1c22);color:var(--text-base,#f2f2f5);border:1px solid var(--color-off,rgba(255,255,255,.08));border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.5);min-width:320px;max-width:min(480px,calc(108rem * var(--ui-scale)));padding:20px;}
 .tp-dialog-title{font-size:15px;font-weight:600;margin-bottom:8px;}
 .tp-dialog-message{font-size:13.5px;line-height:1.5;color:var(--text-off,#cfcfd6);white-space:pre-wrap;word-break:break-word;margin-bottom:18px;}
 .tp-dialog-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid var(--color-off,rgba(255,255,255,.14));border-radius:8px;color:var(--text-base,#fff);font-size:13.5px;padding:9px 12px;margin-bottom:16px;outline:none;font-family:inherit;}

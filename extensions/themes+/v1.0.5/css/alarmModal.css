@@ -14,8 +14,8 @@
 	border-radius: var(--radius-container);
 	padding: var(--dis-2);
 	width: var(--width-6);
-	max-width: 92vw;
-	max-height: 70vh;
+	max-width: calc(110.4rem * var(--ui-scale));
+	max-height: calc(47.25rem * var(--ui-scale));
 	overflow: auto;
 	position: relative;
 	display: flex;
@@ -221,7 +221,7 @@
 	flex-direction: column;
 	gap: var(--dis-1);
 	min-width: var(--width-5);
-	max-width: 90vw;
+	max-width: calc(108rem * var(--ui-scale));
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 	animation: alarmPopupIn var(--transition-normal) forwards;
 	font-family: var(--font-family);

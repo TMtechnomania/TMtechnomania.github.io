@@ -3,8 +3,8 @@
 	border-radius: var(--radius-container);
 	padding: var(--dis-2);
 	width: var(--width-8);
-	max-width: 92vw;
-	height: 60vh;
+	max-width: calc(110.4rem * var(--ui-scale));
+	height: calc(40.5rem * var(--ui-scale));
 	/* Fixed height to prevent shifting */
 	overflow: hidden;
 	/* Fix header, scroll body */

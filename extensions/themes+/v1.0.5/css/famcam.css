@@ -80,8 +80,8 @@
     /* Min/Max constraints */
     min-width: 200px;
     min-height: 150px;
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: calc(108rem * var(--ui-scale));
+    max-height: calc(60.75rem * var(--ui-scale));
 
     overflow: hidden;
     /* Vital for image containment */
@@ -248,7 +248,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15vw;
+    font-size: calc(18rem * var(--ui-scale));
     font-weight: 800;
     color: #fff;
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
