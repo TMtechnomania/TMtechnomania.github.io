@@ -638,3 +638,21 @@ body {
 /* .modal-header .modal-title {
 	flex: 1;
 } */
+/* Responsive root font scaling (landscape only to avoid portrait shrink) */
+@media (max-width: 1920px) and (orientation: landscape) {
+	html {
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 1280px) and (orientation: landscape) {
+	html {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+	html {
+		font-size: 12px;
+	}
+}
