@@ -513,7 +513,16 @@ async function closeAllOverlays() {
 		});
 	} catch (e) {}
 
-	// Setup Components
+	// Auto-apply settings changes from other tabs without manual reload
+try {
+	chrome.storage.onChanged.addListener((changes, area) => {
+		if (area !== "local") return;
+		if (!changes[STORAGE_KEY_SETTINGS]) return;
+		// Ignore changes made in this tab (settings modal open)
+		if (document.getElementById("settings-modal")) return;
+		window.location.reload();
+	});
+} catch (e) {}
 	// setupFullscreenToggle(); // Moved to delegation below
 
 	// Setup Action Bar Actions Delegation (Handles dynamic recreation of action bar)
