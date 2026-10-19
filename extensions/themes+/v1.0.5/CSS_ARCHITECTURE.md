@@ -94,9 +94,17 @@ whole UI scales from one formula in `css/base.css`:
 
 ```css
 html {
-    font-size: clamp(var(--scale-root-min), var(--scale-root-fluid), var(--scale-root-max));
+    font-size: calc(
+        clamp(var(--scale-root-min), var(--scale-root-fluid), var(--scale-root-max)) *
+            var(--ui-scale, 1)
+    );
 }
 ```
+
+`--ui-scale` is the user's Small / Normal / Large preference
+(Settings → UI Scaling) applied on top of the automatic scale. The automatic
+per-screen part is pure CSS; the preference is the only piece JS sets
+(`applyUiScale()` in `js/config.js`, called by `newtab.js` and `userguide.js`).
 
 | Token                  | Value        | Meaning                                   |
 | ---------------------- | ------------ | ----------------------------------------- |
@@ -143,7 +151,7 @@ Rules of thumb:
 -   `--dis-x` / `--dis-N`: 0.25rem .. 20rem distance ramp (0.5rem steps), the primary spacing scale
 -   `--width-N`: 4rem .. 160rem width ramp (4rem steps)
 -   `--radius-container` / `--radius-child` / `--radius-xs` / `--radius-full`: derived radii
--   `--ui-scale` is **removed** - never re-add a scale multiplier; the fluid root font-size does that job
+-   `--ui-scale`: **user preference multiplier** (0.8 / 1 / 1.2 from Settings → UI Scaling). Applied exactly once, on the root font-size - never multiply an individual component by it.
 
 ### Colors
 

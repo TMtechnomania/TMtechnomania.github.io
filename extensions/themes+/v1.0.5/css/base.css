@@ -150,6 +150,11 @@
 	   These are the only px values on purpose: they bound the root
 	   font-size itself, which is what "px" means to the user agent.
 	   ============================================================ */
+	/* User preference multiplier on top of the fluid scale.
+	   Set by the "UI Scaling" control (js/settingsModal.js -> js/newtab.js)
+	   and applied exactly once, on the root font-size. Never multiply
+	   individual components by this - everything is rem-based. */
+	--ui-scale: 1;
 	--scale-root-min: 13px;
 	--scale-root-fluid: 1.4815vmin;
 	--scale-root-max: 24px;
@@ -671,10 +676,9 @@ body {
    UI, it only re-flows it.
    ============================================ */
 html {
-	font-size: clamp(
-		var(--scale-root-min),
-		var(--scale-root-fluid),
-		var(--scale-root-max)
+	font-size: calc(
+		clamp(var(--scale-root-min), var(--scale-root-fluid), var(--scale-root-max)) *
+			var(--ui-scale, 1)
 	);
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;

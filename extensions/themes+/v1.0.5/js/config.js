@@ -249,3 +249,18 @@ export function applyTheme(theme) {
 	}
 	updateImageColorStyle();
 }
+
+/**
+ * Apply the user's UI size preference.
+ *
+ * `--ui-scale` is a pure multiplier on the fluid root font-size (see
+ * css/base.css): the automatic per-screen scaling is handled by the vmin
+ * clamp, so this only expresses Small / Normal / Large. Setting it to 1
+ * leaves the responsive sizing untouched.
+ */
+export function applyUiScale(scale) {
+	const value = Number(scale);
+	const safe =
+		Number.isFinite(value) && value > 0 ? Math.min(Math.max(value, 0.5), 2) : 1;
+	document.documentElement.style.setProperty("--ui-scale", String(safe));
+}

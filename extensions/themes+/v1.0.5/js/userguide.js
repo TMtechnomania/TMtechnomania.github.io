@@ -3,6 +3,7 @@ import {
 	DEFAULT_CONFIG,
 	WALLPAPER_JSON_URL,
 	IDB_STORE_MEDIA,
+	applyUiScale,
 } from "./config.js";
 import { getUserWallpaperList } from "./db.js";
 
@@ -19,8 +20,7 @@ function applyUserGuideTheme(settings) {
 	}
 
 	// 2. UI Scale
-	const scale = settings.uiScale || 1;
-	root.style.setProperty("--ui-scale", scale);
+	applyUiScale(settings.uiScale);
 
 	// 3. Font
 	const font = settings.font || DEFAULT_CONFIG.font;

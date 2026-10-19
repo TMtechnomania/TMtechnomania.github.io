@@ -453,13 +453,16 @@ async function createPreviewOverlay(blob) {
 	controls.appendChild(btnSnapDesk);
 
 	// Set initial size using CSS variables for 16:9 aspect ratio
-	// Get computed value of --dis-16 for width
+	// Custom properties hold rem tokens ("8rem"); resolve them against the live
+	// root font-size, which already includes the responsive + user UI scale.
 	const styles = getComputedStyle(document.documentElement);
-	const dis16 = parseFloat(styles.getPropertyValue("--dis-16")) || 320;
-	const dis9 = parseFloat(styles.getPropertyValue("--dis-9")) || 180;
-	const uiScale = parseFloat(styles.getPropertyValue("--ui-scale")) || 1;
-	const initialW = dis16 * uiScale;
-	const initialH = dis9 * uiScale;
+	const remPx = parseFloat(styles.fontSize) || 16;
+	const toPx = (token, fallbackRem) => {
+		const value = parseFloat(token);
+		return (Number.isFinite(value) ? value : fallbackRem) * remPx;
+	};
+	const initialW = toPx(styles.getPropertyValue("--dis-16"), 8);
+	const initialH = toPx(styles.getPropertyValue("--dis-9"), 4.5);
 	_previewEl.style.width = `${initialW}px`;
 	_previewEl.style.height = `${initialH}px`;
 

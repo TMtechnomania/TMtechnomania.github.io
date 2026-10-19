@@ -3,6 +3,7 @@ import {
 	STORAGE_KEY_SETTINGS,
 	DEFAULT_CONFIG,
 	applyTheme,
+	applyUiScale,
 } from "./config.js";
 import { renderInlineIcon } from "./brandIconLoader.js";
 import { renderWallpaper } from "./wallpaper.js";
@@ -61,7 +62,12 @@ window.addEventListener("pagehide", () => {
     } catch (e) {}
 });
 
-// Automatic UI Scaling removed
+// UI size preference (Small / Normal / Large).
+// The automatic per-screen scaling lives in CSS (fluid vmin root); this only
+// carries the user's multiplier, so it must be applied on every settings change.
+document.addEventListener("settings:uiScale", (e) => {
+	applyUiScale(e.detail);
+});
 
 document.addEventListener("settings:clock", (e) => {
 	// e.detail contains the full settings object or just the relevant parts.
@@ -214,7 +220,8 @@ async function closeAllOverlays() {
 	const config = await getStoredConfig();
 
 	try {
-			// Apply UI Scale removed
+			// UI size preference (multiplies the fluid root font-size)
+			applyUiScale(config.uiScale);
 
 			applyFontConfig(
 				config && config.font ? config.font : DEFAULT_CONFIG.font,
