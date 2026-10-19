@@ -61,26 +61,7 @@ window.addEventListener("pagehide", () => {
     } catch (e) {}
 });
 
-// Automatic UI Scaling
-let uiScaleMultiplier = 1;
-
-function updateUIScale() {
-	const width = screen.width;
-	const baseWidth = 1920;
-	// Base scale * user preference multiplier
-	const scale = (width / baseWidth) * uiScaleMultiplier;
-	document.documentElement.style.setProperty("--ui-scale", scale);
-}
-
-// Initialize and listen
-updateUIScale();
-window.addEventListener("resize", updateUIScale);
-
-// Listen for settings changes
-document.addEventListener("settings:uiScale", (e) => {
-	uiScaleMultiplier = parseFloat(e.detail) || 1;
-	updateUIScale();
-});
+// Automatic UI Scaling removed
 
 document.addEventListener("settings:clock", (e) => {
 	// e.detail contains the full settings object or just the relevant parts.
@@ -233,16 +214,12 @@ async function closeAllOverlays() {
 	const config = await getStoredConfig();
 
 	try {
-		// Apply UI Scale
-		if (config.uiScale) {
-			uiScaleMultiplier = config.uiScale;
-			updateUIScale();
-		}
+			// Apply UI Scale removed
 
-		applyFontConfig(
-			config && config.font ? config.font : DEFAULT_CONFIG.font,
-		);
-		applyTheme(config.theme);
+			applyFontConfig(
+				config && config.font ? config.font : DEFAULT_CONFIG.font,
+			);
+			applyTheme(config.theme);
 	} catch (e) {
 		// console.error('Failed to apply config', e);
 	}
