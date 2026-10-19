@@ -140,3 +140,69 @@ export function sameSettings(a, b) {
 export function hasSettingsDelta(current, next) {
 	return !sameSettings(current, next);
 }
+
+/* ------------------------------------------------------------------ */
+/* Debounced persistence                                              */
+/*                                                                    */
+/* Continuous controls (range sliders, colour pickers) call           */
+/* saveSettings on every input event. Writing each one straight to    */
+/* storage broadcasts a settings change to every other tab - one drag */
+/* used to mean dozens of sync round-trips. Writes are coalesced and  */
+/* flushed once the input settles (500ms), or immediately on demand   */
+/* (modal close, tab hidden/unloaded).                                */
+/* ------------------------------------------------------------------ */
+
+const WRITE_DELAY_MS = 500;
+let pendingSource = null;
+let pendingTimer = null;
+
+function cloneSettings(settings) {
+	try {
+		return JSON.parse(JSON.stringify(settings));
+	} catch (e) {
+		return null;
+	}
+}
+
+/**
+ * Queue a settings write; repeated calls replace the pending payload.
+ * The object is snapshotted at flush time, not here, so a change merged from
+ * another tab during the debounce window is not overwritten by a stale copy.
+ */
+export function queueSettingsWrite(settings) {
+	if (!settings) return;
+	pendingSource = settings;
+	if (pendingTimer) clearTimeout(pendingTimer);
+	pendingTimer = setTimeout(flushSettingsWrite, WRITE_DELAY_MS);
+}
+
+/** Write any pending payload now (no-op when nothing is queued). */
+export function flushSettingsWrite() {
+	if (pendingTimer) {
+		clearTimeout(pendingTimer);
+		pendingTimer = null;
+	}
+	if (!pendingSource) return;
+	const payload = cloneSettings(pendingSource);
+	pendingSource = null;
+	if (!payload) return;
+	markSettingsWrite(payload);
+	try {
+		chrome.storage.local.set({ [STORAGE_KEY_SETTINGS]: payload });
+	} catch (e) {
+		console.warn("[settingsSync] settings write failed", e);
+	}
+}
+
+export function hasPendingSettingsWrite() {
+	return pendingSource !== null;
+}
+
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+	// Never lose the last change if the tab goes away mid-debounce.
+	window.addEventListener("pagehide", flushSettingsWrite);
+	window.addEventListener("beforeunload", flushSettingsWrite);
+	document.addEventListener("visibilitychange", () => {
+		if (document.visibilityState === "hidden") flushSettingsWrite();
+	});
+}

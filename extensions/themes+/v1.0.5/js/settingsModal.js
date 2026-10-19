@@ -7,12 +7,13 @@ import {
 	DUOTONE_THEMES,
 } from "./config.js";
 import {
-	markSettingsWrite,
 	normalizeSettings,
 	onSettingsChanged,
 	mergeSettingsInPlace,
 	sameSettings,
 	hasSettingsDelta,
+	queueSettingsWrite,
+	flushSettingsWrite,
 } from "./settingsSync.js";
 import { toggleRain } from "./rainEffect.js";
 import {
@@ -56,6 +57,8 @@ export async function toggleSettingsModal() {
 export function closeSettingsModalIfOpen() {
 	const el = document.getElementById("settings-modal");
 	if (el) {
+		// Persist anything still queued (debounce) before the panel goes away.
+		flushSettingsWrite();
 		// Add slideDown animation before removal
 		el.style.animation = "slideDown var(--transition-normal) forwards";
 		el.addEventListener(
@@ -338,6 +341,58 @@ async function openSettingsModal() {
 }
 
 /**
+ * Keep a scroll container where it was while its content is rebuilt.
+ *
+ * The settings content is repopulated asynchronously (the wallpaper grid
+ * re-fetches its manifest and user list), so a single synchronous restore is
+ * not enough: the container is briefly short, scrollTop clamps, and the panel
+ * appears to jump to the top. This re-applies the position while the content
+ * grows, and stops the moment the user scrolls themselves.
+ */
+function keepScrollPosition(scroller, top, timeoutMs = 1200) {
+	if (!scroller || !Number.isFinite(top) || top <= 0) return;
+
+	let cancelled = false;
+	let observer = null;
+
+	const apply = () => {
+		if (cancelled) return;
+		scroller.scrollTop = top;
+	};
+	const stop = () => {
+		cancelled = true;
+		try {
+			observer?.disconnect();
+		} catch (e) {}
+		["wheel", "touchstart", "keydown"].forEach((ev) =>
+			scroller.removeEventListener(ev, stop),
+		);
+	};
+
+	// Only real user input should cancel the restore - our own scrollTop
+	// writes fire "scroll" and would otherwise cancel immediately.
+	["wheel", "touchstart", "keydown"].forEach((ev) =>
+		scroller.addEventListener(ev, stop, { passive: true }),
+	);
+
+	if (typeof ResizeObserver !== "undefined") {
+		observer = new ResizeObserver(apply);
+		const target =
+			scroller.querySelector(".settings-section.active") ||
+			scroller.firstElementChild;
+		if (target) observer.observe(target);
+	}
+
+	apply();
+	requestAnimationFrame(apply);
+	setTimeout(apply, 60);
+	setTimeout(() => {
+		apply();
+		stop();
+	}, timeoutMs);
+}
+
+/**
  * Rebuild one settings section from the given settings, preserving the
  * content scroll position. Used when settings changed in another tab.
  */
@@ -361,10 +416,12 @@ function renderSettingsSection(section, settings) {
 	// what made a synced update read as "the panel reloaded".
 	section.style.animation = "none";
 
-	if (scroller) scroller.scrollTop = scrollTop;
+	keepScrollPosition(scroller, scrollTop);
 }
 
 async function getSettings() {
+	// Make sure a queued (debounced) change is on disk before reading.
+	flushSettingsWrite();
 	return new Promise((resolve) => {
 		chrome.storage.local.get(STORAGE_KEY_SETTINGS, (res) => {
 			resolve(normalizeSettings(res?.[STORAGE_KEY_SETTINGS]));
@@ -373,22 +430,15 @@ async function getSettings() {
 }
 
 async function saveSettings(newSettings) {
-	// Remember the payload: this tab will get its own storage event back and
-	// must not treat it as a remote change (it already applied the change).
-	markSettingsWrite(newSettings);
+	// Snapshot for the echo check, then queue the write. Sliders call this on
+	// every input event; each write is broadcast to every other tab, so writes
+	// are coalesced (500ms) instead of fired per pixel of drag.
 	try {
 		lastPersistedSettings = JSON.parse(JSON.stringify(newSettings));
 	} catch (e) {
 		lastPersistedSettings = null;
 	}
-	return new Promise((resolve) => {
-		chrome.storage.local.set(
-			{ [STORAGE_KEY_SETTINGS]: newSettings },
-			() => {
-				resolve();
-			},
-		);
-	});
+	queueSettingsWrite(newSettings);
 }
 
 function renderSectionContent(container, tabId, settings) {
@@ -2950,12 +3000,16 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 				container
 					.querySelectorAll(".wallpaper-tile")
 					.forEach((t) => t.classList.toggle("active", t === tile));
+				const scroller = container.closest(".settings-content");
+				const scrollTop = scroller ? scroller.scrollTop : 0;
 				settings.wallpaper.collection = "user";
 				settings.wallpaper.mode = "specific";
 				settings.wallpaper.specific = wall.id;
 				syncTypeBucket(settings); // Sync to type bucket
 				saveSettings(settings);
-				refreshWallpaper(settings);
+				refreshWallpaper(settings).then(() =>
+					keepScrollPosition(scroller, scrollTop),
+				);
 			});
 
 			// Delete Overlay
@@ -3239,7 +3293,11 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 			settings.wallpaper.specific = id;
 			syncTypeBucket(settings);
 			saveSettings(settings);
-			refreshWallpaper(settings);
+			const scroller = container.closest(".settings-content");
+			const scrollTop = scroller ? scroller.scrollTop : 0;
+			refreshWallpaper(settings).then(() =>
+				keepScrollPosition(scroller, scrollTop),
+			);
 		},
 		onDelete: (tile, item) => {
 			showConfirmation("Delete this wallpaper?", async () => {
