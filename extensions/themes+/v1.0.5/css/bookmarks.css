@@ -5,8 +5,8 @@
 	right: 0;
 	margin: 0 auto;
 	width: var(--width-9);
-	max-width: calc(108rem * var(--ui-scale));
-	height: calc(40.5rem * var(--ui-scale));
+	max-width: calc(108rem);
+	height: calc(40.5rem);
 	max-height: var(--width-13);
 	z-index: var(--z-panel);
 	background: var(--color-base);
@@ -39,7 +39,7 @@
 	height: var(--dis-5);
 	padding: var(--dis-xs) var(--dis-2);
 	border-radius: var(--radius-full);
-	font-size: calc(1rem * var(--ui-scale));
+	font-size: calc(1rem);
 	background: var(--color-off);
 	outline: none;
 	border: none;
@@ -72,12 +72,12 @@
 }
 
 .bookmark-item:focus {
-	outline: calc(2px * var(--ui-scale)) solid var(--color-accent);
-	outline-offset: calc(2px * var(--ui-scale));
+	outline: calc(2px) solid var(--color-accent);
+	outline-offset: calc(2px);
 }
 
 .bookmark-title {
-	font-size: calc(1rem * var(--ui-scale));
+	font-size: calc(1rem);
 	font-weight: 500;
 	color: var(--text-base);
 	white-space: nowrap;
@@ -86,7 +86,7 @@
 }
 
 .bookmark-url {
-	font-size: calc(0.86rem * var(--ui-scale));
+	font-size: calc(0.86rem);
 	color: var(--text-off);
 	font-weight: 300;
 	white-space: nowrap;
@@ -104,7 +104,7 @@
 
 .bookmark-folder-title {
 	min-height: var(--dis-6);
-	font-size: calc(1.08rem * var(--ui-scale));
+	font-size: calc(1.08rem);
 	font-weight: 500;
 	margin-bottom: var(--dis-xs);
 	color: var(--text-base);
@@ -121,10 +121,10 @@
 .bookmark-folder-title::before {
 	content: "";
 	display: inline-block;
-	width: calc(0.6rem * var(--ui-scale));
-	height: calc(0.6rem * var(--ui-scale));
-	border-right: calc(2px * var(--ui-scale)) solid var(--text-off);
-	border-bottom: calc(2px * var(--ui-scale)) solid var(--text-off);
+	width: calc(0.6rem);
+	height: calc(0.6rem);
+	border-right: calc(2px) solid var(--text-off);
+	border-bottom: calc(2px) solid var(--text-off);
 	transform: rotate(45deg);
 	flex-shrink: 0;
 }
@@ -155,7 +155,7 @@
 	flex-direction: column;
 	min-width: 0;
 	flex: 1 1 auto;
-	gap: calc(2px * var(--ui-scale));
+	gap: calc(2px);
 }
 
 .bookmark-actions {
@@ -171,5 +171,5 @@
 	padding: var(--dis-2);
 	color: var(--text-off);
 	text-align: center;
-	font-size: calc(0.95rem * var(--ui-scale));
+	font-size: calc(0.95rem);
 }

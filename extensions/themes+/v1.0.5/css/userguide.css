@@ -22,7 +22,7 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    height: calc(67.5rem * var(--ui-scale));
+    height: calc(67.5rem);
     overflow: hidden;
 }
 
@@ -169,7 +169,7 @@ body {
 }
 
 .feature-card:hover {
-    transform: translateY(calc(-2px * var(--ui-scale)));
+    transform: translateY(calc(-2px));
     border-color: var(--text-accent);
 }
 
