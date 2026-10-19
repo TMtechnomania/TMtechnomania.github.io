@@ -86,16 +86,64 @@ The CSS has been completely modularized for better maintainability and performan
 
 ## CSS Variables - New Naming Convention
 
+### Responsive Scale (read this before adding any size)
+
+Sizing is driven by the **root font-size**, which is fluid and keyed to the
+viewport's short edge (`vmin`). Every component dimension is rem-based, so the
+whole UI scales from one formula in `css/base.css`:
+
+```css
+html {
+    font-size: clamp(var(--scale-root-min), var(--scale-root-fluid), var(--scale-root-max));
+}
+```
+
+| Token                  | Value        | Meaning                                   |
+| ---------------------- | ------------ | ----------------------------------------- |
+| `--scale-root-min`     | `13px`       | floor (720p short edge)                   |
+| `--scale-root-fluid`   | `1.4815vmin` | 16px at 1080p short edge                  |
+| `--scale-root-max`     | `24px`       | ceiling (2160p and above)                 |
+
+Resulting root size per display class, identical in **both** orientations:
+
+| Display | Landscape   | Portrait    | Root  |
+| ------- | ----------- | ----------- | ----- |
+| 720p    | 1280 x 720  | 720 x 1280  | 13px  |
+| 1080p   | 1920 x 1080 | 1080 x 1920 | 16px  |
+| 1440p   | 2560 x 1440 | 1440 x 2560 | 21.3px|
+| 2160p   | 3840 x 2160 | 2160 x 3840 | 24px  |
+
+Because the formula tracks `vmin` and not width, **rotating a monitor never
+rescales the UI** - it only re-flows it. Do not reintroduce width-only
+`@media` font-size rules; they make landscape and portrait disagree.
+
+### Layout bounds
+
+| Token                  | Purpose                                                        |
+| ---------------------- | -------------------------------------------------------------- |
+| `--layout-edge`        | Clamped inset for full-screen panels (4% of the viewport, 1-4rem) |
+| `--layout-gutter`      | Clamped gap used where a fixed gap would overflow narrow widths  |
+| `--layout-safe-height` | `100% - 4rem dock margin` - max height for bottom-docked panels  |
+| `--layout-safe-width`  | `100% - 2rem` - max width for floating panels/widgets            |
+
+Rules of thumb:
+
+- Cap panel widths with `min(<design rem>, <percentage>)` so a rotated
+  (narrow) viewport shrinks the panel instead of clipping it.
+- Use `justify-content: safe center` on scrollable centered rows (action bar,
+  ribbons); plain `center` clips the leading edge once the row overflows.
+- Prefer intrinsic layout over width breakpoints: the tools dashboard uses
+  `column-count` (maximum) plus `column-width` (minimum) so it flows between 1
+  and 5 columns with the actual panel width.
+- Reflow panels with `@container` on the panel itself (`.settings-modal`,
+  `.tools-modal` are size containers), not on window width.
+
 ### Sizing & Spacing
 
--   `--ui-scale`: Global scale multiplier (1)
--   `--ui-gap`: Standard gap between elements
--   `--ui-padding-block`: Vertical padding
--   `--ui-padding-inline`: Horizontal padding
--   `--ui-chip-height`: Height of chip elements
--   `--ui-chip-icon-size`: Size of icons in chips
--   `--ui-pill-icon-size`: Size of icons in pills
--   `--ui-bar-height`: Height of bars (action bar, searchbar)
+-   `--dis-x` / `--dis-N`: 0.25rem .. 20rem distance ramp (0.5rem steps), the primary spacing scale
+-   `--width-N`: 4rem .. 160rem width ramp (4rem steps)
+-   `--radius-container` / `--radius-child` / `--radius-xs` / `--radius-full`: derived radii
+-   `--ui-scale` is **removed** - never re-add a scale multiplier; the fluid root font-size does that job
 
 ### Colors
 

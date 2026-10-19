@@ -3,7 +3,7 @@
 	bottom: var(--width-1);
 	left: 0;
 	width: 100%;
-	max-height: calc(33.75rem * var(--ui-scale));
+	max-height: calc(33.75rem);
 	overflow-y: auto;
 	z-index: var(--z-panel);
 	background: transparent;
@@ -22,7 +22,7 @@
 }
 
 .tabs-ribbon-content::-webkit-scrollbar {
-	height: calc(4px * var(--ui-scale));
+	height: calc(4px);
 }
 
 .tabs-ribbon-content::-webkit-scrollbar-thumb {
@@ -42,6 +42,7 @@
 	border-radius: var(--radius-full);
 	background: var(--color-base);
 	padding: var(--dis-1);
+	max-width: 100%;
 }
 
 .tabs-ribbon-list {
@@ -57,7 +58,7 @@
 }
 
 .tab-item {
-	min-width: var(--dis-14);
+	min-width: min(var(--dis-14), 40%);
 	max-width: var(--dis-24);
 }
 
@@ -69,7 +70,7 @@
 
 .tab-title {
 	flex: 1;
-	font-size: calc(0.95rem * var(--ui-scale));
+	font-size: calc(0.95rem);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -96,7 +97,7 @@
 /* overflow-indicator - handled by .btn-display */
 .overflow-indicator {
 	color: var(--text-off);
-	font-size: calc(0.75rem * var(--ui-scale));
+	font-size: calc(0.75rem);
 }
 
 .control-wrapper {

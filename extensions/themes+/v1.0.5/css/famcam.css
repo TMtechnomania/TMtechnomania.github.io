@@ -77,11 +77,11 @@
     top: 0;
     left: 0;
 
-    /* Min/Max constraints */
-    min-width: 200px;
-    min-height: 150px;
-    max-width: calc(108rem * var(--ui-scale));
-    max-height: calc(60.75rem * var(--ui-scale));
+    /* Min/Max constraints - rem so they follow the responsive scale */
+    min-width: min(var(--dis-25), 100%);
+    min-height: min(var(--dis-19), 60%);
+    max-width: 100%;
+    max-height: 100%;
 
     overflow: hidden;
     /* Vital for image containment */
@@ -248,7 +248,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(18rem * var(--ui-scale));
+    font-size: calc(18rem);
     font-weight: 800;
     color: #fff;
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);

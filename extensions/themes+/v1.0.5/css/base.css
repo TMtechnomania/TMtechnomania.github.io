@@ -138,6 +138,28 @@
 
 	/* Legacy/Utility Variables */
 	--font-family: "Outfit", Arial, Helvetica, sans-serif;
+
+	/* ============================================================
+	   RESPONSIVE SCALE TOKENS
+	   Everything in the extension is rem-based, so the root font-size
+	   is the single sizing knob. It is keyed to the viewport's SHORT
+	   edge (vmin) so a monitor renders an identical UI whether it is
+	   landscape or rotated to portrait:
+	      720p  -> 13px (min clamp)      1080p -> 16px
+	      1440p -> 21.3px                2160p -> 24px (max clamp)
+	   These are the only px values on purpose: they bound the root
+	   font-size itself, which is what "px" means to the user agent.
+	   ============================================================ */
+	--scale-root-min: 13px;
+	--scale-root-fluid: 1.4815vmin;
+	--scale-root-max: 24px;
+
+	/* Layout bounds - clamped against the viewport so panels and
+	   floating widgets can never run off-screen in either rotation. */
+	--layout-edge: clamp(var(--dis-1), 4%, var(--width-1));
+	--layout-gutter: clamp(var(--dis-1), 2%, var(--dis-3));
+	--layout-safe-height: calc(100% - var(--width-1) - var(--dis-1));
+	--layout-safe-width: calc(100% - var(--dis-4));
 }
 
 /* Dark Theme Override */
@@ -638,21 +660,44 @@ body {
 /* .modal-header .modal-title {
 	flex: 1;
 } */
-/* Responsive root font scaling (landscape only to avoid portrait shrink) */
-@media (max-width: 1920px) and (orientation: landscape) {
-	html {
-		font-size: 16px;
-	}
+
+/* ============================================
+   RESPONSIVE ROOT SCALE
+   One fluid formula replaces the old per-breakpoint
+   landscape font sizes. Because it tracks vmin (the
+   shorter viewport edge) instead of width, a 1920x1080
+   monitor and the same monitor rotated to 1080x1920 get
+   the identical 16px root - rotating never rescales the
+   UI, it only re-flows it.
+   ============================================ */
+html {
+	font-size: clamp(
+		var(--scale-root-min),
+		var(--scale-root-fluid),
+		var(--scale-root-max)
+	);
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
-@media (max-width: 1280px) and (orientation: landscape) {
-	html {
-		font-size: 14px;
-	}
+/* ============================================
+   ROTATION-SAFE OVERFLOW
+   Scrolling rows center their content. Centering a too-wide
+   row clips the leading edge, so `safe` keeps the start
+   reachable when a portrait viewport is narrower than the row.
+   ============================================ */
+.tabs-ribbon-content,
+.tools-ribbon-content,
+#action-content {
+	justify-content: center;
+	justify-content: safe center;
 }
 
-@media (max-width: 900px) and (orientation: landscape) {
-	html {
-		font-size: 12px;
-	}
+/* Panels that can be docked bottom stay inside the viewport
+   regardless of how short the window is. */
+.settings-modal,
+.notes-modal,
+.timer-modal {
+	max-height: var(--layout-safe-height);
+	max-width: var(--layout-safe-width);
 }

@@ -5,10 +5,12 @@
 	left: 0;
 	right: 0;
 	margin: 0 auto;
-	width: 90%;
+	width: min(90%, var(--width-13));
 	max-width: var(--width-13);
-	height: calc(54rem * var(--ui-scale));
-	max-height: var(--width-11);
+	/* 44rem on roomy displays, but never taller than the viewport
+	   allows once the bottom dock margin is taken into account. */
+	height: min(var(--width-11), var(--layout-safe-height));
+	max-height: var(--layout-safe-height);
 	z-index: var(--z-panel);
 	background: var(--color-base);
 	display: flex;
@@ -16,6 +18,9 @@
 	border-radius: var(--radius-container);
 	padding: var(--dis-2);
 	overflow: hidden;
+	/* Size container: the body reflows on the panel's own width, so the
+	   layout adapts to a rotated (narrow) monitor, not just the window. */
+	container-type: inline-size;
 	--dis-modal-pad: var(--dis-3);
 	color: var(--text-base);
 	font-family: var(--font-family);
@@ -37,7 +42,7 @@
 
 /* Sidebar */
 .settings-sidebar {
-	width: var(--dis-27);
+	width: clamp(var(--dis-18), 28%, var(--dis-27));
 	border-right: 1px solid var(--color-off);
 	padding: var(--dis-2) var(--dis-2) var(--dis-2) 0;
 	display: flex;
@@ -65,13 +70,13 @@
 .settings-section {
 	display: none;
 	padding: var(--dis-2);
-	max-width: var(--width-13);
+	max-width: min(var(--width-13), 100%);
 	margin: 0 auto;
 	animation: fadeIn 0.3s ease;
 }
 
 .settings-section .btn:not(.btn-icon) {
-	min-width: var(--dis-14);
+	min-width: min(var(--dis-14), 100%);
 }
 
 
@@ -79,7 +84,7 @@
 @keyframes fadeIn {
 	from {
 		opacity: 0;
-		transform: translateY(calc(10px * var(--ui-scale)));
+		transform: translateY(calc(10px));
 	}
 
 	to {
@@ -110,9 +115,9 @@
 }
 
 .settings-group-title {
-	font-size: calc(0.8rem * var(--ui-scale));
+	font-size: calc(0.8rem);
 	text-transform: uppercase;
-	letter-spacing: calc(1.5px * var(--ui-scale));
+	letter-spacing: calc(1.5px);
 	color: var(--text-accent);
 	margin-bottom: 0;
 	font-weight: 700;
@@ -145,14 +150,14 @@
 }
 
 .setting-label {
-	font-size: calc(1rem * var(--ui-scale));
+	font-size: calc(1rem);
 	color: var(--text-base);
 	margin-bottom: var(--dis-xs);
 	font-weight: 500;
 }
 
 .setting-desc {
-	font-size: calc(0.85rem * var(--ui-scale));
+	font-size: calc(0.85rem);
 	color: var(--text-off);
 	line-height: 1.4;
 }
@@ -222,8 +227,8 @@ input:checked+.toggle-slider:before {
 	border: 1px solid transparent;
 	color: var(--text-base);
 	padding: var(--dis-1) var(--dis-4) var(--dis-1) var(--dis-2);
-	border-radius: var(--radius-2);
-	font-size: calc(0.9rem * var(--ui-scale));
+	border-radius: var(--radius-xs);
+	font-size: calc(0.9rem);
 	cursor: pointer;
 	outline: none;
 	min-width: var(--dis-17);
@@ -263,7 +268,7 @@ input:checked+.toggle-slider:before {
 	flex: 1;
 	-webkit-appearance: none;
 	appearance: none;
-	height: calc(4px * var(--ui-scale));
+	height: calc(4px);
 	background: var(--color-off);
 	border-radius: var(--radius-full);
 	outline: none;
@@ -271,8 +276,8 @@ input:checked+.toggle-slider:before {
 
 .setting-range::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	width: calc(1rem * var(--ui-scale));
-	height: calc(1rem * var(--ui-scale));
+	width: calc(1rem);
+	height: calc(1rem);
 	background: var(--color-accent);
 	border-radius: 50%;
 	cursor: pointer;
@@ -284,7 +289,7 @@ input:checked+.toggle-slider:before {
 }
 
 .range-value {
-	font-size: calc(0.85rem * var(--ui-scale));
+	font-size: calc(0.85rem);
 	color: var(--text-off);
 	width: var(--dis-4);
 	text-align: right;
@@ -330,17 +335,11 @@ input:checked+.toggle-slider:before {
 	display: none;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-	.settings-modal {
-		width: 100%;
-		height: 100%;
-		max-width: none;
-		border-radius: 0;
-		border: none;
-		max-height: none;
-	}
-
+/* Narrow panel (rotated monitor / small window): the sidebar becomes a
+   horizontal tab strip so the content keeps full width.
+   Container query on the modal itself - a portrait 1080x1920 viewport is
+   wide enough to keep the two-column layout, a 720x1280 one is not. */
+@container (max-width: 38rem) {
 	.settings-body {
 		flex-direction: column;
 	}
@@ -353,22 +352,41 @@ input:checked+.toggle-slider:before {
 		border-bottom: 1px solid var(--color-off);
 		padding: var(--dis-1);
 		background: var(--color-base);
+		scrollbar-width: none;
+	}
+
+	.settings-sidebar::-webkit-scrollbar {
+		display: none;
 	}
 
 	.settings-tab-btn {
 		padding: var(--dis-2);
 		white-space: nowrap;
 		flex-direction: column;
-		gap: calc(4px * var(--ui-scale));
-		font-size: calc(0.8rem * var(--ui-scale));
+		gap: var(--dis-xs);
+		font-size: calc(0.8rem);
 		align-items: center;
 		justify-content: center;
-		min-width: calc(70px * var(--ui-scale));
+		min-width: var(--dis-6);
+		flex: 0 0 auto;
 	}
 
 	.settings-tab-btn .settings-tab-icon {
-		width: calc(20px * var(--ui-scale));
-		height: calc(20px * var(--ui-scale));
+		width: var(--dis-4);
+		height: var(--dis-4);
+	}
+
+	.settings-content {
+		padding: var(--dis-2) 0 0 0;
+	}
+
+	.settings-section {
+		padding: var(--dis-1);
+		max-width: 100%;
+	}
+
+	.settings-section .btn:not(.btn-icon) {
+		min-width: min(var(--dis-14), 100%);
 	}
 }
 
@@ -386,7 +404,7 @@ input:checked+.toggle-slider:before {
 /* Wallpaper Grid */
 .wallpaper-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(calc(120px * var(--ui-scale)), 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(calc(120px), 1fr));
 	gap: var(--dis-2);
 	padding-top: var(--dis-2);
 }
@@ -410,7 +428,7 @@ input:checked+.toggle-slider:before {
 
 .wallpaper-tile:hover,
 .option-tile:hover {
-	transform: translateY(calc(-2px * var(--ui-scale)));
+	transform: translateY(calc(-2px));
 	border-color: var(--color-off);
 }
 
@@ -433,7 +451,7 @@ input:checked+.toggle-slider:before {
 
 .option-tile span {
 	/* Label */
-	font-size: calc(0.85rem * var(--ui-scale));
+	font-size: calc(0.85rem);
 	font-weight: 500;
 }
 
@@ -488,7 +506,7 @@ input:checked+.toggle-slider:before {
 	position: absolute;
 	width: var(--dis-2);
 	height: var(--dis-2);
-	border: calc(2px * var(--ui-scale)) solid rgba(255, 255, 255, 0.2);
+	border: calc(2px) solid rgba(255, 255, 255, 0.2);
 	border-top-color: #fff;
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
@@ -564,7 +582,7 @@ input:checked+.toggle-slider:before {
 	align-items: center;
 	justify-content: center;
 	color: var(--text-off);
-	font-size: calc(0.8rem * var(--ui-scale));
+	font-size: calc(0.8rem);
 	padding: var(--dis-1);
 	text-align: center;
 	word-break: break-all;
@@ -600,7 +618,7 @@ input:checked+.toggle-slider:before {
 }
 
 .confirm-message {
-	font-size: calc(1rem * var(--ui-scale));
+	font-size: calc(1rem);
 	color: var(--text-base);
 	margin-bottom: var(--dis-4);
 	line-height: 1.5;
@@ -699,11 +717,11 @@ input:checked+.toggle-slider:before {
 .shortcut-title {
 	font-weight: 500;
 	color: var(--text-base);
-	font-size: calc(0.9rem * var(--ui-scale));
+	font-size: calc(0.9rem);
 }
 
 .shortcut-url {
-	font-size: calc(0.8rem * var(--ui-scale));
+	font-size: calc(0.8rem);
 	opacity: 0.7;
 	color: var(--text-off);
 	white-space: nowrap;
@@ -717,11 +735,11 @@ input:checked+.toggle-slider:before {
 }
 
 .setting-badge {
-	font-size: calc(0.75rem * var(--ui-scale));
+	font-size: calc(0.75rem);
 	padding: var(--dis-xs) var(--dis-1);
 	background: var(--color-base);
 	/* Contrast against item bg */
-	border-radius: var(--radius-1);
+	border-radius: var(--radius-xs);
 	opacity: 0.7;
 	color: var(--text-off);
 }

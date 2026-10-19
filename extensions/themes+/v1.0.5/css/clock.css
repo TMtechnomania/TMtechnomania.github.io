@@ -17,13 +17,11 @@
 
 /* Time Display */
 .os-clock-time {
-    /* Using calc based on base.css conventions if exact variable not available for this specific large size */
-    /* 6rem is size-md in base.css logic but actually base.css defines size-md as width/height. 
-       Let's use the calc explicitly but cleaner, or define a local var. 
-       User wants "variables and classes". 
-       I will use calc(var(--ui-scale) * 6rem) as before but remove shadows and explicit color hex if any.
-    */
-    font-size: calc(6rem * var(--ui-scale));
+    /* 6rem at the responsive root scale: the size follows the monitor
+       (base.css), so the clock keeps the same proportion in landscape
+       and portrait without a width breakpoint. */
+    font-size: calc(6rem);
+    max-width: 100%;
     line-height: 1;
     font-weight: 700;
     color: var(--text-base);
@@ -47,21 +45,6 @@
     font-weight: 500;
     color: var(--text-base);
     font-family: var(--clock-font, inherit);
-}
-
-/* Responsive adjustments if needed */
-@media (max-width: 768px) {
-    .os-clock-time {
-        font-size: calc(4rem * var(--ui-scale));
-    }
-
-    .os-clock-greeting {
-        font-size: calc(2rem * var(--ui-scale));
-    }
-
-    .os-clock-date {
-        font-size: calc(1.2rem * var(--ui-scale));
-    }
 }
 
 /* Color Styles */

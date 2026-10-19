@@ -11,8 +11,10 @@
 	align-items: center;
 	gap: var(--dis-4);
 	height: auto;
-	min-width: calc(40rem * var(--ui-scale));
-	width: calc(36rem * var(--ui-scale));
+	/* Fluid width: caps at 40rem on large screens, shrinks with the
+	   viewport (portrait rotation) instead of overflowing it. */
+	width: min(var(--width-10), 92%);
+	max-width: 100%;
 	z-index: var(--z-widget);
 }
 
@@ -62,7 +64,7 @@
 @keyframes chipsContainerIn {
 	from {
 		opacity: 0;
-		transform: translateX(-50%) translateY(calc(-4px * var(--ui-scale)));
+		transform: translateX(-50%) translateY(calc(-4px));
 	}
 
 	to {
@@ -79,7 +81,7 @@
 
 	to {
 		opacity: 0;
-		transform: translateX(-50%) translateY(calc(-4px * var(--ui-scale)));
+		transform: translateX(-50%) translateY(calc(-4px));
 	}
 }
 
@@ -152,7 +154,7 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	border: 1px solid var(--color-off);
 	z-index: var(--z-modal);
-	max-height: 300px;
+	max-height: min(var(--dis-30), 50vh);
 	overflow-y: auto;
 	animation: slideDown var(--transition-fast) ease-out;
 }

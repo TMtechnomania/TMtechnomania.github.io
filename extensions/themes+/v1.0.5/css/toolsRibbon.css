@@ -9,7 +9,7 @@
 	bottom: var(--width-1);
 	left: 0;
 	width: 100%;
-	max-height: calc(33.75rem * var(--ui-scale));
+	max-height: calc(33.75rem);
 	overflow-y: auto;
 	z-index: var(--z-panel);
 	background: transparent;
@@ -29,7 +29,7 @@
 }
 
 .tools-ribbon-content::-webkit-scrollbar {
-	height: calc(4px * var(--ui-scale));
+	height: calc(4px);
 }
 
 .tools-ribbon-content::-webkit-scrollbar-thumb {
@@ -128,8 +128,8 @@
 
 .tools-ribbon-widget {
 	width: 100%;
-	max-width: var(--width-9);
-	max-height: calc(var(--dis-7) * 5);
+	max-width: min(var(--width-9), var(--layout-safe-width));
+	max-height: min(calc(var(--dis-7) * 5), 50vh);
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: var(--dis-2);
@@ -144,24 +144,6 @@
 }
 
 /* ============================= */
-/* === RESPONSIVE === */
-/* ============================= */
-
-@media (max-width: 768px) {
-	.tools-ribbon-tab span:last-child {
-		display: none;
-	}
-
-	.tools-ribbon-tab {
-		padding: var(--dis-1);
-	}
-
-	.tools-ribbon-widget {
-		max-width: calc(108rem * var(--ui-scale));
-	}
-}
-
-/* ============================= */
 /* === FLOATING TOOL PANELS === */
 /* ============================= */
 
@@ -169,9 +151,11 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: calc(16rem * var(--ui-scale)) !important;
-	max-width: calc(108rem * var(--ui-scale));
-	max-height: calc(54rem * var(--ui-scale));
+	/* Never wider/taller than the viewport - matters on a rotated
+	   (portrait) display where 16rem can exceed the window width. */
+	width: min(var(--width-4), 92%) !important;
+	max-width: var(--layout-safe-width);
+	max-height: min(54rem, 90vh);
 	z-index: var(--z-panel);
 	overflow: auto;
 }

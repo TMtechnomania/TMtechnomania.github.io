@@ -26,21 +26,35 @@
 	background: var(--color-base);
 	display: flex;
 	align-items: center;
+	/* Centered, but scrollable: on a portrait viewport the bar is
+	   narrower than its groups, so it pans instead of clipping. */
 	justify-content: center;
+	justify-content: safe center;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
 	margin-top: var(--dis-7);
 	padding: var(--dis-1);
-	gap: var(--dis-1);
+	/* Gap compacts as the bar narrows (percentages resolve against the
+	   bar itself), so a rotated 720p viewport fits without scrolling. */
+	gap: clamp(var(--dis-xs), 0.5%, var(--dis-1));
+}
+
+#action-content::-webkit-scrollbar {
+	display: none;
 }
 
 /* action-group - container for grouped buttons */
 .action-group {
 	display: flex;
 	background: var(--color-off);
-	gap: var(--dis-1);
+	gap: clamp(var(--dis-xs), 0.5%, var(--dis-1));
 	border-radius: var(--radius-full);
 	height: var(--dis-5);
 	transition: all var(--transition-normal);
 	max-width: 100%;
+	flex: 0 0 auto;
 }
 
 /* Media Controls in Action Bar */
@@ -165,7 +179,7 @@
 .shortcut-manage.active {
 	color: var(--text-accent);
 	background: var(--color-base);
-	outline: calc(2px * var(--ui-scale)) solid var(--color-accent);
+	outline: calc(2px) solid var(--color-accent);
 }
 
 .shortcut-sync {
@@ -179,7 +193,7 @@
 .shortcut-sync.active {
 	color: var(--text-accent);
 	background: var(--color-base);
-	outline: calc(2px * var(--ui-scale)) solid var(--color-accent);
+	outline: calc(2px) solid var(--color-accent);
 }
 
 /* Spread Layout Sections */
