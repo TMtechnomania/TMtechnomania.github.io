@@ -1,0 +1,289 @@
+/* Ambient Mode Modal */
+.ambient-modal {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* Dynamic viewport height keeps it full-screen when browser chrome
+       appears/disappears (mobile/tablet and small windows). */
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.4);
+    /* Hardcoded alpha for overlay */
+    backdrop-filter: blur(15px);
+    z-index: var(--z-zen);
+    /* High priority fullscreen overlay */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.ambient-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Fullscreen override */
+.ambient-modal.is-fullscreen {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+/* Timer Container */
+.zen-timer-container {
+    position: relative;
+    /* 18.75rem (300px at the 1080p scale) but never larger than the
+       viewport allows, so Zen mode fits a portrait monitor too. */
+    width: min(18.75rem, 60vmin);
+    aspect-ratio: 1 / 1;
+    /* Keep fixed for specific SVG size correspondence */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SVG Circle Styles */
+.zen-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Fill the container (the markup ships fixed 300px attributes) so the
+       ring scales with the responsive root instead of the pixel size. */
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.zen-circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+}
+
+.zen-circle-progress {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 880;
+    stroke-dashoffset: 880;
+    transition: stroke-dashoffset 1s linear;
+}
+
+/* Timer Text */
+.zen-time-display {
+    font-family: var(--font-family);
+    font-size: var(--dis-8);
+    /* 4rem */
+    font-weight: 300;
+    color: #ffffff;
+    /* Always white in Zen mode */
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+/* Controls Bar */
+.zen-controls {
+    position: absolute;
+    bottom: var(--dis-6);
+    /* 3rem */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--dis-3);
+    /* 1.5rem */
+    width: 90%;
+    max-width: min(31.25rem, 100%);
+}
+
+/* Presets & Toggles Row */
+.zen-presets {
+    display: flex;
+    gap: var(--dis-1);
+    /* 1rem */
+    background: rgba(255, 255, 255, 0.1);
+    padding: var(--dis-1);
+    border-radius: var(--dis-4);
+    /* 2rem approx */
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.zen-toggles {
+    display: flex;
+    gap: var(--dis-2);
+}
+
+/* Uploaded music player */
+.zen-music {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.zen-music[hidden],
+.zen-music-btn[hidden] {
+    display: none;
+}
+
+.zen-music-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast),
+        border-color var(--transition-fast);
+}
+
+.zen-music-btn:hover,
+.zen-music-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    color: #fff;
+}
+
+.zen-music-btn span,
+.zen-music-btn svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zen-mode-btn {
+    width: auto;
+    min-width: 0;
+    padding: 0 0.85rem;
+    border-radius: 999px;
+}
+
+.zen-mode-label {
+    width: auto !important;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.zen-now-playing {
+    min-width: 0;
+    max-width: min(18rem, 42vw);
+    padding: 0 0.15rem;
+}
+
+.zen-now-playing-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #fff;
+    font-size: 1rem;
+    opacity: 0.92;
+}
+
+.zen-music.is-builtin .zen-now-playing-name {
+    opacity: 0.8;
+}
+
+/* Refactored Button Overrides for Ambient Mode */
+.zen-controls .btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    transition: all var(--transition-fast);
+}
+
+.zen-controls .btn:hover,
+.zen-controls .btn.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    color: #fff;
+    box-shadow: none;
+}
+
+.zen-controls .btn.active {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: #fff;
+}
+
+/* Play/Pause Main Button */
+.zen-play-btn {
+    width: var(--dis-8);
+    color: #fff;
+    /* 4rem */
+    height: var(--dis-8);
+    border-radius: 50%;
+    /* standard */
+    background: var(--color-accent);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    /* Keep glow, hard to var */
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.zen-play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.6);
+}
+
+.zen-play-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: #fff;
+}
+
+/* Close Button */
+.zen-close {
+    position: absolute;
+    top: var(--dis-4);
+    /* 2rem */
+    right: var(--dis-4);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: var(--dis-4);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.zen-close:hover {
+    color: #fff;
+}
+
+/* Hidden state for inactivity debounce */
+.zen-ui-hidden .zen-controls,
+.zen-ui-hidden .zen-close {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+.zen-controls,
+.zen-close {
+    transition: opacity 0.3s ease;
+}

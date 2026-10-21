@@ -1,0 +1,144 @@
+/* On-Screen Clock Container */
+#on-screen-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: var(--dis-4);
+    /* Space between clock and search bar */
+    z-index: var(--z-widget);
+    /* Above wallpaper */
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity var(--transition-normal);
+}
+
+/* Time Display */
+.os-clock-time {
+    /* 6rem at the responsive root scale: the size follows the monitor
+       (base.css), so the clock keeps the same proportion in landscape
+       and portrait without a width breakpoint. */
+    font-size: calc(6rem);
+    max-width: 100%;
+    line-height: 1;
+    font-weight: 700;
+    color: var(--text-base);
+    /* text-shadow: removed */
+    font-family: var(--clock-font, inherit);
+    white-space: nowrap;
+}
+
+/* Greeting Display */
+.os-clock-greeting {
+    font-size: var(--dis-6);
+    font-weight: 600;
+    color: var(--text-base);
+    font-family: var(--clock-font, inherit);
+    line-height: 1.2;
+}
+
+/* Date Display */
+.os-clock-date {
+    font-size: var(--dis-5);
+    font-weight: 500;
+    color: var(--text-base);
+    font-family: var(--clock-font, inherit);
+}
+
+/* Daily quote (local pack) */
+.os-clock-quote {
+    max-width: min(46ch, 90vw);
+    margin-top: var(--dis-2);
+    font-size: var(--dis-3);
+    line-height: 1.45;
+    color: var(--text-base);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.os-clock-quote-text {
+    font-style: italic;
+}
+
+.os-clock-quote-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--dis-1);
+    margin-top: var(--dis-xs);
+}
+
+.os-clock-quote-author {
+    font-size: 0.8em;
+    font-style: normal;
+    opacity: 0.75;
+}
+
+.os-clock-quote-shuffle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    opacity: 0.45;
+    cursor: pointer;
+    transition:
+        opacity var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.os-clock-quote-shuffle:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.os-clock-quote-shuffle:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.os-clock-quote-shuffle svg {
+    width: 1em;
+    height: 1em;
+}
+
+/* Color Styles */
+#on-screen-clock.color-inverse .os-clock-time,
+#on-screen-clock.color-inverse .os-clock-date,
+#on-screen-clock.color-inverse .os-clock-greeting,
+#on-screen-clock.color-inverse .os-clock-quote {
+    color: var(--text-invert);
+}
+
+#on-screen-clock.color-custom .os-clock-time,
+#on-screen-clock.color-custom .os-clock-date,
+#on-screen-clock.color-custom .os-clock-greeting,
+#on-screen-clock.color-custom .os-clock-quote {
+    color: var(--ui-text-display, var(--text-base));
+}
+
+/* Outline Styles */
+#on-screen-clock.clock-outline .os-clock-time {
+    -webkit-text-stroke: 0.015em var(--ui-text-outline, var(--text-invert));
+}
+
+#on-screen-clock.clock-outline .os-clock-date,
+#on-screen-clock.clock-outline .os-clock-greeting {
+    -webkit-text-stroke: 0.02em var(--ui-text-outline, var(--text-invert));
+}
+
+#on-screen-clock.clock-outline.color-inverse .os-clock-time {
+    -webkit-text-stroke: 0.015em var(--ui-text-outline, var(--text-base));
+}
+
+#on-screen-clock.clock-outline.color-inverse .os-clock-date,
+#on-screen-clock.clock-outline.color-inverse .os-clock-greeting {
+    -webkit-text-stroke: 0.02em var(--ui-text-outline, var(--text-base));
+}

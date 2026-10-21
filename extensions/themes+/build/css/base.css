@@ -1,0 +1,898 @@
+:root {
+	/* UI Scale removed */
+
+	/* Distance Variables - 0.5rem increments from 0.5rem to 20rem */
+	--dis-xs: calc(0.25rem);
+	--dis-1: calc(0.5rem);
+	--dis-2: calc(1rem);
+	--dis-3: calc(1.5rem);
+	--dis-4: calc(2rem);
+	--dis-5: calc(2.5rem);
+	--dis-6: calc(3rem);
+	--dis-7: calc(3.5rem);
+	--dis-8: calc(4rem);
+	--dis-9: calc(4.5rem);
+	--dis-10: calc(5rem);
+	--dis-11: calc(5.5rem);
+	--dis-12: calc(6rem);
+	--dis-13: calc(6.5rem);
+	--dis-14: calc(7rem);
+	--dis-15: calc(7.5rem);
+	--dis-16: calc(8rem);
+	--dis-17: calc(8.5rem);
+	--dis-18: calc(9rem);
+	--dis-19: calc(9.5rem);
+	--dis-20: calc(10rem);
+	--dis-21: calc(10.5rem);
+	--dis-22: calc(11rem);
+	--dis-23: calc(11.5rem);
+	--dis-24: calc(12rem);
+	--dis-25: calc(12.5rem);
+	--dis-26: calc(13rem);
+	--dis-27: calc(13.5rem);
+	--dis-28: calc(14rem);
+	--dis-29: calc(14.5rem);
+	--dis-30: calc(15rem);
+	--dis-31: calc(15.5rem);
+	--dis-32: calc(16rem);
+	--dis-33: calc(16.5rem);
+	--dis-34: calc(17rem);
+	--dis-35: calc(17.5rem);
+	--dis-36: calc(18rem);
+	--dis-37: calc(18.5rem);
+	--dis-38: calc(19rem);
+	--dis-39: calc(19.5rem);
+	--dis-40: calc(20rem);
+
+	/* Width Variables - 4rem increments from 4rem to 160rem */
+	--width-1: calc(4rem);
+	--width-2: calc(8rem);
+	--width-3: calc(12rem);
+	--width-4: calc(16rem);
+	--width-5: calc(20rem);
+	--width-6: calc(24rem);
+	--width-7: calc(28rem);
+	--width-8: calc(32rem);
+	--width-9: calc(36rem);
+	--width-10: calc(40rem);
+	--width-11: calc(44rem);
+	--width-12: calc(48rem);
+	--width-13: calc(52rem);
+	--width-14: calc(56rem);
+	--width-15: calc(60rem);
+	--width-16: calc(64rem);
+	--width-17: calc(68rem);
+	--width-18: calc(72rem);
+	--width-19: calc(76rem);
+	--width-20: calc(80rem);
+	--width-21: calc(84rem);
+	--width-22: calc(88rem);
+	--width-23: calc(92rem);
+	--width-24: calc(96rem);
+	--width-25: calc(100rem);
+	--width-26: calc(104rem);
+	--width-27: calc(108rem);
+	--width-28: calc(112rem);
+	--width-29: calc(116rem);
+	--width-30: calc(120rem);
+	--width-31: calc(124rem);
+	--width-32: calc(128rem);
+	--width-33: calc(132rem);
+	--width-34: calc(136rem);
+	--width-35: calc(140rem);
+	--width-36: calc(144rem);
+	--width-37: calc(148rem);
+	--width-38: calc(152rem);
+	--width-39: calc(156rem);
+	--width-40: calc(160rem);
+
+	/* Component Width Variable (legacy) */
+	--width-widget: calc(17.5rem);
+
+	/* Border Radius Variables */
+	--radius-container: calc(var(--dis-7) / 2);
+	--radius-child: calc(var(--dis-5) / 2);
+	--radius-xs: calc(var(--dis-3) / 2);
+	--radius-full: 999px;
+
+	/* Z-Index Layers - Core stacking order */
+	/* wallpaper */
+	--z-wallpaper: -1;
+	/* searchbar / clock / greeting / date */
+	--z-widget: 9;
+	/* famcam */
+	--z-famcam: 99;
+	/* action bar */
+	--z-ui: 100;
+	/* modals / panels / ribbons created by action bar */
+	--z-panel: 199;
+	--z-modal: 199;
+	/* zen mode (top) */
+	--z-zen: 499;
+	--z-high-priority: var(--z-zen);
+
+	/* Helper aliases (inner stack helpers; keep simple defaults) */
+	--z-overlay: var(--z-panel);
+	--z-preview: var(--z-famcam);
+	--z-topmost: var(--z-panel);
+
+	/* Transition Variables */
+	--transition-fast: 0.15s ease;
+	--transition-normal: 0.25s ease;
+	--transition-slow: 0.4s ease;
+
+	/* Color Variables - Light Theme (Default) */
+	--color-base: #FFFFFF;
+	--color-off: #EEF6FF;
+	--color-inverse: #000000;
+	--color-accent: #005fcc;
+	--color-error: #E53935;
+	--color-warning: #FB8C00;
+	--color-success: #43A047;
+
+	/* Text Color Variables - Light Theme */
+	--text-base: #111111;
+	--text-off: #333333;
+	--text-invert: #FFFFFF;
+	--text-accent: #005fcc;
+
+	/* Legacy/Utility Variables */
+	--font-family: "Outfit", Arial, Helvetica, sans-serif;
+
+	/* ============================================================
+	   RESPONSIVE SCALE TOKENS
+	   Everything in the extension is rem-based, so the root font-size
+	   is the single sizing knob. It is keyed to the viewport's SHORT
+	   edge (vmin) so a monitor renders an identical UI whether it is
+	   landscape or rotated to portrait:
+	      720p  -> 13px (min clamp)      1080p -> 16px
+	      1440p -> 21.3px                2160p -> 24px (max clamp)
+	   These are the only px values on purpose: they bound the root
+	   font-size itself, which is what "px" means to the user agent.
+	   ============================================================ */
+	/* User preference multiplier on top of the fluid scale.
+	   Set by the "UI Scaling" control (js/settingsModal.js -> js/newtab.js)
+	   and applied exactly once, on the root font-size. Never multiply
+	   individual components by this - everything is rem-based. */
+	--ui-scale: 1;
+	--scale-root-min: 13px;
+	--scale-root-fluid: 1.4815vmin;
+	--scale-root-max: 24px;
+
+	/* Layout bounds - clamped against the viewport so panels and
+	   floating widgets can never run off-screen in either rotation. */
+	--layout-edge: clamp(var(--dis-1), 4%, var(--width-1));
+	--layout-gutter: clamp(var(--dis-1), 2%, var(--dis-3));
+	--layout-safe-height: calc(100% - var(--width-1) - var(--dis-1));
+	--layout-safe-width: calc(100% - var(--dis-4));
+}
+
+/* Dark Theme Override */
+[data-theme="dark"] {
+	--color-base: #000000;
+	--color-off: #111111;
+	--color-inverse: #FFFFFF;
+	--color-accent: #005fcc;
+
+	--text-base: #FFFFFF;
+	--text-off: #CCCCCC;
+	--text-invert: #FFFFFF;
+	--text-accent: #8ab8ff;
+}
+
+/* System Dark Mode (only if no explicit theme is set) */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--color-base: #000000;
+		--color-off: #111111;
+		--color-inverse: #FFFFFF;
+		--color-accent: #005fcc;
+
+		--text-base: #FFFFFF;
+		--text-off: #CCCCCC;
+		--text-invert: #FFFFFF;
+		--text-accent: #8ab8ff;
+	}
+}
+
+* {
+	border: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* Keyboard focus must remain visible everywhere. */
+:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 2px;
+}
+
+/* Re-enable text selection where editing/copying is expected. */
+input,
+textarea,
+select,
+[contenteditable="true"],
+[contenteditable=""],
+.note-input-content,
+.note-widget-content {
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+*::before,
+*::after {
+	box-sizing: inherit;
+}
+
+a, a:hover, a:visited {
+	text-decoration: none;
+	color: inherit;
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+body {
+	font-family: var(--font-family);
+	position: relative;
+	background-color: var(--color-base);
+	color: var(--text-base);
+}
+
+#wallpaper {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: var(--z-wallpaper);
+	transition: opacity var(--transition-slow);
+}
+
+#wallpaper.loading {
+	opacity: 0;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+	width: var(--dis-1);
+	height: var(--dis-1);
+}
+
+::-webkit-scrollbar-track {
+	background: var(--color-off);
+	border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--text-off);
+	border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--text-base);
+}
+
+/* Firefox Scrollbar */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-off) var(--color-off);
+}
+
+/* ============================================
+   BUTTON UTILITY CLASSES
+   ============================================ */
+
+.btn {
+	align-items: center;
+	background: var(--color-off);
+	border: none;
+	border-radius: var(--radius-full);
+	color: var(--text-base);
+	cursor: pointer;
+	display: flex;
+	font-family: var(--font-family);
+	font-size: calc(0.875rem);
+	font-weight: 500;
+	height: var(--dis-5);
+	justify-content: center;
+	min-width: var(--dis-5);
+	padding: var(--dis-1);
+	transition: all var(--transition-fast);
+}
+
+.btn.btn-small {
+	font-size: calc(0.75rem);
+	height: var(--dis-4);
+	min-width: var(--dis-4);
+	padding: var(--dis-xs);
+}
+
+.btn:hover {
+	background: var(--color-base);
+	box-shadow: inset 0 0 0 2px var(--color-off);
+	color: var(--text-accent);
+}
+
+.btn-display {
+	cursor: default;
+}
+
+.btn.active,
+.btn:active:not(.btn-display) {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn:focus-visible {
+	background: var(--color-off);
+	box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.btn:disabled,
+.btn.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+.btn.primary {
+	background: var(--color-accent);
+	color: var(--text-invert);
+}
+
+.btn.primary:hover {
+	box-shadow: unset;
+	filter: brightness(1.1);
+}
+
+.btn span {
+	align-items: center;
+	display: flex;
+	height: var(--dis-3);
+	justify-content: center;
+	overflow: hidden;
+	padding: var(--dis-xs);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.btn:not(.btn-text) span:not(.text):is(:first-child) {
+	width: var(--dis-3);
+}
+
+.btn:not(.btn-text) span.text {
+	flex: 1;
+}
+
+.btn:not(.btn-text) :is(span:has(svg, img)) {
+	width: var(--dis-3);
+}
+
+.btn:not(.btn-text) span:first-child :is(svg, img) {
+	aspect-ratio: 1 / 1;
+	height: var(--dis-2);
+	width: var(--dis-2);
+}
+
+/* btn-icon */
+.btn.btn-icon {
+	aspect-ratio: 1;
+}
+
+/* Text-only button */
+.btn.btn-text {
+	padding: var(--dis-1) var(--dis-2);
+	min-width: var(--width-1);
+}
+
+/* btn-icon-text */
+.btn.btn-icon-text {
+	padding: var(--dis-1) var(--dis-2) var(--dis-1) var(--dis-1);
+}
+
+.btn span:nth-child(2) {
+	justify-content: flex-start;
+}
+
+
+/* === INPUTS === */
+
+.input,
+.select,
+.textarea {
+	background: var(--color-off);
+	border: none;
+	border-radius: calc(var(--dis-5) / 2);
+	color: var(--text-base);
+	font-family: var(--font-family);
+	font-size: var(--dis-2);
+	height: var(--dis-5);
+	line-height: var(--dis-5);
+	/* Explicit line-height for better rendering */
+	padding: 0 var(--dis-3);
+	/* Use 0 vertical padding with line-height instead */
+	transition: all var(--transition-fast);
+	width: 100%;
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+	background: var(--color-base);
+	box-shadow: inset 0 0 0 1px var(--color-off);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+	background: var(--color-base);
+	box-shadow: inset 0 0 0 1px var(--color-off);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Error state uses color change instead of border */
+.input.error,
+.select.error,
+.textarea.error {
+	background: rgba(229, 57, 53, 0.1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+	color: var(--text-off);
+}
+
+.textarea {
+	min-height: var(--dis-10);
+	resize: vertical;
+}
+
+.select {
+	display: block;
+	cursor: pointer;
+	appearance: none;
+	width: 100%;
+	height: var(--dis-4);
+	line-height: var(--dis-4);
+	color: var(--text-base);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--dis-2) center;
+	background-size: var(--dis-1) auto;
+	padding-right: var(--dis-5);
+	padding-left: var(--dis-2);
+	/* Remove padding-top/bottom to let line-height center */
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+
+.select:hover {
+	cursor: pointer;
+	appearance: none;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--dis-2) center;
+	background-size: var(--dis-1) auto;
+	padding-right: var(--dis-5);
+}
+
+.select:focus {
+	cursor: pointer;
+	appearance: none;
+	/* Rotated SVG (180deg) for the opposite state */
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M5.4%20223a17.6%2017.6%200%200%200%2013%205.4h255.6c5%200%209.3-1.8%2012.9-5.4a17.6%2017.6%200%200%200%200-24.8c0-5-1.8-9.3-5.4-12.9L153.6%2057.4a17.8%2017.8%200%200%200-25.6%200L5.4%20185.3c-3.5%203.5-5.4%207.8-5.4%2012.8%200%205%201.9%209.2%205.4%2012.8z%22%2F%3E%3C%2Fsvg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--dis-2) center;
+	background-size: var(--dis-1) auto;
+	padding-right: var(--dis-5);
+}
+
+/* === RANGE INPUT === */
+.input-range {
+	appearance: none;
+	-webkit-appearance: none;
+	height: var(--dis-xs);
+	background: var(--color-base);
+	border-radius: var(--radius-full);
+	cursor: pointer;
+}
+
+.input-range::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: var(--dis-1);
+	height: var(--dis-1);
+	background: var(--color-accent);
+	border-radius: var(--radius-full);
+	cursor: pointer;
+	transition: transform 0.1s;
+}
+
+.input-range::-webkit-slider-thumb:hover {
+	transform: scale(1.15);
+}
+
+.input-range::-moz-range-thumb {
+	width: var(--dis-1);
+	height: var(--dis-1);
+	background: var(--color-accent);
+	border-radius: var(--radius-full);
+	cursor: pointer;
+	border: none;
+}
+
+/* === ICON LINK (No background) === */
+
+.icon-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-off);
+	cursor: pointer;
+	transition: color var(--transition-fast);
+}
+
+.icon-link:hover {
+	color: var(--text-accent);
+}
+
+
+
+/* ============================================
+   STATE CLASSES
+   ============================================ */
+
+.is-hidden {
+	display: none !important;
+}
+
+.is-disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.is-error {
+	color: var(--color-error);
+}
+
+.is-success {
+	color: var(--color-success);
+}
+
+.is-warning {
+	color: var(--color-warning);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(var(--dis-2));
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateY(var(--dis-2));
+	}
+}
+
+/* Modal animation for centered modals */
+@keyframes modalIn {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.animate-slide-up {
+	animation: slideUp var(--transition-normal) forwards;
+}
+
+.animate-slide-down {
+	animation: slideDown var(--transition-normal) forwards;
+}
+
+.animate-fade-in {
+	animation: fadeIn var(--transition-normal) forwards;
+}
+
+.animate-fade-out {
+	animation: fadeOut var(--transition-normal) forwards;
+}
+
+.animate-spin {
+	animation: spin 1s linear infinite;
+}
+
+/* === MODAL HEADER === */
+.modal-header {
+	align-items: center;
+	display: flex;
+	gap: var(--dis-1);
+	justify-content: space-between;
+	padding-bottom: var(--dis-2);
+	border-bottom: 1px solid var(--color-off);
+}
+
+/* .modal-header .modal-title {
+	flex: 1;
+} */
+
+/* ============================================
+   RESPONSIVE ROOT SCALE
+   One fluid formula replaces the old per-breakpoint
+   landscape font sizes. Because it tracks vmin (the
+   shorter viewport edge) instead of width, a 1920x1080
+   monitor and the same monitor rotated to 1080x1920 get
+   the identical 16px root - rotating never rescales the
+   UI, it only re-flows it.
+   ============================================ */
+html {
+	font-size: calc(
+		clamp(var(--scale-root-min), var(--scale-root-fluid), var(--scale-root-max)) *
+			var(--ui-scale, 1)
+	);
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+/* ============================================
+   ROTATION-SAFE OVERFLOW
+   Scrolling rows center their content. Centering a too-wide
+   row clips the leading edge, so `safe` keeps the start
+   reachable when a portrait viewport is narrower than the row.
+   ============================================ */
+.tabs-ribbon-content,
+.tools-ribbon-content,
+#action-content {
+	justify-content: center;
+	justify-content: safe center;
+}
+
+/* Panels that can be docked bottom stay inside the viewport
+   regardless of how short the window is. */
+.settings-modal,
+.notes-modal,
+.timer-modal {
+	max-height: var(--layout-safe-height);
+	max-width: var(--layout-safe-width);
+}
+
+/* ============================================
+   GLASS THEME
+   ============================================ */
+html[data-theme="glass"] {
+	background: #0b1220;
+}
+
+[data-theme="glass"] {
+	color-scheme: dark;
+	--glass-blur: 18px;
+	--color-base: rgba(10, 16, 30, 0.58);
+	--color-off: rgba(255, 255, 255, 0.08);
+	--glass-hover: rgba(255, 255, 255, 0.14);
+	--color-inverse: #ffffff;
+	--color-accent: #2563eb;
+	--text-base: #f7f9ff;
+	--text-off: #c3ccdd;
+	--text-invert: #ffffff;
+	--text-accent: #93c5fd;
+	--glass-border: rgba(255, 255, 255, 0.16);
+	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Let the wallpaper show through the page itself; the panels/buttons carry
+   the translucent glass tint and blur. */
+[data-theme="glass"] body {
+	background: transparent;
+}
+
+[data-theme="glass"] #action-content,
+[data-theme="glass"] .search-row,
+[data-theme="glass"] .search-engine-chips,
+[data-theme="glass"] .settings-modal,
+[data-theme="glass"] .tools-modal,
+[data-theme="glass"] .notes-modal,
+[data-theme="glass"] .timer-modal,
+[data-theme="glass"] .alarm-modal,
+[data-theme="glass"] .alarm-popup,
+[data-theme="glass"] .bookmarks-panel,
+[data-theme="glass"] .confirm-modal,
+[data-theme="glass"] .tp-dialog,
+[data-theme="glass"] .note-widget,
+[data-theme="glass"] .tool-float-widget,
+[data-theme="glass"] .tools-ribbon-widget,
+[data-theme="glass"] .suggestions-dropdown,
+[data-theme="glass"] .shortcut-actions,
+[data-theme="glass"] .window-group,
+[data-theme="glass"] .tools-ribbon-group,
+[data-theme="glass"] .ug-sidebar,
+[data-theme="glass"] .ug-main {
+	background: var(--color-base);
+	-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+	backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+	border: 1px solid var(--glass-border);
+	box-shadow: var(--glass-shadow);
+}
+
+[data-theme="glass"] .btn,
+[data-theme="glass"] .input,
+[data-theme="glass"] .select,
+[data-theme="glass"] .textarea,
+[data-theme="glass"] .bookmarks-search {
+	box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+
+/* Settings navigation: the modal already carries the glass layer, so the
+   sidebar and tab buttons stay transparent instead of stacking another one. */
+[data-theme="glass"] .settings-sidebar {
+	background: transparent;
+}
+
+[data-theme="glass"] .settings-tab-btn {
+	background: transparent;
+	box-shadow: none;
+	border-color: transparent;
+}
+
+[data-theme="glass"] .settings-tab-btn:hover {
+	background: var(--color-off);
+}
+
+[data-theme="glass"] .settings-tab-btn.active {
+	background: var(--color-accent);
+	border-color: var(--color-accent);
+	color: var(--text-invert);
+}
+
+/* Nested cards and rows are deliberately transparent: the top-level glass
+   panel already provides the blur, and these layers just add depth. */
+[data-theme="glass"] .settings-group,
+[data-theme="glass"] .option-tile,
+[data-theme="glass"] .shortcut-list-item,
+[data-theme="glass"] .tool-widget,
+[data-theme="glass"] .stat-card,
+[data-theme="glass"] .ws-item,
+[data-theme="glass"] .calc-display,
+[data-theme="glass"] .qr-output,
+[data-theme="glass"] .lorem-output,
+[data-theme="glass"] .regex-result,
+[data-theme="glass"] .rss-items,
+[data-theme="glass"] .rss-item,
+[data-theme="glass"] .note-item,
+[data-theme="glass"] .note-content-wrapper,
+[data-theme="glass"] .note-widget-header,
+[data-theme="glass"] .alarm-item,
+[data-theme="glass"] .alarm-type-group,
+[data-theme="glass"] .media-poster,
+[data-theme="glass"] .tool-float-header,
+[data-theme="glass"] .feature-card,
+[data-theme="glass"] .feature-icon,
+[data-theme="glass"] .tag {
+	background: transparent;
+}
+
+[data-theme="glass"] .btn:hover,
+[data-theme="glass"] .btn:focus-visible {
+	-webkit-backdrop-filter: blur(20px) saturate(160%);
+	backdrop-filter: blur(20px) saturate(160%);
+	box-shadow:
+		inset 0 0 0 1px var(--glass-border),
+		0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* Action-bar groups and ribbon groups are one glass pill; their child
+   buttons must not render their own surfaces. */
+[data-theme="glass"] .action-group,
+[data-theme="glass"] #media-control.media-controls {
+	background: var(--color-off);
+	-webkit-backdrop-filter: blur(14px) saturate(150%);
+	backdrop-filter: blur(14px) saturate(150%);
+	border: 1px solid var(--glass-border);
+	box-shadow: var(--glass-shadow);
+}
+
+[data-theme="glass"] .action-group > .btn:not(.active):not(.primary),
+[data-theme="glass"] #media-control .btn,
+[data-theme="glass"] .window-group > .btn:not(.active),
+[data-theme="glass"] .tools-ribbon-group > .btn:not(.active) {
+	background: transparent;
+	box-shadow: none;
+}
+
+[data-theme="glass"] .action-group > .btn:not(.active):not(.primary):hover,
+[data-theme="glass"] .action-group > .btn:not(.active):not(.primary):focus-visible,
+[data-theme="glass"] #media-control .btn:hover,
+[data-theme="glass"] .window-group > .btn:not(.active):hover,
+[data-theme="glass"] .tools-ribbon-group > .btn:not(.active):hover {
+	background: var(--glass-hover);
+	box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+
+[data-theme="glass"] .btn:not(.active):not(.primary):hover,
+[data-theme="glass"] .btn:not(.active):not(.primary):focus-visible {
+	background: var(--glass-hover);
+}
+
+/* Keep a visible keyboard-focus ring even with the glass hover effect. */
+[data-theme="glass"] .btn:focus-visible {
+	box-shadow:
+		inset 0 0 0 1px var(--glass-border),
+		0 0 0 2px var(--color-accent);
+}
+
+/* Respect the OS reduced-motion preference. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+}
