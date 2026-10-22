@@ -25,6 +25,7 @@ import {
 import { initNotesWidget } from "./notesWidget.js";
 import { initStorageSync } from "./storageUtil.js";
 import { initNotesSync } from "./notesSync.js";
+import { initFilterPresetSync } from "./filterPresetSync.js";
 import {
 	onSettingsChanged,
 	normalizeSettings,
@@ -413,6 +414,10 @@ async function closeAllOverlays() {
 	// Notes/checklists: local is authoritative; reconcile with chrome.storage.sync
 	// in the background (a remote change dispatches notes-updated).
 	initNotesSync().catch(() => {});
+
+	// Custom wallpaper filter preset: mirrored to chrome.storage.sync the same
+	// way (local settings stay authoritative).
+	initFilterPresetSync().catch(() => {});
 
 	try {
 		config = (await getStoredConfig()) || DEFAULT_CONFIG;

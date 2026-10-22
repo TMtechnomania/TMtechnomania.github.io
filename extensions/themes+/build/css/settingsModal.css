@@ -352,15 +352,16 @@ input:checked+.toggle-slider:before {
 .filter-presets {
 	display: flex;
 	flex-direction: column;
-	gap: var(--dis-1);
-	padding: 0 var(--dis-3) var(--dis-2);
+	gap: var(--dis-2);
+	padding: var(--dis-1) var(--dis-3) var(--dis-2);
 }
 
 .filter-presets-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--dis-1);
+	gap: var(--dis-2);
+	min-height: var(--dis-4);
 }
 
 .filter-presets-title {
@@ -371,8 +372,24 @@ input:checked+.toggle-slider:before {
 	letter-spacing: calc(1px);
 }
 
-.filter-preset-save {
+/* Compact, chip-height save action so it sits level with the Presets label
+   instead of towering over the chips below. */
+.btn.filter-preset-save {
+	height: auto;
+	min-width: 0;
+	padding: calc(var(--dis-1) * 0.55) var(--dis-2);
 	font-size: calc(0.75rem);
+	font-weight: 600;
+	background: transparent;
+	border: 1px dashed var(--color-off);
+	color: var(--text-off);
+}
+
+.btn.filter-preset-save:hover {
+	background: var(--color-off);
+	border-color: var(--text-off);
+	color: var(--text-base);
+	box-shadow: none;
 }
 
 .filter-preset-chips {
