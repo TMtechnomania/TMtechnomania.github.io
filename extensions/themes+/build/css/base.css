@@ -732,9 +732,8 @@ html[data-theme="glass"] {
 [data-theme="glass"] {
 	color-scheme: dark;
 	--glass-blur: 20px;
-	/* Kept light enough that the tint does not overwhelm a bright wallpaper;
-	   the blur keeps text legible on both light and dark backgrounds. */
-	--color-base: rgba(10, 16, 30, 0.42);
+	/* Very light tint so bright wallpapers keep their colour and liveliness. */
+	--color-base: rgba(10, 16, 30, 0.24);
 	--color-off: rgba(255, 255, 255, 0.09);
 	--glass-hover: rgba(255, 255, 255, 0.14);
 	--color-inverse: #ffffff;
