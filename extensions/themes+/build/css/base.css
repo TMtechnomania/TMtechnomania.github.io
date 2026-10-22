@@ -731,9 +731,11 @@ html[data-theme="glass"] {
 
 [data-theme="glass"] {
 	color-scheme: dark;
-	--glass-blur: 18px;
-	--color-base: rgba(10, 16, 30, 0.58);
-	--color-off: rgba(255, 255, 255, 0.08);
+	--glass-blur: 20px;
+	/* Kept light enough that the tint does not overwhelm a bright wallpaper;
+	   the blur keeps text legible on both light and dark backgrounds. */
+	--color-base: rgba(10, 16, 30, 0.42);
+	--color-off: rgba(255, 255, 255, 0.09);
 	--glass-hover: rgba(255, 255, 255, 0.14);
 	--color-inverse: #ffffff;
 	--color-accent: #2563eb;
@@ -742,7 +744,7 @@ html[data-theme="glass"] {
 	--text-invert: #ffffff;
 	--text-accent: #93c5fd;
 	--glass-border: rgba(255, 255, 255, 0.16);
-	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 /* Let the wallpaper show through the page itself; the panels/buttons carry
