@@ -3272,26 +3272,29 @@ function syncFilterSliders(container, settings) {
 }
 
 function renderFilterPresets(group, container, settings) {
-	const row = document.createElement("div");
-	row.className = "setting-row";
+	const makeControl = () => {
+		const control = document.createElement("div");
+		control.className = "setting-control";
+		control.style.display = "flex";
+		control.style.alignItems = "center";
+		control.style.gap = "var(--dis-1)";
+		control.style.flexWrap = "wrap";
+		control.style.justifyContent = "flex-end";
+		return control;
+	};
 
-	const info = document.createElement("div");
-	info.className = "setting-info";
-	const label = document.createElement("div");
-	label.className = "setting-label";
-	label.textContent = "Presets";
-	const desc = document.createElement("div");
-	desc.className = "setting-desc";
-	desc.textContent = "Apply a saved filter look to any wallpaper.";
-	info.append(label, desc);
-
-	const control = document.createElement("div");
-	control.className = "setting-control";
-	control.style.display = "flex";
-	control.style.alignItems = "center";
-	control.style.gap = "var(--dis-1)";
-	control.style.flexWrap = "wrap";
-	control.style.justifyContent = "flex-end";
+	const makeInfo = (labelText, descText) => {
+		const info = document.createElement("div");
+		info.className = "setting-info";
+		const label = document.createElement("div");
+		label.className = "setting-label";
+		label.textContent = labelText;
+		const desc = document.createElement("div");
+		desc.className = "setting-desc";
+		desc.textContent = descText;
+		info.append(label, desc);
+		return info;
+	};
 
 	const makeIconBtn = (icon, title, extraClass) => {
 		const btn = document.createElement("button");
@@ -3309,8 +3312,24 @@ function renderFilterPresets(group, container, settings) {
 		return btn;
 	};
 
+	// Row 1 — Preset: dropdown with prev/next navigation.
+	const presetRow = document.createElement("div");
+	presetRow.className = "setting-row";
 	const prevBtn = makeIconBtn("chevron-left.svg", "Previous preset");
 	const nextBtn = makeIconBtn("chevron-right.svg", "Next preset");
+	const select = document.createElement("select");
+	select.className = "select";
+	select.setAttribute("aria-label", "Filter preset");
+	const presetControl = makeControl();
+	presetControl.append(prevBtn, select, nextBtn);
+	presetRow.append(
+		makeInfo("Preset", "Apply a saved filter look to any wallpaper."),
+		presetControl,
+	);
+
+	// Row 2 — Custom preset: save the current filters / clear the saved one.
+	const customRow = document.createElement("div");
+	customRow.className = "setting-row";
 	const saveBtn = makeIconBtn(
 		"floppy-disk.svg",
 		"Save the current filter values as your custom preset",
@@ -3321,13 +3340,15 @@ function renderFilterPresets(group, container, settings) {
 		"Clear the saved custom preset",
 		"filter-preset-reset",
 	);
-
-	const select = document.createElement("select");
-	select.className = "select";
-	select.setAttribute("aria-label", "Filter preset");
-
-	control.append(prevBtn, select, nextBtn, saveBtn, resetBtn);
-	row.append(info, control);
+	const customControl = makeControl();
+	customControl.append(saveBtn, resetBtn);
+	customRow.append(
+		makeInfo(
+			"Custom preset",
+			"Save the current filters as your own preset.",
+		),
+		customControl,
+	);
 
 	const presetList = () => {
 		const list = Object.entries(FILTER_PRESETS).map(([id, preset]) => ({
@@ -3416,7 +3437,7 @@ function renderFilterPresets(group, container, settings) {
 	});
 
 	render();
-	group.appendChild(row);
+	group.append(presetRow, customRow);
 
 	return { refresh: render };
 }
