@@ -3709,7 +3709,7 @@ async function renderWallpaperGrid(container, settings, forceReload = false) {
 				}, 120000);
 				try {
 					chrome.runtime.sendMessage(
-						{ action: "refreshManifest" },
+						{ action: "refreshManifest", force: true },
 						() => {
 							clearTimeout(timer);
 							finish();

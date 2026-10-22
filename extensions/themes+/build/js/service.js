@@ -26,12 +26,12 @@ const app = chrome || browser;
  * intentionally not tied to a user action. Existing entries are left alone:
  * one IndexedDB lookup, no network traffic.
  */
-async function ensureDefaultMedia(entry) {
+async function ensureDefaultMedia(entry, force = false) {
 	if (!entry || !entry.id || !entry.asset) return;
 	try {
 		const key = `${entry.id}::media`;
 		const existing = await getMediaEntry(key).catch(() => null);
-		if (existing && existing.status === "ok") return;
+		if (!force && existing && existing.status === "ok") return;
 
 		await downloadAndStoreResource({
 			url: resolveAssetUrl(entry.asset),
@@ -39,10 +39,45 @@ async function ensureDefaultMedia(entry) {
 			kind: "media",
 			manifestEntry: entry,
 			maxAttempts: 3,
+			noStore: force,
 		});
 	} catch (e) {
 		// A failed default download is retried on the next catalog sync.
 	}
+}
+
+/**
+ * Re-download full media that is already cached.
+ *
+ * A wallpaper can be replaced on the server without its URL changing, so a
+ * catalog refresh cannot rely on "download only what is missing". Entries the
+ * user already has are fetched again (cache-bypassed) and overwritten.
+ */
+async function refreshCachedMedia(entries, skipIds = null) {
+	const cached = [];
+	for (const entry of entries) {
+		if (!entry || !entry.id || !entry.asset) continue;
+		if (skipIds && skipIds.has(entry.id)) continue;
+		const existing = await getMediaEntry(`${entry.id}::media`).catch(
+			() => null,
+		);
+		if (existing && existing.status === "ok") cached.push(entry);
+	}
+	if (!cached.length) return;
+
+	await runWithConcurrency(
+		cached,
+		async (entry) =>
+			await downloadAndStoreResource({
+				url: resolveAssetUrl(entry.asset),
+				assetPath: entry.id,
+				kind: "media",
+				manifestEntry: entry,
+				maxAttempts: 3,
+				noStore: true,
+			}),
+		3,
+	);
 }
 
 /** Tell open new-tab pages that cached assets changed. */
@@ -54,9 +89,22 @@ function notifyAssetsReady() {
 	} catch (e) {}
 }
 
-async function syncManifest() {
+async function syncManifest({ force = false } = {}) {
 	try {
-		const manifest = await fetchJson(WALLPAPER_JSON_URL);
+		// A manual refresh must not be served a cached catalog: GitHub Pages
+		// caches wallpaper.json for a few minutes. Bypass the HTTP cache and
+		// add a cache-busting query when the refresh is explicit.
+		let manifestUrl = WALLPAPER_JSON_URL;
+		if (force) {
+			const u = new URL(WALLPAPER_JSON_URL);
+			u.searchParams.set("t", String(Date.now()));
+			manifestUrl = u.href;
+		}
+		const manifest = await fetchJson(
+			manifestUrl,
+			15000,
+			force ? { cache: "no-store" } : undefined,
+		);
 		if (!manifest || typeof manifest.version !== "string") {
 			// console.warn('Invalid manifest fetched');
 			return { ok: false, error: "Invalid manifest" };
@@ -152,7 +200,7 @@ async function syncManifest() {
 		await writeDefaultMediaIds(defaults);
 
 		// STEP 1: Default image wallpaper (needed for the very first render).
-		await ensureDefaultMedia(firstImage);
+		await ensureDefaultMedia(firstImage, force);
 
 		// The default image is cached now: let open new-tab pages retry a
 		// render that happened before the asset was available.
@@ -167,10 +215,16 @@ async function syncManifest() {
 			if (!entry || !entry.id || !entry.asset || !entry.thumbnail)
 				continue;
 			const key = `${entry.id}::thumb`;
-			const prevV = prevMap[entry.id];
-			if (prevV && prevV === entry.version) {
+			if (!force) {
 				const existing = await getMediaEntry(key).catch(() => null);
-				if (existing && existing.status === "ok") continue;
+				const cached = existing && existing.status === "ok";
+				if (cached) {
+					const prevV = prevMap[entry.id];
+					const nextV = entry.version || null;
+					// Only refetch a cached thumb when the catalog explicitly
+					// says it changed (or on an explicit refresh below).
+					if (!prevV || !nextV || prevV === nextV) continue;
+				}
 			}
 			candidates.push({ entry, key });
 		}
@@ -186,13 +240,24 @@ async function syncManifest() {
 						assetPath: t.entry.id,
 						kind: "thumb",
 						manifestEntry: t.entry,
+						noStore: force,
 					});
 				},
 				6,
 			);
 		};
 
-		await Promise.all([ensureDefaultMedia(firstVideo), downloadThumbs()]);
+		await Promise.all([ensureDefaultMedia(firstVideo, force), downloadThumbs()]);
+
+		// Explicit refresh: replace full media the user already has, since a
+		// re-uploaded wallpaper keeps its URL. The two defaults were already
+		// refreshed above, so skip them here.
+		if (force) {
+			const defaultIds = new Set(
+				[firstImage?.id, firstVideo?.id].filter(Boolean),
+			);
+			await refreshCachedMedia(allNew, defaultIds);
+		}
 
 		// Let open new-tab pages pick up the default video as well.
 		notifyAssetsReady();
@@ -444,7 +509,7 @@ async function handleMessage(data, sendResponse, sender) {
 	}
 	if (data.action === "refreshManifest") {
 		try {
-			const res = await syncManifest();
+			const res = await syncManifest({ force: data.force === true });
 			sendResponse({
 				action: "refreshManifestResult",
 				result: res,

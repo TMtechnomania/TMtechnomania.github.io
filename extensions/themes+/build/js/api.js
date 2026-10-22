@@ -7,11 +7,11 @@ const app =
 		? browser
 		: null;
 
-export async function fetchJson(url, timeoutMs = 15000) {
+export async function fetchJson(url, timeoutMs = 15000, options = {}) {
 	const controller = new AbortController();
 	const id = setTimeout(() => controller.abort(), timeoutMs);
 	try {
-		const res = await fetch(url, { signal: controller.signal });
+		const res = await fetch(url, { signal: controller.signal, ...options });
 		if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
 		return await res.json();
 	} finally {
@@ -24,6 +24,7 @@ export async function fetchWithRetries(
 	maxAttempts = 3,
 	baseDelay = 300,
 	timeoutMs = 30000,
+	options = {},
 ) {
 	let attempt = 0;
 	let lastErr = null;
@@ -31,7 +32,10 @@ export async function fetchWithRetries(
 		const controller = new AbortController();
 		const timer = setTimeout(() => controller.abort(), timeoutMs);
 		try {
-			const res = await fetch(url, { signal: controller.signal });
+			const res = await fetch(url, {
+				signal: controller.signal,
+				...options,
+			});
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			return { ok: true, response: res };
 		} catch (err) {
@@ -106,14 +110,26 @@ export async function setStorageLocal(obj) {
 	});
 }
 
-async function fetchAndStoreBlob(url, key, meta = {}, maxAttempts = 3) {
+async function fetchAndStoreBlob(
+	url,
+	key,
+	meta = {},
+	maxAttempts = 3,
+	noStore = false,
+) {
 	let status = "failed";
 	let errorMessage = null;
 	let blob = null;
 
 	const logIdentifier = meta.id || meta.name || key;
 
-	const result = await fetchWithRetries(url, maxAttempts);
+	const result = await fetchWithRetries(
+		url,
+		maxAttempts,
+		300,
+		30000,
+		noStore ? { cache: "no-store" } : undefined,
+	);
 
 	if (result.ok) {
 		try {
@@ -164,6 +180,7 @@ export async function downloadAndStoreResource({
 	kind = "thumb",
 	manifestEntry = null,
 	maxAttempts = 3,
+	noStore = false,
 }) {
 	if (!url) return { ok: false, error: "missing url" };
 	if (!assetPath) return { ok: false, error: "missing assetPath" };
@@ -181,7 +198,7 @@ export async function downloadAndStoreResource({
 		manifestEntry: manifestEntry || {},
 	};
 
-	return await fetchAndStoreBlob(url, key, meta, maxAttempts);
+	return await fetchAndStoreBlob(url, key, meta, maxAttempts, noStore);
 }
 
 export async function runWithConcurrency(items, workerFn, concurrency = 6) {
