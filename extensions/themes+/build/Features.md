@@ -8,7 +8,7 @@ Themes+ is a **new-tab productivity dashboard**. Its primary purpose is replacin
 
 -   **Wallpapers**:
     -   Types: Mono (Color), Image (4K supported), Video (Live), **Duotone** (Generative).
-    -   Features: Custom uploads (IndexedDB with the `unlimitedStorage` permission — up to 100 images at 25 MB each and 40 videos at 200 MB each), live storage usage meter (usage vs. browser quota, refreshed every 2 seconds), Blurs/Filters, Theme Sync.
+    -   Features: Custom uploads (IndexedDB with the `unlimitedStorage` permission — up to 100 images at 25 MB each and 40 videos at 200 MB each), live storage usage meter (usage vs. browser quota, refreshed every 2 seconds), Blurs/Filters with one-tap presets (None / Vivid / Cinematic / Dreamy) plus a single saveable custom preset, Theme Sync.
 -   **Shortcuts**:
     -   Built-in Brand Logo Picker (500+ FontAwesome brand SVGs).
     -   Custom Logo Upload (local image/SVG file up to 256 KB, or custom URL with live preview).

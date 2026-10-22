@@ -6,6 +6,8 @@ import {
 	applyTheme,
 	DEFAULT_SHORTCUTS,
 	DUOTONE_THEMES,
+	FILTER_PRESETS,
+	FILTER_PRESET_KEYS,
 } from "./config.js";
 import {
 	normalizeSettings,
@@ -2440,6 +2442,7 @@ function addRange(
 	value,
 	defaultValue,
 	onChange,
+	key,
 ) {
 	const row = document.createElement("div");
 	row.className = "setting-row";
@@ -2475,6 +2478,11 @@ function addRange(
 	input.min = min;
 	input.max = max;
 	input.value = value;
+	// Filter sliders carry their config key so a preset can sync them in place.
+	if (key) {
+		input.dataset.filterKey = key;
+		input.dataset.unit = unit || "";
+	}
 
 	const valDisplay = document.createElement("div");
 	valDisplay.className = "range-value";
@@ -2986,6 +2994,11 @@ function updateWallpaperDynamicContent(container, settings) {
 	filterGroup.appendChild(groupHeader);
 	container.appendChild(filterGroup);
 
+	// Filter presets (None / Vivid / Cinematic / Dreamy / Custom). These are
+	// global — applying one simply drives the Visual Filter sliders below, so
+	// they work for catalog wallpapers and custom uploads alike.
+	const filterPresetUI = renderFilterPresets(filterGroup, container, settings);
+
 	// Rain Toggle
 	const rainDetails = document.createElement("div");
 	rainDetails.className = "rain-settings";
@@ -3096,7 +3109,9 @@ function updateWallpaperDynamicContent(container, settings) {
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
 			// updateWallpaperDynamicContent(container, settings); // REMOVED to fix drag glitch
+			filterPresetUI?.refreshChips();
 		},
+		"blur",
 	);
 
 	addRange(
@@ -3111,7 +3126,9 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.brightness = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
+			filterPresetUI?.refreshChips();
 		},
+		"brightness",
 	);
 
 	addRange(
@@ -3126,7 +3143,9 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.contrast = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
+			filterPresetUI?.refreshChips();
 		},
+		"contrast",
 	);
 
 	addRange(
@@ -3141,7 +3160,9 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.sharpness = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
+			filterPresetUI?.refreshChips();
 		},
+		"sharpness",
 	);
 
 	addRange(
@@ -3156,7 +3177,9 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.saturate = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
+			filterPresetUI?.refreshChips();
 		},
+		"saturate",
 	);
 
 	addRange(
@@ -3171,7 +3194,9 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.grayscale = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
+			filterPresetUI?.refreshChips();
 		},
+		"grayscale",
 	);
 
 	// 2. Wallpaper Grid
@@ -3183,6 +3208,131 @@ function updateWallpaperDynamicContent(container, settings) {
 }
 
 // --- Logic Helpers ---
+
+// --- Filter presets ---
+
+/** Pull just the preset-controlled filter keys out of a config object. */
+function pickFilterValues(cfg) {
+	const out = {};
+	for (const k of FILTER_PRESET_KEYS) {
+		const v = cfg?.[k];
+		out[k] = Number(v != null ? v : DEFAULT_CONFIG.wallpaper[k]);
+	}
+	return out;
+}
+
+function filterValuesEqual(a, b) {
+	return FILTER_PRESET_KEYS.every(
+		(k) => Number(a?.[k]) === Number(b?.[k]),
+	);
+}
+
+/** The preset id whose values currently match, or null for a manual mix. */
+function detectActivePreset(settings) {
+	const cur = pickFilterValues(settings.wallpaper);
+	for (const [id, preset] of Object.entries(FILTER_PRESETS)) {
+		if (filterValuesEqual(cur, preset)) return id;
+	}
+	const custom = settings.wallpaper.customPreset;
+	if (custom && filterValuesEqual(cur, custom)) return "custom";
+	return null;
+}
+
+/** Write the given filter values into the live wallpaper config. */
+function applyFilterValues(settings, values) {
+	for (const k of FILTER_PRESET_KEYS) {
+		if (values?.[k] != null) settings.wallpaper[k] = Number(values[k]);
+	}
+	saveSettings(settings);
+	updateWallpaperFilters(settings.wallpaper);
+}
+
+/** Move the on-screen sliders to match the settings without a full re-render. */
+function syncFilterSliders(container, settings) {
+	container.querySelectorAll("input[data-filter-key]").forEach((input) => {
+		const key = input.dataset.filterKey;
+		if (settings.wallpaper[key] == null) return;
+		input.value = settings.wallpaper[key];
+		const display = input.parentElement?.querySelector(".range-value");
+		if (display)
+			display.textContent = `${input.value}${input.dataset.unit || ""}`;
+	});
+}
+
+function renderFilterPresets(group, container, settings) {
+	const wrap = document.createElement("div");
+	wrap.className = "filter-presets";
+
+	const head = document.createElement("div");
+	head.className = "filter-presets-head";
+
+	const title = document.createElement("div");
+	title.className = "filter-presets-title";
+	title.textContent = "Presets";
+	head.appendChild(title);
+
+	const saveBtn = document.createElement("button");
+	saveBtn.type = "button";
+	saveBtn.className = "btn btn-icon-text filter-preset-save";
+	saveBtn.title = "Save the current filter values as your custom preset";
+	const saveIcon = document.createElement("span");
+	renderInlineIcon(
+		saveIcon,
+		"assets/svgs-fontawesome/solid/floppy-disk.svg",
+	);
+	saveBtn.appendChild(saveIcon);
+	const saveText = document.createElement("span");
+	saveText.className = "text";
+	saveText.textContent =
+		settings.wallpaper.customPreset ? "Update Custom" : "Save as Custom";
+	saveBtn.appendChild(saveText);
+	head.appendChild(saveBtn);
+	wrap.appendChild(head);
+
+	const chips = document.createElement("div");
+	chips.className = "filter-preset-chips";
+	wrap.appendChild(chips);
+
+	const refreshChips = () => {
+		chips.innerHTML = "";
+		const activeId = detectActivePreset(settings);
+		const entries = Object.entries(FILTER_PRESETS);
+		if (settings.wallpaper.customPreset) {
+			entries.push([
+				"custom",
+				{ label: "Custom", ...settings.wallpaper.customPreset },
+			]);
+		}
+		for (const [id, preset] of entries) {
+			const chip = document.createElement("button");
+			chip.type = "button";
+			chip.className =
+				"filter-chip" + (activeId === id ? " active" : "");
+			chip.textContent = preset.label;
+			chip.title = "Apply this filter preset";
+			chip.onclick = () => {
+				applyFilterValues(settings, preset);
+				syncFilterSliders(container, settings);
+				refreshChips();
+			};
+			chips.appendChild(chip);
+		}
+	};
+
+	saveBtn.onclick = () => {
+		settings.wallpaper.customPreset = pickFilterValues(
+			settings.wallpaper,
+		);
+		saveSettings(settings);
+		saveText.textContent = "Update Custom";
+		refreshChips();
+	};
+
+	refreshChips();
+	group.appendChild(wrap);
+
+	return { refreshChips };
+}
 
 function updateWallpaperFilters(cfg) {
 	const el = document.getElementById("wallpaper");

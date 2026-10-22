@@ -2,6 +2,60 @@
 export const WALLPAPER_JSON_URL =
 	"https://buildwithkt.dev/extensions/themes+/assets/wallpaper.json";
 
+// Built-in wallpaper filter presets. These are global (they are not tied to a
+// particular wallpaper) and map 1:1 onto the Visual Filters sliders.
+// "none" restores the neutral default. The user can also save one custom
+// preset (see `wallpaper.customPreset`).
+export const FILTER_PRESETS = {
+	none: {
+		label: "None",
+		blur: 0,
+		brightness: 100,
+		contrast: 100,
+		sharpness: 0,
+		saturate: 100,
+		grayscale: 0,
+	},
+	vivid: {
+		label: "Vivid",
+		blur: 0,
+		brightness: 120,
+		contrast: 150,
+		sharpness: 10,
+		saturate: 200,
+		grayscale: 0,
+	},
+	cinematic: {
+		label: "Cinematic",
+		blur: 0,
+		brightness: 95,
+		contrast: 120,
+		sharpness: 25,
+		saturate: 85,
+		grayscale: 0,
+	},
+	dreamy: {
+		label: "Dreamy",
+		blur: 2,
+		brightness: 110,
+		contrast: 90,
+		sharpness: 0,
+		saturate: 130,
+		grayscale: 0,
+	},
+};
+
+// The filter keys a preset controls (shared by the built-ins and the custom
+// slot). Keep in sync with the Visual Filters sliders.
+export const FILTER_PRESET_KEYS = [
+	"blur",
+	"brightness",
+	"contrast",
+	"sharpness",
+	"saturate",
+	"grayscale",
+];
+
 // IndexedDB Config
 // The schema version is an explicit constant in db.js (not derived from the
 // extension version) so downgrades cannot trigger VersionError/data loss.
@@ -79,6 +133,9 @@ export const DEFAULT_CONFIG = {
 		grayscale: 0, // in percentage
 		saturate: 100, // in percentage
 		sharpness: 0, // 0-100, SVG unsharp mask
+		// The user's single saved filter preset (filter values only — never the
+		// wallpaper it was captured from). null until they save one.
+		customPreset: null,
 		muted: true, // Default to muted for video wallpapers
 		rain: false, // Rain customization
 		rainSettings: {
