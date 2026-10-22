@@ -810,11 +810,13 @@ html[data-theme="glass"] {
 }
 
 /* Nested cards and rows are deliberately transparent: the top-level glass
-   panel already provides the blur, and these layers just add depth. */
+   panel already provides the blur, and these layers just add depth.
+   A floating tool IS a .tool-widget (no wrapper), so it must be excluded
+   here or it would lose the tinted panel surface and look merely blurred. */
 [data-theme="glass"] .settings-group,
 [data-theme="glass"] .option-tile,
 [data-theme="glass"] .shortcut-list-item,
-[data-theme="glass"] .tool-widget,
+[data-theme="glass"] .tool-widget:not(.tool-float-widget),
 [data-theme="glass"] .stat-card,
 [data-theme="glass"] .ws-item,
 [data-theme="glass"] .calc-display,
