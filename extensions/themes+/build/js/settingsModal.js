@@ -3109,7 +3109,8 @@ function updateWallpaperDynamicContent(container, settings) {
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
 			// updateWallpaperDynamicContent(container, settings); // REMOVED to fix drag glitch
-			filterPresetUI?.refreshChips();
+			noteFilterPresetChange(settings);
+			filterPresetUI?.refresh();
 		},
 		"blur",
 	);
@@ -3126,7 +3127,8 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.brightness = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
-			filterPresetUI?.refreshChips();
+			noteFilterPresetChange(settings);
+			filterPresetUI?.refresh();
 		},
 		"brightness",
 	);
@@ -3143,7 +3145,8 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.contrast = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
-			filterPresetUI?.refreshChips();
+			noteFilterPresetChange(settings);
+			filterPresetUI?.refresh();
 		},
 		"contrast",
 	);
@@ -3160,7 +3163,8 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.sharpness = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
-			filterPresetUI?.refreshChips();
+			noteFilterPresetChange(settings);
+			filterPresetUI?.refresh();
 		},
 		"sharpness",
 	);
@@ -3177,7 +3181,8 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.saturate = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
-			filterPresetUI?.refreshChips();
+			noteFilterPresetChange(settings);
+			filterPresetUI?.refresh();
 		},
 		"saturate",
 	);
@@ -3194,7 +3199,8 @@ function updateWallpaperDynamicContent(container, settings) {
 			settings.wallpaper.grayscale = val;
 			saveSettings(settings);
 			updateWallpaperFilters(settings.wallpaper);
-			filterPresetUI?.refreshChips();
+			noteFilterPresetChange(settings);
+			filterPresetUI?.refresh();
 		},
 		"grayscale",
 	);
@@ -3238,6 +3244,12 @@ function detectActivePreset(settings) {
 	return null;
 }
 
+/** Keep the Presets dropdown in step when the sliders are edited by hand. */
+function noteFilterPresetChange(settings) {
+	const match = detectActivePreset(settings);
+	if (match) settings.wallpaper.filterPreset = match;
+}
+
 /** Write the given filter values into the live wallpaper config. */
 function applyFilterValues(settings, values) {
 	for (const k of FILTER_PRESET_KEYS) {
@@ -3260,78 +3272,153 @@ function syncFilterSliders(container, settings) {
 }
 
 function renderFilterPresets(group, container, settings) {
-	const wrap = document.createElement("div");
-	wrap.className = "filter-presets";
+	const row = document.createElement("div");
+	row.className = "setting-row";
 
-	const head = document.createElement("div");
-	head.className = "filter-presets-head";
+	const info = document.createElement("div");
+	info.className = "setting-info";
+	const label = document.createElement("div");
+	label.className = "setting-label";
+	label.textContent = "Presets";
+	const desc = document.createElement("div");
+	desc.className = "setting-desc";
+	desc.textContent = "Apply a saved filter look to any wallpaper.";
+	info.append(label, desc);
 
-	const title = document.createElement("div");
-	title.className = "filter-presets-title";
-	title.textContent = "Presets";
-	head.appendChild(title);
+	const control = document.createElement("div");
+	control.className = "setting-control";
+	control.style.display = "flex";
+	control.style.alignItems = "center";
+	control.style.gap = "var(--dis-1)";
+	control.style.flexWrap = "wrap";
+	control.style.justifyContent = "flex-end";
 
-	const saveBtn = document.createElement("button");
-	saveBtn.type = "button";
-	saveBtn.className = "btn btn-icon-text filter-preset-save";
-	saveBtn.title = "Save the current filter values as your custom preset";
-	const saveIcon = document.createElement("span");
-	renderInlineIcon(
-		saveIcon,
-		"assets/svgs-fontawesome/solid/floppy-disk.svg",
-	);
-	saveBtn.appendChild(saveIcon);
-	const saveText = document.createElement("span");
-	saveText.className = "text";
-	saveText.textContent =
-		settings.wallpaper.customPreset ? "Update Custom" : "Save as Custom";
-	saveBtn.appendChild(saveText);
-	head.appendChild(saveBtn);
-	wrap.appendChild(head);
-
-	const chips = document.createElement("div");
-	chips.className = "filter-preset-chips";
-	wrap.appendChild(chips);
-
-	const refreshChips = () => {
-		chips.innerHTML = "";
-		const activeId = detectActivePreset(settings);
-		const entries = Object.entries(FILTER_PRESETS);
-		if (settings.wallpaper.customPreset) {
-			entries.push([
-				"custom",
-				{ label: "Custom", ...settings.wallpaper.customPreset },
-			]);
-		}
-		for (const [id, preset] of entries) {
-			const chip = document.createElement("button");
-			chip.type = "button";
-			chip.className =
-				"filter-chip" + (activeId === id ? " active" : "");
-			chip.textContent = preset.label;
-			chip.title = "Apply this filter preset";
-			chip.onclick = () => {
-				applyFilterValues(settings, preset);
-				syncFilterSliders(container, settings);
-				refreshChips();
-			};
-			chips.appendChild(chip);
-		}
+	const makeIconBtn = (icon, title, extraClass) => {
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.className = "btn btn-icon" + (extraClass ? ` ${extraClass}` : "");
+		btn.title = title;
+		btn.setAttribute("aria-label", title);
+		btn.style.width = "var(--dis-4)";
+		btn.style.height = "var(--dis-4)";
+		btn.innerHTML = "<span></span>";
+		renderInlineIcon(
+			btn.querySelector("span"),
+			`assets/svgs-fontawesome/solid/${icon}`,
+		);
+		return btn;
 	};
 
-	saveBtn.onclick = () => {
+	const prevBtn = makeIconBtn("chevron-left.svg", "Previous preset");
+	const nextBtn = makeIconBtn("chevron-right.svg", "Next preset");
+	const saveBtn = makeIconBtn(
+		"floppy-disk.svg",
+		"Save the current filter values as your custom preset",
+		"filter-preset-save",
+	);
+	const resetBtn = makeIconBtn(
+		"rotate-left.svg",
+		"Clear the saved custom preset",
+		"filter-preset-reset",
+	);
+
+	const select = document.createElement("select");
+	select.className = "select";
+	select.setAttribute("aria-label", "Filter preset");
+
+	control.append(prevBtn, select, nextBtn, saveBtn, resetBtn);
+	row.append(info, control);
+
+	const presetList = () => {
+		const list = Object.entries(FILTER_PRESETS).map(([id, preset]) => ({
+			id,
+			label: preset.label,
+			values: preset,
+		}));
+		if (settings.wallpaper.customPreset) {
+			list.push({
+				id: "custom",
+				label: "Custom",
+				values: {
+					label: "Custom",
+					...settings.wallpaper.customPreset,
+				},
+			});
+		}
+		return list;
+	};
+
+	const selectedId = () => {
+		const list = presetList();
+		const stored = settings.wallpaper.filterPreset;
+		if (stored && list.some((p) => p.id === stored)) return stored;
+		return detectActivePreset(settings) || "none";
+	};
+
+	const render = () => {
+		const list = presetList();
+		select.innerHTML = "";
+		for (const preset of list) {
+			const option = document.createElement("option");
+			option.value = preset.id;
+			option.textContent = preset.label;
+			select.appendChild(option);
+		}
+		select.value = selectedId();
+		const hasCustom = !!settings.wallpaper.customPreset;
+		resetBtn.disabled = !hasCustom;
+		resetBtn.style.opacity = hasCustom ? "1" : "0.35";
+	};
+
+	const applyPreset = (preset) => {
+		applyFilterValues(settings, preset.values);
+		settings.wallpaper.filterPreset = preset.id;
+		saveSettings(settings);
+		syncFilterSliders(container, settings);
+		render();
+	};
+
+	select.addEventListener("change", () => {
+		const preset = presetList().find((p) => p.id === select.value);
+		if (preset) applyPreset(preset);
+	});
+
+	const step = (delta) => {
+		const list = presetList();
+		if (!list.length) return;
+		const current = list.findIndex((p) => p.id === selectedId());
+		const index =
+			(((current < 0 ? 0 : current) + delta) % list.length +
+				list.length) %
+			list.length;
+		applyPreset(list[index]);
+	};
+	prevBtn.addEventListener("click", () => step(-1));
+	nextBtn.addEventListener("click", () => step(1));
+
+	saveBtn.addEventListener("click", () => {
 		settings.wallpaper.customPreset = pickFilterValues(
 			settings.wallpaper,
 		);
+		settings.wallpaper.filterPreset = "custom";
 		saveSettings(settings);
-		saveText.textContent = "Update Custom";
-		refreshChips();
-	};
+		render();
+	});
 
-	refreshChips();
-	group.appendChild(wrap);
+	resetBtn.addEventListener("click", () => {
+		if (!settings.wallpaper.customPreset) return;
+		settings.wallpaper.customPreset = null;
+		if (settings.wallpaper.filterPreset === "custom") {
+			settings.wallpaper.filterPreset = "none";
+		}
+		saveSettings(settings);
+		render();
+	});
 
-	return { refreshChips };
+	render();
+	group.appendChild(row);
+
+	return { refresh: render };
 }
 
 function updateWallpaperFilters(cfg) {

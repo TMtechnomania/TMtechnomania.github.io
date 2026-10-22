@@ -136,6 +136,9 @@ export const DEFAULT_CONFIG = {
 		// The user's single saved filter preset (filter values only — never the
 		// wallpaper it was captured from). null until they save one.
 		customPreset: null,
+		// Last preset applied from the Presets dropdown (a UI selection only;
+		// the filter values above remain the source of truth).
+		filterPreset: "none",
 		muted: true, // Default to muted for video wallpapers
 		rain: false, // Rain customization
 		rainSettings: {

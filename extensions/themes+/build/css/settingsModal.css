@@ -348,83 +348,8 @@ input:checked+.toggle-slider:before {
 	padding: var(--dis-2) var(--dis-3) 0;
 }
 
-/* Filter presets */
-.filter-presets {
-	display: flex;
-	flex-direction: column;
-	gap: var(--dis-2);
-	padding: var(--dis-1) var(--dis-3) var(--dis-2);
-}
-
-.filter-presets-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--dis-2);
-	min-height: var(--dis-4);
-}
-
-.filter-presets-title {
-	font-size: calc(0.75rem);
-	font-weight: 600;
-	color: var(--text-off);
-	text-transform: uppercase;
-	letter-spacing: calc(1px);
-}
-
-/* Compact, chip-height save action so it sits level with the Presets label
-   instead of towering over the chips below. */
-.btn.filter-preset-save {
-	height: auto;
-	min-width: 0;
-	padding: calc(var(--dis-1) * 0.55) var(--dis-2);
-	font-size: calc(0.75rem);
-	font-weight: 600;
-	background: transparent;
-	border: 1px dashed var(--color-off);
-	color: var(--text-off);
-}
-
-.btn.filter-preset-save:hover {
-	background: var(--color-off);
-	border-color: var(--text-off);
-	color: var(--text-base);
-	box-shadow: none;
-}
-
-.filter-preset-chips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--dis-1);
-}
-
-.filter-chip {
-	appearance: none;
-	border: 1px solid var(--color-off);
-	background: var(--color-off);
-	color: var(--text-base);
-	border-radius: var(--radius-full);
-	padding: calc(var(--dis-1) * 0.55) var(--dis-2);
-	font-family: inherit;
-	font-size: calc(0.75rem);
-	font-weight: 600;
-	line-height: 1;
-	cursor: pointer;
-	transition:
-		background var(--transition-fast),
-		color var(--transition-fast),
-		border-color var(--transition-fast);
-}
-
-.filter-chip:hover {
-	background: var(--color-base);
-}
-
-.filter-chip.active {
-	background: var(--color-accent);
-	border-color: transparent;
-	color: var(--text-invert);
-}
+/* The Presets control reuses the standard .setting-row + .select + .btn markup
+   (see renderFilterPresets), so it needs no bespoke styles here. */
 
 /* About Section - Redesigned */
 /* About Section - Redesigned */
